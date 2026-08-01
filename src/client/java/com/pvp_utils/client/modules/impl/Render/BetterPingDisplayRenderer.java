@@ -1,7 +1,7 @@
 package com.pvp_utils.client.modules.impl.Render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.PlayerInfo;
 
 public final class BetterPingDisplayRenderer {
@@ -18,7 +18,7 @@ public final class BetterPingDisplayRenderer {
     private BetterPingDisplayRenderer() {
     }
 
-    public static void render(DrawContext graphics, int slotWidth, int x, int y, PlayerInfo playerInfo) {
+    public static void render(GuiGraphicsExtractor graphics, int slotWidth, int x, int y, PlayerInfo playerInfo) {
         Minecraft client = Minecraft.getInstance();
         if (client == null || playerInfo == null) {
             return;

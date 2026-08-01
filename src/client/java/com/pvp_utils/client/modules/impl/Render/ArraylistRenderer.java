@@ -2,7 +2,7 @@ package com.pvp_utils.client.modules.impl.Render;
 
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class ArraylistRenderer {
         return INSTANCE;
     }
 
-    public void render(DrawContext graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         Minecraft client = Minecraft.getInstance();
         if (!Config.arraylist) return;
         if (client.player == null || client.options.hideGui) return;
@@ -185,7 +185,7 @@ public class ArraylistRenderer {
         return Minecraft.getInstance().font.width(text);
     }
 
-    private void drawBackground(DrawContext graphics, Minecraft client, List<String> names, int width, boolean alignRight) {
+    private void drawBackground(GuiGraphicsExtractor graphics, Minecraft client, List<String> names, int width, boolean alignRight) {
         for (int i = 0; i < names.size(); i++) {
             Bounds bounds = innerBoundsFor(client, names, width, alignRight, i);
             graphics.fill(bounds.x1(), bounds.y1(), bounds.x2(), bounds.y2(), BACKGROUND_COLOR);
@@ -193,7 +193,7 @@ public class ArraylistRenderer {
         drawBorder(graphics, client, names, width, alignRight);
     }
 
-    private void drawBorder(DrawContext graphics, Minecraft client, List<String> names, int width, boolean alignRight) {
+    private void drawBorder(GuiGraphicsExtractor graphics, Minecraft client, List<String> names, int width, boolean alignRight) {
         if (!Config.arraylistBorder) return;
         int borderWidth = borderOutset();
         for (int i = 0; i < names.size(); i++) {
@@ -222,7 +222,7 @@ public class ArraylistRenderer {
         }
     }
 
-    private void fillRect(DrawContext graphics, int x1, int y1, int x2, int y2, int color) {
+    private void fillRect(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2, int color) {
         if (x2 <= x1 || y2 <= y1) return;
         graphics.fill(x1, y1, x2, y2, color);
     }

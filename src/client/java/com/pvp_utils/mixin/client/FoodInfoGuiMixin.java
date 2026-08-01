@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.modules.impl.Tool.FoodInfo.FoodInfoHudOverlay;
@@ -26,3 +27,4 @@ public class FoodInfoGuiMixin {
         FoodInfoHudOverlay.getInstance().onRenderHealth(graphics, player, left, top);
     }
 }
+*/

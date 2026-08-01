@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
@@ -41,7 +41,7 @@ public final class MainUIVideoBackground {
     private int textureW = -1;
     private int textureH = -1;
 
-    public boolean render(DrawContext graphics, String selectedVideo) {
+    public boolean render(GuiGraphicsExtractor graphics, String selectedVideo) {
         Minecraft client = Minecraft.getInstance();
         int screenW = Math.max(1, client.getWindow().getGuiScaledWidth());
         int screenH = Math.max(1, client.getWindow().getGuiScaledHeight());
@@ -212,7 +212,7 @@ public final class MainUIVideoBackground {
         textureH = height;
     }
 
-    private void drawCover(DrawContext graphics, int screenW, int screenH) {
+    private void drawCover(GuiGraphicsExtractor graphics, int screenW, int screenH) {
         float screenAspect = screenW / (float) screenH;
         float textureAspect = textureW / (float) textureH;
         int sourceW = textureW;

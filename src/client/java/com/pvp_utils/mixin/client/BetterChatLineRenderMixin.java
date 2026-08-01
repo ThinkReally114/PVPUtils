@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.mojang.authlib.GameProfile;
@@ -92,3 +93,4 @@ public abstract class BetterChatLineRenderMixin {
     private void pvp_utils$shiftTagIconX(Args args, GuiMessage.Line line, int index, float alpha) {
     }
 }
+*/

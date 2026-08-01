@@ -15,7 +15,7 @@ import io.github.humbleui.skija.SamplingMode;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -146,7 +146,7 @@ public final class AltManagerScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (embeddedBack == null || minecraft.screen == this) {
             MainUISharedBackground.render(graphics, mouseX, mouseY);
         }
@@ -169,7 +169,7 @@ public final class AltManagerScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     public void renderFrameEnd() {

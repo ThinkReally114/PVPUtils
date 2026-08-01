@@ -16,7 +16,7 @@ import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
@@ -68,7 +68,7 @@ public class PotionStatusRenderer {
         return INSTANCE;
     }
 
-    public void render(DrawContext graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         Minecraft client = Minecraft.getInstance();
         if (!Config.potionStatus) {
             destroyTexture(client);

@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.Version;
@@ -46,3 +47,4 @@ public class TitleScreenMixin {
         guiGraphics.drawString(client.font, after, tx + client.font.width(typed), y, 0xFFFFFFFF, false);
     }
 }
+*/

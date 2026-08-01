@@ -1,7 +1,7 @@
 package com.pvp_utils.client.render.skia;
 
 import io.github.humbleui.skija.Canvas;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -18,7 +18,7 @@ public abstract class SkiaScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (shouldRedraw()) {
             Canvas canvas = SkiaRenderer.begin();
             if (canvas != null) {
@@ -64,13 +64,13 @@ public abstract class SkiaScreen extends Screen {
     }
 
     @Override
-    protected void renderBlurredBackground(DrawContext guiGraphics) {}
+    protected void renderBlurredBackground(GuiGraphicsExtractor guiGraphics) {}
 
     @Override
-    protected void renderMenuBackground(DrawContext guiGraphics) {}
+    protected void renderMenuBackground(GuiGraphicsExtractor guiGraphics) {}
 
     @Override
-    public void renderBackground(DrawContext guiGraphics, int i, int j, float f) {}
+    public void renderBackground(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {}
 
     protected abstract void drawSkia(Canvas canvas, int width, int height, int mouseX, int mouseY, float delta);
 

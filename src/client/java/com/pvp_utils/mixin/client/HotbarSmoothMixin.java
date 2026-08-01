@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -83,3 +84,4 @@ public class HotbarSmoothMixin {
         return (selectedSlot + rollover * SLOT_COUNT) * SLOT_WIDTH;
     }
 }
+*/

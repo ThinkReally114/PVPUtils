@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
@@ -54,3 +55,4 @@ public class PlayerTabOverlayMixin {
         cir.setReturnValue(NickHiderManager.replaceTabName(name, playerInfo));
     }
 }
+*/

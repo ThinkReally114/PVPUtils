@@ -13,8 +13,8 @@ import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.Rect;
 import io.github.humbleui.types.RRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.components.PlayerFaceRenderer;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+// PlayerFaceRenderer removed in 26.2
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.ClientAsset;
@@ -217,7 +217,7 @@ public class TargetHudRenderer {
         }
     }
 
-    public void render(DrawContext graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         long now = System.currentTimeMillis();
         Minecraft client = Minecraft.getInstance();
         boolean editActive = HudEditOverlay.getInstance().isActive() && Config.targetHud;
@@ -280,7 +280,7 @@ public class TargetHudRenderer {
         renderLite(graphics, client, alpha, now);
     }
 
-    private void renderLite(DrawContext graphics, Minecraft client, float alpha, long now) {
+    private void renderLite(GuiGraphicsExtractor graphics, Minecraft client, float alpha, long now) {
         int screenW = client.getWindow().getGuiScaledWidth();
         int screenH = client.getWindow().getGuiScaledHeight();
         float hudScale = Math.max(0.5f, Config.targetHudScale);
@@ -332,7 +332,7 @@ public class TargetHudRenderer {
         if (target instanceof Player player) {
             try {
                 PlayerSkin skin = resolvePlayerSkin(client, player);
-                PlayerFaceRenderer.draw(graphics, skin, avatarX, avatarY, AVATAR_SIZE);
+                graphics.fill(avatarX, avatarY, avatarX2, avatarY2, alphaBits | 0x000000);
             } catch (Exception e) {
                 graphics.fill(avatarX, avatarY, avatarX2, avatarY2, alphaBits | 0x000000);
             }
@@ -404,7 +404,7 @@ public class TargetHudRenderer {
         graphics.pose().popMatrix();
     }
 
-    private void renderNew(DrawContext graphics, Minecraft client, float alpha, long now, boolean blurMode) {
+    private void renderNew(GuiGraphicsExtractor graphics, Minecraft client, float alpha, long now, boolean blurMode) {
         int screenW = client.getWindow().getGuiScaledWidth();
         int screenH = client.getWindow().getGuiScaledHeight();
         float hudScale = Math.max(0.5f, Config.targetHudScale);
@@ -487,7 +487,7 @@ public class TargetHudRenderer {
                 PlayerSkin skin = resolvePlayerSkin(client, player);
                 playerRoundedAvatarRendered = renderRoundedPlayerAvatarTexture(graphics, client, skin, avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarDrawSize);
                 if (!playerRoundedAvatarRendered) {
-                    PlayerFaceRenderer.draw(graphics, skin, avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarDrawSize);
+                    graphics.fill(avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarX + avatarDrawInset + avatarDrawSize, avatarY + avatarDrawInset + avatarDrawSize, alphaBits | 0x111111);
                 }
             } catch (Exception e) {
                 graphics.fill(avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarX + avatarDrawInset + avatarDrawSize, avatarY + avatarDrawInset + avatarDrawSize, alphaBits | 0x111111);
@@ -511,7 +511,7 @@ public class TargetHudRenderer {
         graphics.pose().popMatrix();
     }
 
-    private boolean renderRoundedPlayerAvatarTexture(DrawContext graphics, Minecraft client, PlayerSkin skin, int x, int y, int size) {
+    private boolean renderRoundedPlayerAvatarTexture(GuiGraphicsExtractor graphics, Minecraft client, PlayerSkin skin, int x, int y, int size) {
         float targetScale = Math.max(1f, (float) client.getWindow().getGuiScale() * Math.max(0.5f, Config.targetHudScale));
         int targetW = Math.max(1, Math.round(size * targetScale));
         int targetH = Math.max(1, Math.round(size * targetScale));

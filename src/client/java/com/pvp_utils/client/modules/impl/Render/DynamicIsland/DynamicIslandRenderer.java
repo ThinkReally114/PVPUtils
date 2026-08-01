@@ -14,7 +14,7 @@ import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
@@ -129,7 +129,7 @@ public class DynamicIslandRenderer {
         lastTabRequestTime = System.currentTimeMillis();
     }
 
-    public void render(DrawContext graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         if (!Config.dynamicIsland) {
             destroyTexture(Minecraft.getInstance());
             resetAnimation();

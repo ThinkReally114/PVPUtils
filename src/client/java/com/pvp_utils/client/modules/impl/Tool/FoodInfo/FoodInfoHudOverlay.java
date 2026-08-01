@@ -2,7 +2,7 @@ package com.pvp_utils.client.modules.impl.Tool.FoodInfo;
 
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -42,14 +42,14 @@ public final class FoodInfoHudOverlay {
         flashAlpha = Mth.clamp(unclampedFlashAlpha, 0.0f, 1.0f) * 0.65f;
     }
 
-    public void onPreRenderFood(DrawContext graphics, Player player, int top, int right) {
+    public void onPreRenderFood(GuiGraphicsExtractor graphics, Player player, int top, int right) {
         if (!Config.foodInfo || player == null) {
             return;
         }
         drawExhaustionOverlay(graphics, FoodInfoHelper.exhaustion(player), right, top);
     }
 
-    public void onRenderFood(DrawContext graphics, Player player, int top, int right) {
+    public void onRenderFood(GuiGraphicsExtractor graphics, Player player, int top, int right) {
         if (!Config.foodInfo || player == null) {
             return;
         }
@@ -75,7 +75,7 @@ public final class FoodInfoHudOverlay {
         drawSaturationOverlay(graphics, saturationGained, stats.getSaturationLevel(), right, top, flashAlpha, ticks, player);
     }
 
-    public void onRenderHealth(DrawContext graphics, Player player, int left, int top) {
+    public void onRenderHealth(GuiGraphicsExtractor graphics, Player player, int left, int top) {
         if (!Config.foodInfo || player == null || !FoodInfoHelper.shouldShowEstimatedHealth(player)) {
             return;
         }
@@ -90,7 +90,7 @@ public final class FoodInfoHudOverlay {
         drawHealthOverlay(graphics, currentHealth, modifiedHealth, left, top, flashAlpha, Minecraft.getInstance().gui.getGuiTicks(), player);
     }
 
-    private void drawSaturationOverlay(DrawContext graphics, float saturationGained, float saturationLevel, int right, int top, float alpha, int ticks, Player player) {
+    private void drawSaturationOverlay(GuiGraphicsExtractor graphics, float saturationGained, float saturationLevel, int right, int top, float alpha, int ticks, Player player) {
         if (saturationLevel + saturationGained < 0.0f) {
             return;
         }
@@ -110,7 +110,7 @@ public final class FoodInfoHudOverlay {
         }
     }
 
-    private void drawHungerOverlay(DrawContext graphics, int hungerRestored, int foodLevel, int right, int top, float alpha, boolean rotten, int ticks, Player player) {
+    private void drawHungerOverlay(GuiGraphicsExtractor graphics, int hungerRestored, int foodLevel, int right, int top, float alpha, boolean rotten, int ticks, Player player) {
         if (hungerRestored <= 0) {
             return;
         }
@@ -130,7 +130,7 @@ public final class FoodInfoHudOverlay {
         }
     }
 
-    private void drawHealthOverlay(DrawContext graphics, float health, float modifiedHealth, int left, int top, float alpha, int ticks, Player player) {
+    private void drawHealthOverlay(GuiGraphicsExtractor graphics, float health, float modifiedHealth, int left, int top, float alpha, int ticks, Player player) {
         if (modifiedHealth <= health) {
             return;
         }
@@ -151,7 +151,7 @@ public final class FoodInfoHudOverlay {
         }
     }
 
-    private void drawExhaustionOverlay(DrawContext graphics, float exhaustion, int right, int top) {
+    private void drawExhaustionOverlay(GuiGraphicsExtractor graphics, float exhaustion, int right, int top) {
         float ratio = Mth.clamp(exhaustion / FoodInfoHelper.MAX_EXHAUSTION, 0.0f, 1.0f);
         int width = (int) (ratio * 81.0f);
         if (width <= 0) {

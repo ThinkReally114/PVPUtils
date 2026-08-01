@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import net.minecraft.client.GuiMessage;
@@ -9,3 +10,4 @@ public interface ChatHudLineAccessor {
     @Accessor("addedTime")
     int getCreationTick();
 }
+*/

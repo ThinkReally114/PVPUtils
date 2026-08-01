@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.mojang.authlib.GameProfile;
@@ -34,3 +35,4 @@ public abstract class BetterChatGuiMessageLineMixin implements BetterChatLinePro
         return pvp_utils$drawAvatar;
     }
 }
+*/

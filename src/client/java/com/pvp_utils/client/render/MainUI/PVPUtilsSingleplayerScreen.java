@@ -14,7 +14,7 @@ import io.github.humbleui.skija.SamplingMode;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
@@ -167,7 +167,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (embeddedBack == null || minecraft.screen == this) {
             MainUISharedBackground.render(graphics, mouseX, mouseY);
         }
@@ -193,15 +193,15 @@ public class PVPUtilsSingleplayerScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     @Override
-    protected void renderBlurredBackground(DrawContext guiGraphics) {
+    protected void renderBlurredBackground(GuiGraphicsExtractor guiGraphics) {
     }
 
     @Override
-    protected void renderMenuBackground(DrawContext guiGraphics) {
+    protected void renderMenuBackground(GuiGraphicsExtractor guiGraphics) {
     }
 
     public void renderFrameEnd() {

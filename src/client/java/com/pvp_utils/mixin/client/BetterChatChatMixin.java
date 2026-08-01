@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -64,3 +65,4 @@ public abstract class BetterChatChatMixin {
         BetterChatState.getInstance().trimMessageCount(this.trimmedMessages.size());
     }
 }
+*/

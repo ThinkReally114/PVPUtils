@@ -14,7 +14,7 @@ import io.github.humbleui.skija.SamplingMode;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -85,7 +85,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         MainUISharedBackground.render(graphics, mouseX, mouseY);
         scroll += (targetScroll - scroll) * 0.18f;
         detailScroll += (targetDetailScroll - detailScroll) * 0.18f;
@@ -109,7 +109,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     public void renderFrameEnd() {

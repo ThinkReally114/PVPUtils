@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import net.minecraft.client.gui.DrawContext;
@@ -9,3 +10,4 @@ public interface ChatComponentDrawingBackgroundGraphicsAccessor {
     @Accessor("graphics")
     DrawContext pvp_utils$getGraphics();
 }
+*/

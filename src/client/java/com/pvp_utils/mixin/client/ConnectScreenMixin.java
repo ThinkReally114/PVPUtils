@@ -1,3 +1,4 @@
+/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.modules.impl.Tool.ServerConnectionOverlay;
@@ -45,3 +46,4 @@ public abstract class ConnectScreenMixin extends Screen {
         ServerConnectionOverlay.render(graphics, this.width, this.height, this.status);
     }
 }
+*/

@@ -18,7 +18,7 @@ import io.github.humbleui.types.RRect;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -185,7 +185,7 @@ public class PVPUtilsMainUI extends Screen {
     }
 
     @Override
-    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (renderEmbeddedPage(graphics, mouseX, mouseY, delta)) return;
         float layoutScale = mainLayoutScale();
         updateSettingsPanel(
@@ -210,7 +210,7 @@ public class PVPUtilsMainUI extends Screen {
     }
 
     @Override
-    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     @Override
@@ -449,7 +449,7 @@ public class PVPUtilsMainUI extends Screen {
         return Math.max(0.35f, MAIN_LAYOUT_BASE_SCALE * MAIN_LAYOUT_BASE_GUI_SCALE / guiScale * fit);
     }
 
-    private void renderText(DrawContext graphics, float alpha) {
+    private void renderText(GuiGraphicsExtractor graphics, float alpha) {
         ensureTextTexture();
         if (textTexture == null) return;
         int color = Math.round(Math.max(0f, Math.min(1f, alpha)) * 255f) << 24 | 0xFFFFFF;
@@ -567,7 +567,7 @@ public class PVPUtilsMainUI extends Screen {
         return 0;
     }
 
-    private void renderMainBackground(DrawContext graphics, int mouseX, int mouseY) {
+    private void renderMainBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (isVideoBackground()) {
             ensureSelectedVideo();
             ensureVideoBackground();
@@ -631,7 +631,7 @@ public class PVPUtilsMainUI extends Screen {
         }
     }
 
-    private void renderVideoUnavailable(DrawContext graphics) {
+    private void renderVideoUnavailable(GuiGraphicsExtractor graphics) {
         graphics.fill(0, 0, this.width, this.height, 0xFF05070A);
         String title = Config.isChinese ? "视频背景不可用" : "Video background unavailable";
         String reason = videoBackground == null || videoBackground.getLastError().isBlank()
@@ -702,7 +702,7 @@ public class PVPUtilsMainUI extends Screen {
         }
     }
 
-    private void renderEntryHint(DrawContext graphics, float entryAlpha) {
+    private void renderEntryHint(GuiGraphicsExtractor graphics, float entryAlpha) {
         if (hintStartMs <= 0L) return;
         long elapsed = System.currentTimeMillis() - hintStartMs;
         if (elapsed >= HINT_DURATION_MS) return;
@@ -951,7 +951,7 @@ public class PVPUtilsMainUI extends Screen {
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
-    private boolean renderEmbeddedPage(DrawContext graphics, int mouseX, int mouseY, float delta) {
+    private boolean renderEmbeddedPage(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (embeddedSingleplayer != null) {
             renderMainBackground(graphics, mouseX, mouseY);
             embeddedSingleplayer.render(graphics, mouseX, mouseY, delta);
@@ -1690,7 +1690,7 @@ public class PVPUtilsMainUI extends Screen {
             return mx >= x && mx <= x + w && my >= y && my <= y + h;
         }
 
-        private void render(DrawContext graphics, int mouseX, int mouseY, boolean pressed, float alpha) {
+        private void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean pressed, float alpha) {
             float oldHover = hover;
             hover += ((contains(mouseX, mouseY) ? 1f : 0f) - hover) * 0.18f;
             if (pressed) hover = Math.min(1f, hover + 0.08f);

@@ -3,7 +3,7 @@ package com.pvp_utils.client.modules.impl.Optimize.BetterScoreboard;
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.numbers.NumberFormat;
@@ -32,7 +32,7 @@ public final class BetterScoreboardManager {
         return Config.betterScoreboard;
     }
 
-    public static void pushTransform(DrawContext graphics, Objective objective) {
+    public static void pushTransform(GuiGraphicsExtractor graphics, Objective objective) {
         if (!enabled()) {
             return;
         }
@@ -46,7 +46,7 @@ public final class BetterScoreboardManager {
         graphics.pose().translate(-rect.x(), -rect.y());
     }
 
-    public static void popTransform(DrawContext graphics) {
+    public static void popTransform(GuiGraphicsExtractor graphics) {
         if (enabled()) {
             graphics.pose().popMatrix();
         }
@@ -140,7 +140,7 @@ public final class BetterScoreboardManager {
         return builder.toString();
     }
 
-    private static Rect measure(DrawContext graphics, Objective objective) {
+    private static Rect measure(GuiGraphicsExtractor graphics, Objective objective) {
         return measure(Minecraft.getInstance().gui.getFont(), graphics.guiWidth(), graphics.guiHeight(), objective);
     }
 

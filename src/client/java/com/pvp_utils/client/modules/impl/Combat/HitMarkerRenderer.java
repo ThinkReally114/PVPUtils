@@ -2,7 +2,7 @@ package com.pvp_utils.client.modules.impl.Combat;
 
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.sounds.SoundEvents;
 
 public class HitMarkerRenderer {
@@ -44,7 +44,7 @@ public class HitMarkerRenderer {
         }
     }
 
-    public void render(DrawContext graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         if (!Config.hitMarker || hitTime == 0) return;
 
         long elapsed = System.currentTimeMillis() - hitTime;
@@ -70,7 +70,7 @@ public class HitMarkerRenderer {
         drawDiagonal(graphics, centerX + gap, centerY + gap, 1, 1, length, color);
     }
 
-    private void drawDiagonal(DrawContext graphics, int x, int y, int dx, int dy, int len, int color) {
+    private void drawDiagonal(GuiGraphicsExtractor graphics, int x, int y, int dx, int dy, int len, int color) {
         for (int i = 0; i < len; i++) {
             graphics.fill(x + i * dx, y + i * dy, x + i * dx + 1, y + i * dy + 1, color);
         }
