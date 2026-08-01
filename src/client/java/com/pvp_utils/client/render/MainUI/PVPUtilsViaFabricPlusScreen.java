@@ -103,7 +103,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
             if (embeddedBack != null) {
                 embeddedBack.run();
             } else if (minecraft != null) {
-                minecraft.setScreen(parent);
+                minecraft.gui.setScreen(parent);
             }
         }
     }

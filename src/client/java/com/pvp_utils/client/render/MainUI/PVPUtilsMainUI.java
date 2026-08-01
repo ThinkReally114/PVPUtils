@@ -167,7 +167,7 @@ public class PVPUtilsMainUI extends Screen {
             }));
         }
         buttons.add(new MenuButton("Options", "\uE8B8", () -> {
-            if (this.minecraft != null) this.minecraft.setScreen(new OptionsScreen(returnParent(), this.minecraft.options));
+            if (this.minecraft != null) this.minecraft.gui.setScreen(new OptionsScreen(returnParent(), this.minecraft.options));
         }));
         buttons.add(new MenuButton("Shutdown", "\uE8AC", () -> {
             if (this.minecraft != null) this.minecraft.stop();
@@ -359,7 +359,7 @@ public class PVPUtilsMainUI extends Screen {
                 playClickSound();
                 Config.useMainUI = false;
                 Config.save();
-                if (this.minecraft != null) this.minecraft.setScreen(new TitleScreen());
+                if (this.minecraft != null) this.minecraft.gui.setScreen(new TitleScreen());
                 return true;
             }
         }
@@ -816,7 +816,7 @@ public class PVPUtilsMainUI extends Screen {
             return;
         }
         if (this.minecraft != null) {
-            this.minecraft.setScreen(new TitleScreen());
+            this.minecraft.gui.setScreen(new TitleScreen());
         }
     }
 

@@ -20,13 +20,13 @@ public final class MainUIScreenManager {
             if (Config.useMainUI) {
                 boolean delayEntryFade = firstMainUIAutoOpen;
                 firstMainUIAutoOpen = false;
-                client.setScreen(new PVPUtilsMainUI(titleScreen, false, delayEntryFade));
+                client.gui.setScreen(new PVPUtilsMainUI(titleScreen, false, delayEntryFade));
                 return;
             }
             Button button = Button.builder(Component.literal("P"), b -> {
                 Config.useMainUI = true;
                 Config.save();
-                client.setScreen(new PVPUtilsMainUI(titleScreen, true));
+                client.gui.setScreen(new PVPUtilsMainUI(titleScreen, true));
             }).bounds(scaledWidth / 2 + 104, scaledHeight / 4 + 48 + 36 - 24, 20, 20).build();
             Screens.getButtons(titleScreen).add(button);
         });

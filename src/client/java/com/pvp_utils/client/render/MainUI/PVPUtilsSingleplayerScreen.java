@@ -98,7 +98,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
         buttons.add(new ActionButton("Create", () -> {
             if (minecraft != null) CreateWorldScreen.openFresh(minecraft, () -> {
                 loadWorlds();
-                minecraft.setScreen(this);
+                minecraft.gui.setScreen(this);
             });
         }));
         buttons.add(new ActionButton("Edit", () -> openEditScreen()));
@@ -181,13 +181,13 @@ public class PVPUtilsSingleplayerScreen extends Screen {
                 if (!backDispatched) {
                     backDispatched = true;
                     if (minecraft.screen == this) {
-                        minecraft.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
+                        minecraft.gui.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
                     } else {
                         embeddedBack.run();
                     }
                 }
             } else {
-                minecraft.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
+                minecraft.gui.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
             }
         }
     }
@@ -431,17 +431,17 @@ public class PVPUtilsSingleplayerScreen extends Screen {
 
     private void openSelectedWorld() {
         if (minecraft == null || selected < 0 || selected >= worlds.size()) return;
-        minecraft.createWorldOpenFlows().openWorld(worlds.get(selected).summary().getLevelId(), () -> minecraft.setScreen(this));
+        minecraft.createWorldOpenFlows().openWorld(worlds.get(selected).summary().getLevelId(), () -> minecraft.gui.setScreen(this));
     }
 
     private void openEditScreen() {
         if (minecraft == null || selected < 0 || selected >= worlds.size()) return;
         try {
             LevelStorageSource.LevelStorageAccess access = minecraft.getLevelSource().createAccess(worlds.get(selected).summary().getLevelId());
-            minecraft.setScreen(EditWorldScreen.create(minecraft, access, result -> {
+            minecraft.gui.setScreen(EditWorldScreen.create(minecraft, access, result -> {
                 access.safeClose();
                 loadWorlds();
-                minecraft.setScreen(this);
+                minecraft.gui.setScreen(this);
             }));
         } catch (IOException ignored) {
         }
@@ -450,7 +450,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
     private void deleteSelectedWorld() {
         if (minecraft == null || selected < 0 || selected >= worlds.size()) return;
         WorldEntry world = worlds.get(selected);
-        minecraft.setScreen(new ConfirmScreen(yes -> {
+        minecraft.gui.setScreen(new ConfirmScreen(yes -> {
             if (yes) {
                 try (LevelStorageSource.LevelStorageAccess access = minecraft.getLevelSource().createAccess(world.summary().getLevelId())) {
                     access.deleteLevel();
@@ -459,7 +459,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
                 selected = -1;
                 loadWorlds();
             }
-            minecraft.setScreen(this);
+            minecraft.gui.setScreen(this);
         }, Component.literal("Delete World"), Component.literal(world.name())));
     }
 

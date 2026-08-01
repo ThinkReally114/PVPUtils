@@ -52,7 +52,7 @@ public final class ViaFabricPlusBridge {
         try {
             Class<?> screenClass = Class.forName("com.terraformersmc.modmenu.gui.ModsScreen");
             Object screen = screenClass.getConstructor(Screen.class).newInstance(parent);
-            net.minecraft.client.Minecraft.getInstance().setScreen((Screen) screen);
+            net.minecraft.client.Minecraft.getInstance().gui.setScreen((Screen) screen);
             return true;
         } catch (Throwable ignored) {
             return false;

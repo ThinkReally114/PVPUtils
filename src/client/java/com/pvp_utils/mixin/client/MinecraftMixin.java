@@ -86,13 +86,6 @@ public class MinecraftMixin {
         }
     }
 
-    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
-    private void hideAutoChestDepositScreen(Screen screen, CallbackInfo ci) {
-        if (AutoChestDepositManager.shouldHideContainerScreen(screen)) {
-            ci.cancel();
-        }
-    }
-
     @Inject(method = "startAttack", at = @At("HEAD"), cancellable = true)
     private void attackFakePlayer(CallbackInfoReturnable<Boolean> cir) {
         if (FakePlayerManager.tryAttack((Minecraft) (Object) this)) {

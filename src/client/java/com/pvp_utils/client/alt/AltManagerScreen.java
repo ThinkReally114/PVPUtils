@@ -163,7 +163,7 @@ public final class AltManagerScreen extends Screen {
             if (embeddedBack != null && minecraft.screen != this) {
                 embeddedBack.run();
             } else {
-                minecraft.setScreen(parent);
+                minecraft.gui.setScreen(parent);
             }
         }
     }

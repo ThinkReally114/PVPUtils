@@ -97,7 +97,7 @@ public class TermsScreen extends Screen {
             Config.fullMode = false;
             Config.save();
             if (this.minecraft != null) {
-                this.minecraft.setScreen(new NewSettingsScreen(parent));
+                this.minecraft.gui.setScreen(new NewSettingsScreen(parent));
             }
             return true;
         }

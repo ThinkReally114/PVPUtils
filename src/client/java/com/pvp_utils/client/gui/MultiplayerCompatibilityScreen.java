@@ -26,7 +26,7 @@ public class MultiplayerCompatibilityScreen extends Screen {
                 setAllEnabled(true);
             }
             Config.save();
-            this.minecraft.setScreen(new MultiplayerCompatibilityScreen(lastScreen));
+            this.minecraft.gui.setScreen(new MultiplayerCompatibilityScreen(lastScreen));
         }).bounds(buttonX, firstButtonY, buttonWidth, 20).build());
 
         if (Config.multiplayerAdvancedMode) {
@@ -63,7 +63,7 @@ public class MultiplayerCompatibilityScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(lastScreen);
+        this.minecraft.gui.setScreen(lastScreen);
     }
 
     private static Component modeLabel() {

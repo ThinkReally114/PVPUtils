@@ -165,13 +165,13 @@ public final class PVPUtilsMultiplayerScreen extends Screen {
                 if (!backDispatched) {
                     backDispatched = true;
                     if (minecraft.screen == this) {
-                        minecraft.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
+                        minecraft.gui.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
                     } else {
                         embeddedBack.run();
                     }
                 }
             } else {
-                minecraft.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
+                minecraft.gui.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
             }
         }
     }
@@ -324,7 +324,7 @@ public final class PVPUtilsMultiplayerScreen extends Screen {
             returningFromManageServer = true;
             prepareOverlayReturn();
             ServerData data = new ServerData("", "", ServerData.Type.OTHER);
-            minecraft.setScreen(new ManageServerScreen(this, Component.literal("Add Server"), ok -> {
+            minecraft.gui.setScreen(new ManageServerScreen(this, Component.literal("Add Server"), ok -> {
                 if (ok) {
                     serverList.add(data, false);
                     serverList.save();
@@ -339,7 +339,7 @@ public final class PVPUtilsMultiplayerScreen extends Screen {
             returningFromManageServer = true;
             prepareOverlayReturn();
             ServerData data = servers.get(selected);
-            minecraft.setScreen(new ManageServerScreen(this, Component.literal("Edit Server"), ok -> {
+            minecraft.gui.setScreen(new ManageServerScreen(this, Component.literal("Edit Server"), ok -> {
                 if (ok) {
                     serverList.replace(selected, data);
                     serverList.save();
@@ -360,7 +360,7 @@ public final class PVPUtilsMultiplayerScreen extends Screen {
             playClick();
             returningFromManageServer = true;
             prepareOverlayReturn();
-            minecraft.setScreen(new MultiplayerCompatibilityScreen(embeddedBack == null ? this : parent));
+            minecraft.gui.setScreen(new MultiplayerCompatibilityScreen(embeddedBack == null ? this : parent));
             return true;
         }
         if (inside(event.x(), event.y(), bottomButtonX(x, buttonW, 4), y, buttonW, 32f)) {
@@ -499,9 +499,9 @@ public final class PVPUtilsMultiplayerScreen extends Screen {
 
     private void returnFromOverlay() {
         if (parent instanceof PVPUtilsMainUI && embeddedBack != null) {
-            minecraft.setScreen(parent);
+            minecraft.gui.setScreen(parent);
         } else {
-            minecraft.setScreen(this);
+            minecraft.gui.setScreen(this);
         }
     }
 
