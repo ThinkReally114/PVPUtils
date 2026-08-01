@@ -18,7 +18,7 @@ import io.github.humbleui.skija.SurfaceProps;
 import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -130,7 +130,7 @@ public final class ItemUseStatusRenderer {
         lastMixinSampleTime = System.currentTimeMillis();
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         Minecraft client = Minecraft.getInstance();
         if (!Config.itemUseStatus) {
             if (!(Config.dynamicIsland && Config.dynamicIslandItemUseStatus)) {
@@ -358,7 +358,7 @@ public final class ItemUseStatusRenderer {
         return kineticWeapon == null ? 0 : kineticWeapon.computeDamageUseDuration();
     }
 
-    private void renderLite(GuiGraphics graphics, Minecraft client, float progress, float alpha) {
+    private void renderLite(DrawContext graphics, Minecraft client, float progress, float alpha) {
         int screenW = client.getWindow().getGuiScaledWidth();
         int screenH = client.getWindow().getGuiScaledHeight();
         float scale = getScale();
@@ -389,7 +389,7 @@ public final class ItemUseStatusRenderer {
         graphics.pose().popMatrix();
     }
 
-    private void renderNew(GuiGraphics graphics, Minecraft client, float progress, float alpha) {
+    private void renderNew(DrawContext graphics, Minecraft client, float progress, float alpha) {
         ensureNativeLoaded();
         float targetScale = Math.max(1f, (float) client.getWindow().getGuiScale());
         int targetW = Math.max(1, Math.round(NEW_W * targetScale));

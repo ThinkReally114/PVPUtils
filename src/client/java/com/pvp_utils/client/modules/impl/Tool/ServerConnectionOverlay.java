@@ -5,7 +5,7 @@ import com.pvp_utils.client.render.skia.SkiaRenderer;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.Paint;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.chat.Component;
 
 import java.time.LocalTime;
@@ -69,7 +69,7 @@ public final class ServerConnectionOverlay {
         }
     }
 
-    public static void render(GuiGraphics graphics, int width, int height, Component status) {
+    public static void render(DrawContext graphics, int width, int height, Component status) {
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
 
@@ -83,7 +83,7 @@ public final class ServerConnectionOverlay {
         }
     }
 
-    public static void renderFailure(GuiGraphics graphics, int width, int height) {
+    public static void renderFailure(DrawContext graphics, int width, int height) {
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
 

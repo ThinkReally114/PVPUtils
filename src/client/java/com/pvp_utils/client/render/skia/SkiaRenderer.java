@@ -14,7 +14,7 @@ import io.github.humbleui.skija.Surface;
 import io.github.humbleui.skija.SurfaceProps;
 import io.github.humbleui.skija.impl.Library;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
@@ -196,7 +196,7 @@ public class SkiaRenderer {
         return currentScale;
     }
 
-    public static void end(GuiGraphics graphics, int guiWidth, int guiHeight) {
+    public static void end(DrawContext graphics, int guiWidth, int guiHeight) {
         if (USE_GL_BACKEND_FOR_FRAME) {
             try {
                 GL_BACKEND.end();
@@ -220,7 +220,7 @@ public class SkiaRenderer {
         }
     }
 
-    public static void endRegion(GuiGraphics graphics) {
+    public static void endRegion(DrawContext graphics) {
         if (!regionDrawing || regionSurface == null || regionTexture == null) return;
         regionDrawing = false;
         try {
@@ -244,7 +244,7 @@ public class SkiaRenderer {
         }
     }
 
-    public static void drawCached(GuiGraphics graphics, int guiWidth, int guiHeight) {
+    public static void drawCached(DrawContext graphics, int guiWidth, int guiHeight) {
         if (USE_GL_BACKEND_FOR_FRAME) return;
         pruneIdleSurfaces();
         if (dynamicTexture == null) return;
@@ -252,7 +252,7 @@ public class SkiaRenderer {
         lastFrameUseMs = System.currentTimeMillis();
     }
 
-    public static void drawCachedRegion(GuiGraphics graphics) {
+    public static void drawCachedRegion(DrawContext graphics) {
         pruneIdleSurfaces();
         if (regionTexture == null || regionCapacityPixelW <= 0 || regionCapacityPixelH <= 0) return;
         graphics.blit(RenderPipelines.GUI_TEXTURED, REGION_TEXTURE_ID, regionX, regionY, 0f, 0f, regionW, regionH, regionPixelW, regionPixelH, regionCapacityPixelW, regionCapacityPixelH);

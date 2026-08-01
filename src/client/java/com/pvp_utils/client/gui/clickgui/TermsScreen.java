@@ -2,7 +2,7 @@ package com.pvp_utils.client.gui.clickgui;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.client.TermsManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -29,7 +29,7 @@ public class TermsScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         graphics.fill(0, 0, this.width, this.height, 0xE6000000);
         int center = this.width / 2;
         graphics.drawCenteredString(this.font, this.title, center, 36, 0xFFFFFFFF);
@@ -54,7 +54,7 @@ public class TermsScreen extends Screen {
                 0xFF3A3A3A, Config.isChinese ? "打开规则文件" : "Open Rules File", false);
     }
 
-    private void drawButton(GuiGraphics graphics, int x, int y, int w, int h,
+    private void drawButton(DrawContext graphics, int x, int y, int w, int h,
                             int mouseX, int mouseY, int color, String text, boolean disabled) {
         boolean hover = mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
         int fill = disabled ? 0xFF4A4A4A : color;
@@ -73,7 +73,7 @@ public class TermsScreen extends Screen {
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
-    private void drawCentered(GuiGraphics graphics, String text, int x, int y, int color) {
+    private void drawCentered(DrawContext graphics, String text, int x, int y, int color) {
         graphics.drawCenteredString(this.font, text, x, y, color);
     }
 

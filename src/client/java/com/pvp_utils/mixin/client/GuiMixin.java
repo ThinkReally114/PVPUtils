@@ -26,7 +26,7 @@ import com.pvp_utils.client.render.skia.SkiaScreen;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import io.github.humbleui.skija.Canvas;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -44,7 +44,7 @@ public class GuiMixin {
             method = "renderCrosshair",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z")
     )
-    private boolean pvp_utils$showCrosshairInThirdPerson(boolean original, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    private boolean pvp_utils$showCrosshairInThirdPerson(boolean original, DrawContext guiGraphics, DeltaTracker deltaTracker) {
         return true;
     }
 
@@ -59,7 +59,7 @@ public class GuiMixin {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void onRender(DrawContext guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         int guiWidth = mc.getWindow().getGuiScaledWidth();
         int guiHeight = mc.getWindow().getGuiScaledHeight();
@@ -110,21 +110,21 @@ public class GuiMixin {
     }
 
     @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$hideVanillaPotionEffects(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void pvp_utils$hideVanillaPotionEffects(DrawContext guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (PotionStatusRenderer.getInstance().shouldHideVanillaEffects()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderVignette", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$hideVignette(GuiGraphics guiGraphics, @Nullable Entity entity, CallbackInfo ci) {
+    private void pvp_utils$hideVignette(DrawContext guiGraphics, @Nullable Entity entity, CallbackInfo ci) {
         if (Config.hideVignette) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderBossOverlay", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$hideBossBar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void pvp_utils$hideBossBar(DrawContext guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (Config.hideBossBar) {
             ci.cancel();
         }

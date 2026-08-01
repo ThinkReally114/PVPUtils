@@ -6,7 +6,7 @@ import com.pvp_utils.client.modules.impl.Render.BetterChat.BetterChatLineProfile
 import com.pvp_utils.client.modules.impl.Render.BetterChat.BetterChatRenderState;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.PlayerFaceRenderer;
 import net.minecraft.client.GuiMessageTag;
@@ -64,7 +64,7 @@ public abstract class BetterChatLineRenderMixin {
             Minecraft client = ((ChatComponentAccessor) this.field_63873).pvp_utils$getMinecraft();
             if (client != null) {
                 try {
-                    GuiGraphics graphics = this.pvp_utils$getGraphics();
+                    DrawContext graphics = this.pvp_utils$getGraphics();
                     PlayerSkin skin = client.getSkinManager().createLookup(profile, false).get();
                     PlayerFaceRenderer.draw(graphics, skin, AVATAR_X, avatarY, AVATAR_SIZE);
                 } catch (Throwable ignored) {
@@ -74,7 +74,7 @@ public abstract class BetterChatLineRenderMixin {
     }
 
     @Unique
-    private GuiGraphics pvp_utils$getGraphics() {
+    private DrawContext pvp_utils$getGraphics() {
         if (this.val$graphics instanceof ChatComponentDrawingBackgroundGraphicsAccessor background) {
             return background.pvp_utils$getGraphics();
         }

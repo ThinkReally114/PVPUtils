@@ -5,7 +5,7 @@ import com.pvp_utils.client.command.CommandManager;
 import com.pvp_utils.client.modules.impl.Render.HudEditOverlay;
 import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -65,7 +65,7 @@ public class ChatScreenMixin {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void highlightClientCommand(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void highlightClientCommand(DrawContext graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (input != null && CommandManager.isClientCommandInput(input.getValue())) {
             int left = Math.max(0, input.getX());
             int right = Math.min(Minecraft.getInstance().getWindow().getGuiScaledWidth(), input.getX() + input.getWidth());

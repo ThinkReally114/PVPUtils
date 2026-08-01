@@ -10,7 +10,7 @@ import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.humbleui.skija.Canvas;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -39,7 +39,7 @@ public final class BetterScoreboardRenderer {
         return INSTANCE;
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         if (!Config.betterScoreboard || !Config.betterScoreboardVisualImprovement) {
             return;
         }
@@ -136,7 +136,7 @@ public final class BetterScoreboardRenderer {
         }
     }
 
-    private void drawNativeFormattedText(GuiGraphics graphics, Minecraft client, float x, float y, float w, float bgPad,
+    private void drawNativeFormattedText(DrawContext graphics, Minecraft client, float x, float y, float w, float bgPad,
                                          Component titleComponent, String titleText, boolean titleFormatted,
                                          List<BetterScoreboardManager.Row> rows, float scale) {
         float contentX = x + bgPad;
@@ -249,7 +249,7 @@ public final class BetterScoreboardRenderer {
         return width;
     }
 
-    private void drawNativeGlyphs(GuiGraphics graphics, Minecraft client, List<NativeGlyph> glyphs) {
+    private void drawNativeGlyphs(DrawContext graphics, Minecraft client, List<NativeGlyph> glyphs) {
         for (NativeGlyph glyph : glyphs) {
             drawNativeComponent(graphics, client, glyph.component(), glyph.x(), glyph.y(), glyph.scale(), glyph.fallbackColor());
         }
@@ -260,7 +260,7 @@ public final class BetterScoreboardRenderer {
                 || Character.UnicodeBlock.of(codePoint) == Character.UnicodeBlock.PRIVATE_USE_AREA;
     }
 
-    private void drawNativeComponent(GuiGraphics graphics, Minecraft client, Component component, float x, float y, float scale, int fallbackColor) {
+    private void drawNativeComponent(DrawContext graphics, Minecraft client, Component component, float x, float y, float scale, int fallbackColor) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);

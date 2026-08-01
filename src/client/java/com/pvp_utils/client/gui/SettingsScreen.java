@@ -2,7 +2,7 @@ package com.pvp_utils.client.gui;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.client.ResetManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -590,13 +590,13 @@ public class SettingsScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void render(DrawContext graphics, int mouseX, int mouseY, float partialTick) {
         this.renderTransparentBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float partialTick) {
     }
 
     @Override

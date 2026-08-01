@@ -17,7 +17,7 @@ import io.github.humbleui.skija.Paint;
 import io.github.humbleui.types.RRect;
 import io.github.humbleui.types.Rect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -176,7 +176,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext graphics, int mouseX, int mouseY, float delta) {
         pendingMouseX = mouseX;
         pendingMouseY = mouseY;
         pendingFrame = true;
@@ -263,15 +263,15 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     @Override
-    protected void renderBlurredBackground(GuiGraphics graphics) {
+    protected void renderBlurredBackground(DrawContext graphics) {
     }
 
     @Override
-    protected void renderMenuBackground(GuiGraphics graphics) {
+    protected void renderMenuBackground(DrawContext graphics) {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderBackground(DrawContext graphics, int mouseX, int mouseY, float delta) {
     }
 
     private int mainFramebufferId() {
@@ -638,12 +638,12 @@ public class NeteaseMusicScreen extends SkiaScreen {
         canvas.drawRRect(RRect.makeXYWH(x, y, w, h, Math.min(radius, Math.min(w, h) * 0.5f)), uiPaint);
     }
 
-    private void renderBackdrop(GuiGraphics graphics, int w, int h, int alpha) {
+    private void renderBackdrop(DrawContext graphics, int w, int h, int alpha) {
         graphics.fill(0, 0, w, h, withAlpha(0x111315, Math.round(alpha * 0.68F)));
         graphics.fill(0, 0, w, h, withAlpha(0x07120E, Math.round(alpha * 0.25F)));
     }
 
-    private void renderUiBackground(GuiGraphics graphics, int alpha) {
+    private void renderUiBackground(DrawContext graphics, int alpha) {
         graphics.fill(0, 0, SIDEBAR_WIDTH, height, withAlpha(0x1E1D17, Math.round(alpha * 0.64F)));
         graphics.fill(0, height - PLAYER_HEIGHT, width, height, withAlpha(0x111315, Math.round(alpha * 0.78F)));
     }
@@ -675,7 +675,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         return 0f;
     }
 
-    private void applyUiScale(GuiGraphics graphics, float scale, float offsetX, float offsetY) {
+    private void applyUiScale(DrawContext graphics, float scale, float offsetX, float offsetY) {
         graphics.pose().translate(offsetX, offsetY);
         graphics.pose().scale(scale, scale);
     }
@@ -693,7 +693,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         return ((float) y - offsetY) / scale;
     }
 
-    private void enableUiScissor(GuiGraphics graphics, float left, float top, float right, float bottom) {
+    private void enableUiScissor(DrawContext graphics, float left, float top, float right, float bottom) {
         int x1 = Math.round(activeUiOffsetX + left * activeUiScale);
         int y1 = Math.round(activeUiOffsetY + top * activeUiScale);
         int x2 = Math.round(activeUiOffsetX + right * activeUiScale);
@@ -701,7 +701,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.enableScissor(x1, y1, x2, y2);
     }
 
-    private void renderSidebar(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderSidebar(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         searchInputX = 12;
         searchInputY = 14;
         searchInputW = SIDEBAR_WIDTH - 24;
@@ -733,7 +733,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void drawSidebarItem(GuiGraphics graphics, int x, int y, int w, String text, boolean selected, int mouseX, int mouseY, int alpha, String key) {
+    private void drawSidebarItem(DrawContext graphics, int x, int y, int w, String text, boolean selected, int mouseX, int mouseY, int alpha, String key) {
         boolean hovered = hit(x - 6, y - 6, w, 22, mouseX, mouseY);
         float target = selected ? 1.0F : hovered ? 0.45F : 0.0F;
         float current = sidebarSelectAnimations.getOrDefault(key, 0.0F);
@@ -750,7 +750,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderMain(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderMain(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         if (viewMode == ViewMode.HOME) {
             renderHomePlaylists(graphics, mouseX, mouseY, alpha);
             return;
@@ -762,7 +762,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderSongGrid(graphics, mouseX, mouseY, alpha);
     }
 
-    private void renderMainTransformed(GuiGraphics graphics, int mouseX, int mouseY, int alpha, float scale) {
+    private void renderMainTransformed(DrawContext graphics, int mouseX, int mouseY, int alpha, float scale) {
         graphics.pose().pushMatrix();
         applyContentScale(graphics, scale);
         try {
@@ -772,7 +772,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderContentFrame(GuiGraphics graphics, int mouseX, int mouseY, int alpha, float scale, boolean oldPage) {
+    private void renderContentFrame(DrawContext graphics, int mouseX, int mouseY, int alpha, float scale, boolean oldPage) {
         if (oldPage) {
             withTransitionSnapshot(() -> renderMainTransformed(graphics, mouseX, mouseY, alpha, scale));
             return;
@@ -780,7 +780,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderMainTransformed(graphics, mouseX, mouseY, alpha, scale);
     }
 
-    private void applyContentScale(GuiGraphics graphics, float scale) {
+    private void applyContentScale(DrawContext graphics, float scale) {
         if (Math.abs(scale - 1.0F) < 0.001F) {
             return;
         }
@@ -791,7 +791,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.pose().translate(-centerX, -centerY);
     }
 
-    private void renderHomePlaylists(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderHomePlaylists(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         int contentX = SIDEBAR_WIDTH + 22;
         int contentY = 24;
         int gridX = contentX;
@@ -840,7 +840,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderPlaylistGridSlider(graphics, gridX + availableW + 8, gridY, visibleRows * rowH - 12, columns, visibleRows * columns, mouseX, mouseY, alpha);
     }
 
-    private void renderPlaylistDetail(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderPlaylistDetail(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         float appear = contentAppearProgress();
         int localAlpha = Math.round(alpha * appear);
         int slide = Math.round((1.0F - appear) * 18.0F);
@@ -906,7 +906,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderSongGrid(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderSongGrid(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         int contentX = SIDEBAR_WIDTH + 22;
         int contentY = 24;
         int gridX = contentX;
@@ -951,7 +951,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderGridSlider(graphics, gridX + availableW + 8, gridY, visibleRows * rowH - 12, columns, visibleRows * columns, mouseX, mouseY, alpha);
     }
 
-    private void renderPlayer(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderPlayer(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         Song current = player.currentSong();
         int y = height - PLAYER_HEIGHT;
@@ -977,7 +977,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderProgress(graphics, progressX, progressY, progressW, alpha);
     }
 
-    private void renderVolumeSlider(GuiGraphics graphics, int x, int y, int w, int mouseX, int mouseY, int alpha) {
+    private void renderVolumeSlider(DrawContext graphics, int x, int y, int w, int mouseX, int mouseY, int alpha) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         float volume = draggingVolume && pendingVolume >= 0.0F ? pendingVolume : player.volume();
         boolean hovered = hit(x - 4, y - 7, w + 8, 18, mouseX, mouseY);
@@ -987,7 +987,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.fill(knobX - 2, y - 3, knobX + 2, y + 6, withAlpha(hovered || draggingVolume ? 0xFFFFFF : 0xAEB6C4, alpha));
     }
 
-    private void renderNowPlayingOverlay(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderNowPlayingOverlay(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         Song current = player.currentSong();
         if (current == null) {
@@ -1029,14 +1029,14 @@ public class NeteaseMusicScreen extends SkiaScreen {
         renderLargeProgress(graphics, player, progressX, progressY, progressW, overlayAlpha);
     }
 
-    private void renderLargeProgress(GuiGraphics graphics, MusicPlaybackService player, int x, int y, int w, int alpha) {
+    private void renderLargeProgress(DrawContext graphics, MusicPlaybackService player, int x, int y, int w, int alpha) {
         long total = player.totalDurationMs();
         float progress = draggingProgress && pendingProgress >= 0.0F ? pendingProgress : total <= 0L ? 0.0F : clamp(player.positionMs() / (float) total);
         graphics.fill(x, y, x + w, y + 5, withAlpha(0xFFFFFF, Math.round(alpha * 0.24F)));
         graphics.fill(x, y, x + Math.round(w * progress), y + 5, withAlpha(0xFFFFFF, alpha));
     }
 
-    private void renderNowPlayingSkiaText(GuiGraphics graphics, int alpha, float uiScale, float uiOffsetX, float uiOffsetY, int actualW, int actualH) {
+    private void renderNowPlayingSkiaText(DrawContext graphics, int alpha, float uiScale, float uiOffsetX, float uiOffsetY, int actualW, int actualH) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         Song current = player.currentSong();
         if (current == null) {
@@ -1125,7 +1125,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderProgress(GuiGraphics graphics, int x, int y, int w, int alpha) {
+    private void renderProgress(DrawContext graphics, int x, int y, int w, int alpha) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         long total = player.totalDurationMs();
         float progress = draggingProgress && pendingProgress >= 0.0F ? pendingProgress : total <= 0L ? 0.0F : clamp(player.positionMs() / (float) total);
@@ -1197,7 +1197,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         return line.text().trim();
     }
 
-    private void renderLoginGate(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderLoginGate(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         graphics.fill(0, 0, width, height, withAlpha(0x000000, Math.round(alpha * 0.62F)));
         int w = 320;
         int h = loginMode == LoginMode.QR ? 210 : 190;
@@ -1224,7 +1224,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderQrLogin(GuiGraphics graphics, int x, int y, int w, int mouseX, int mouseY, int alpha) {
+    private void renderQrLogin(DrawContext graphics, int x, int y, int w, int mouseX, int mouseY, int alpha) {
         int qrSize = 96;
         int qrX = x + 42;
         int qrY = y + 88;
@@ -1241,7 +1241,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         drawButton(graphics, qrX + qrSize + 20, qrY + 42, 110, 24, mouseX, mouseY, qrButtonText(), alpha);
     }
 
-    private void renderGridSlider(GuiGraphics graphics, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
+    private void renderGridSlider(DrawContext graphics, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
         int maxStart = maxGridStart(columns, visibleCards);
         if (maxStart <= 0) {
             return;
@@ -1258,7 +1258,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.fill(x - 1, knobY, x + 4, knobY + knobH, withAlpha(hovered || draggingSliderTarget == SliderTarget.SONG_GRID ? 0xFFFFFF : 0x8F98AA, alpha));
     }
 
-    private void renderPlaylistGridSlider(GuiGraphics graphics, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
+    private void renderPlaylistGridSlider(DrawContext graphics, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
         int maxStart = maxPlaylistGridStart(columns, visibleCards);
         if (maxStart <= 0) {
             return;
@@ -1275,14 +1275,14 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.fill(x - 1, knobY, x + 4, knobY + knobH, withAlpha(hovered || draggingSliderTarget == SliderTarget.PLAYLIST_GRID ? 0xFFFFFF : 0x8F98AA, alpha));
     }
 
-    private void renderCloseButton(GuiGraphics graphics, int mouseX, int mouseY, int alpha) {
+    private void renderCloseButton(DrawContext graphics, int mouseX, int mouseY, int alpha) {
         int x = width - 40;
         int y = 8;
         boolean hovered = hit(x, y, 30, 30, mouseX, mouseY);
         graphics.drawCenteredString(font, "\u00D7", x + 15, y + 9, withAlpha(hovered ? 0xFF646B : 0xFFFFFF, alpha));
     }
 
-    private void drawInput(GuiGraphics graphics, int x, int y, int w, int h, int mouseX, int mouseY, String value, String placeholder, Focus field, int alpha) {
+    private void drawInput(DrawContext graphics, int x, int y, int w, int h, int mouseX, int mouseY, String value, String placeholder, Focus field, int alpha) {
         boolean focused = focus == field;
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
         graphics.fill(x, y, x + w, y + h, withAlpha(focused || hovered ? 0x2B313C : 0x20242A, alpha));
@@ -1306,21 +1306,21 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void drawButton(GuiGraphics graphics, int x, int y, int w, int h, int mouseX, int mouseY, String text, int alpha) {
+    private void drawButton(DrawContext graphics, int x, int y, int w, int h, int mouseX, int mouseY, String text, int alpha) {
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
         graphics.fill(x, y, x + w, y + h, withAlpha(hovered ? 0x3A4558 : 0x262D3A, alpha));
         graphics.drawCenteredString(font, text, x + w / 2, y + Math.max(5, h / 2 - 4), withAlpha(0xFFFFFF, alpha));
     }
 
-    private void drawIconButton(GuiGraphics graphics, int x, int y, int w, int h, int mouseX, int mouseY, String icon, int alpha) {
+    private void drawIconButton(DrawContext graphics, int x, int y, int w, int h, int mouseX, int mouseY, String icon, int alpha) {
     }
 
-    private void drawRedButton(GuiGraphics graphics, int x, int y, int w, int h, int mouseX, int mouseY, int alpha) {
+    private void drawRedButton(DrawContext graphics, int x, int y, int w, int h, int mouseX, int mouseY, int alpha) {
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
         graphics.fill(x, y, x + w, y + h, withAlpha(hovered ? 0xF0192D : 0xD80E22, alpha));
     }
 
-    private void drawCircleButton(GuiGraphics graphics, int x, int y, int size, int mouseX, int mouseY, String text, int alpha) {
+    private void drawCircleButton(DrawContext graphics, int x, int y, int size, int mouseX, int mouseY, String text, int alpha) {
         boolean hovered = hit(x, y, size, size, mouseX, mouseY);
         int color = hovered ? 0x4A4A4A : 0x303030;
         graphics.fill(x, y + 6, x + size, y + size - 6, withAlpha(color, Math.round(alpha * 0.72F)));
@@ -1328,7 +1328,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.drawCenteredString(font, text, x + size / 2, y + 8, withAlpha(0xBFC2C7, alpha));
     }
 
-    private void renderCover(GuiGraphics graphics, String url, int x, int y, int size, int alpha) {
+    private void renderCover(DrawContext graphics, String url, int x, int y, int size, int alpha) {
         graphics.fill(x, y, x + size, y + size, withAlpha(0x273244, alpha));
         Identifier texture = NeteaseMusicCovers.texture(url);
         if (texture != null) {
@@ -1341,7 +1341,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.drawCenteredString(font, "Music", x + size / 2, y + size / 2 - 4, withAlpha(0x57C7FF, alpha));
     }
 
-    private void renderRoundedCover(GuiGraphics graphics, String url, int x, int y, int size, int alpha, int radius, float hoverProgress, int maskColor) {
+    private void renderRoundedCover(DrawContext graphics, String url, int x, int y, int size, int alpha, int radius, float hoverProgress, int maskColor) {
         float scale = lerp(1.0F, 1.055F, hoverProgress);
         float centerX = x + size / 2.0F;
         float centerY = y + size / 2.0F;
@@ -1357,7 +1357,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void maskRoundedCorners(GuiGraphics graphics, int x, int y, int size, int radius, int color, int alpha) {
+    private void maskRoundedCorners(DrawContext graphics, int x, int y, int size, int radius, int color, int alpha) {
         int r = Math.max(1, radius);
         int mask = withAlpha(color, alpha);
         // For each row the masked pixels form a contiguous run from the outer edge inward
@@ -1383,7 +1383,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderSkiaTextLayer(GuiGraphics graphics, int alpha, ContentTransition transition, float uiScale, float uiOffsetX, float uiOffsetY, int actualW, int actualH) {
+    private void renderSkiaTextLayer(DrawContext graphics, int alpha, ContentTransition transition, float uiScale, float uiOffsetX, float uiOffsetY, int actualW, int actualH) {
         // This layer draws only text through FontRenderer, so the content-hash cache is safe:
         // when the interface is static the whole peekPixels + GPU upload is skipped each frame.
         Canvas canvas = SkiaRenderer.beginRegion(0, 0, actualW, actualH, true);
@@ -1711,7 +1711,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         FontRenderer.drawText(canvas, text, centerX - FontRenderer.measureTextWidth(text, size, fontName) / 2.0F, baselineY, size, argb, fontName);
     }
 
-    private void renderPlaylistTextOverlay(GuiGraphics graphics, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha, float appear) {
+    private void renderPlaylistTextOverlay(DrawContext graphics, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha, float appear) {
         Canvas canvas = SkiaRenderer.beginRegion(0, 0, width, height);
         if (canvas == null) {
             renderPlaylistTextFallback(graphics, contentX, contentY, cover, listY, rowH, visibleRows, visualBase, rowOffset, alpha);
@@ -1753,7 +1753,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
     }
 
-    private void renderPlaylistTextFallback(GuiGraphics graphics, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha) {
+    private void renderPlaylistTextFallback(DrawContext graphics, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha) {
         Playlist playlist = currentPlaylist;
         if (playlist != null) {
             int infoX = contentX + cover + 24;

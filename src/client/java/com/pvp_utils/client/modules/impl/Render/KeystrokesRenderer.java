@@ -14,7 +14,7 @@ import io.github.humbleui.skija.*;
 import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.player.LocalPlayer;
 
 import java.util.List;
@@ -70,7 +70,7 @@ public class KeystrokesRenderer {
         return INSTANCE;
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         if (!Config.keystrokes) return;
 
         Minecraft client = Minecraft.getInstance();
@@ -108,7 +108,7 @@ public class KeystrokesRenderer {
         return false;
     }
 
-    private void renderLite(GuiGraphics graphics, Minecraft client, int x, int y, float scale, int leftCps, int rightCps, boolean leftDown, boolean rightDown) {
+    private void renderLite(DrawContext graphics, Minecraft client, int x, int y, float scale, int leftCps, int rightCps, boolean leftDown, boolean rightDown) {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);
@@ -173,7 +173,7 @@ public class KeystrokesRenderer {
         clearPendingFrame();
     }
 
-    private void drawLiteKey(GuiGraphics graphics, String label, float x, float y, float width, float height, boolean active) {
+    private void drawLiteKey(DrawContext graphics, String label, float x, float y, float width, float height, boolean active) {
         int ix = Math.round(x);
         int iy = Math.round(y);
         int iw = Math.round(width);
@@ -189,7 +189,7 @@ public class KeystrokesRenderer {
         graphics.drawString(client.font, label, textX, textY, textColor, false);
     }
 
-    private void drawLiteMouseKey(GuiGraphics graphics, Minecraft client, String label, int cps, float x, float y, float width, float height, boolean active) {
+    private void drawLiteMouseKey(DrawContext graphics, Minecraft client, String label, int cps, float x, float y, float width, float height, boolean active) {
         int ix = Math.round(x);
         int iy = Math.round(y);
         int iw = Math.round(width);
@@ -277,7 +277,7 @@ public class KeystrokesRenderer {
         return 0;
     }
 
-    private void drawFallback(GuiGraphics graphics, Minecraft client, int x, int y, float scale, int leftCps, int rightCps, boolean leftDown, boolean rightDown, boolean upDown, boolean keyLeftDown, boolean downDown, boolean keyRightDown, boolean jumpDown, boolean shiftDown) {
+    private void drawFallback(DrawContext graphics, Minecraft client, int x, int y, float scale, int leftCps, int rightCps, boolean leftDown, boolean rightDown, boolean upDown, boolean keyLeftDown, boolean downDown, boolean keyRightDown, boolean jumpDown, boolean shiftDown) {
         int mouseY = (KEY_SIZE + GAP) * 2;
         int leftMouseW = (TOTAL_W - GAP) / 2;
         int rightMouseW = TOTAL_W - GAP - leftMouseW;
@@ -292,7 +292,7 @@ public class KeystrokesRenderer {
         drawFallbackKey(graphics, "SHIFT", x + (leftMouseW + GAP) * scale, y + bottomY * scale, rightMouseW * scale, KEY_SIZE * scale, shiftDown);
     }
 
-    private void drawFallbackKey(GuiGraphics graphics, String label, float x, float y, float width, float height, boolean active) {
+    private void drawFallbackKey(DrawContext graphics, String label, float x, float y, float width, float height, boolean active) {
         int ix = Math.round(x);
         int iy = Math.round(y);
         int iw = Math.round(width);
@@ -387,7 +387,7 @@ public class KeystrokesRenderer {
         return Math.max(0, Math.min(y, screenH - getScaledHeight()));
     }
 
-    private void drawFallbackMouseKey(GuiGraphics graphics, Minecraft client, String label, int cps, float x, float y, float width, float height, boolean active) {
+    private void drawFallbackMouseKey(DrawContext graphics, Minecraft client, String label, int cps, float x, float y, float width, float height, boolean active) {
         int ix = Math.round(x);
         int iy = Math.round(y);
         int iw = Math.round(width);

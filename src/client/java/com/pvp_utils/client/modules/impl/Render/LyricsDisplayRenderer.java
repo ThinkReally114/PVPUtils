@@ -19,7 +19,7 @@ import io.github.humbleui.skija.Surface;
 import io.github.humbleui.skija.SurfaceProps;
 import io.github.humbleui.skija.impl.Library;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -66,7 +66,7 @@ public class LyricsDisplayRenderer {
         return INSTANCE;
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         Minecraft client = Minecraft.getInstance();
         if (!Config.lyricsDisplay) {
             clearState();
@@ -115,7 +115,7 @@ public class LyricsDisplayRenderer {
         renderCachedRegion(graphics, client, x, y, scale, lyrics, positionMs, alpha, currentIndex, now);
     }
 
-    private void renderCachedRegion(GuiGraphics graphics, Minecraft client, float x, float y, float scale, List<LyricLine> lyrics, long positionMs, float alpha, int currentIndex, long now) {
+    private void renderCachedRegion(DrawContext graphics, Minecraft client, float x, float y, float scale, List<LyricLine> lyrics, long positionMs, float alpha, int currentIndex, long now) {
         ensureNativeLoaded();
         int regionX = Math.max(0, (int) Math.floor(x - 2f));
         int regionY = Math.max(0, (int) Math.floor(y - 2f));
@@ -180,7 +180,7 @@ public class LyricsDisplayRenderer {
         return true;
     }
 
-    private void drawCacheTexture(GuiGraphics graphics) {
+    private void drawCacheTexture(DrawContext graphics) {
         if (cacheTexture == null || cachePixelW <= 0 || cachePixelH <= 0) {
             return;
         }

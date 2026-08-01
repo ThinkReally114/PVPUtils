@@ -12,7 +12,7 @@ import io.github.humbleui.skija.*;
 import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -173,7 +173,7 @@ public class BlockCountDisplayRenderer {
         displayStack = stack.copy();
     }
 
-    public void render(GuiGraphics graphics, Canvas canvas) {
+    public void render(DrawContext graphics, Canvas canvas) {
         if (!isFeatureActive()) {
             destroyTexture(Minecraft.getInstance());
             reset();
@@ -275,7 +275,7 @@ public class BlockCountDisplayRenderer {
     }
 
     public void renderFrameEnd() {
-        // Kept for the shared frame-end hook. BlockCount renders through GuiGraphics to keep item layering correct.
+        // Kept for the shared frame-end hook. BlockCount renders through DrawContext to keep item layering correct.
     }
 
     public Snapshot snapshot(Minecraft client) {

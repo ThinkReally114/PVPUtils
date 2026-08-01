@@ -4,7 +4,7 @@ import com.pvp_utils.Config;
 import com.pvp_utils.mixin.client.MultiPlayerGameModeAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,7 +26,7 @@ public class DiggingStatusRenderer {
         return INSTANCE;
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         if (!Config.diggingStatus) {
             reset();
             return;

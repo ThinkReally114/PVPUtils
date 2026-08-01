@@ -2,7 +2,7 @@ package com.pvp_utils.client.render.MainUI;
 
 import com.pvp_utils.Config;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 
@@ -41,7 +41,7 @@ public final class MainUISharedBackground {
                 && client.level == null;
     }
 
-    public static void render(GuiGraphics graphics, int mouseX, int mouseY) {
+    public static void render(DrawContext graphics, int mouseX, int mouseY) {
         Minecraft client = Minecraft.getInstance();
         graphics.fill(0, 0, client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight(), 0xFF000000);
         if (Config.mainUIBackgroundMode == Config.MainUIBackgroundMode.VIDEO) {
@@ -78,7 +78,7 @@ public final class MainUISharedBackground {
         return Config.mainUIGlslShader;
     }
 
-    private static void renderVideoUnavailable(GuiGraphics graphics, Minecraft client) {
+    private static void renderVideoUnavailable(DrawContext graphics, Minecraft client) {
         int width = client.getWindow().getGuiScaledWidth();
         int height = client.getWindow().getGuiScaledHeight();
         graphics.fill(0, 0, width, height, 0xFF05070A);

@@ -22,7 +22,7 @@ import io.github.humbleui.skija.SurfaceProps;
 import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -72,7 +72,7 @@ public class MusicInfoHudRenderer {
         return INSTANCE;
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         Minecraft client = Minecraft.getInstance();
         boolean editActive = HudEditOverlay.getInstance().isActive();
         if (!Config.musicInfoHud || editActive) {
@@ -100,7 +100,7 @@ public class MusicInfoHudRenderer {
         }
     }
 
-    private void renderLite(GuiGraphics graphics, Minecraft client, MusicPlaybackService player, Song song) {
+    private void renderLite(DrawContext graphics, Minecraft client, MusicPlaybackService player, Song song) {
         int screenW = client.getWindow().getGuiScaledWidth();
         int screenH = client.getWindow().getGuiScaledHeight();
         float x = getRenderX(screenW);
@@ -114,7 +114,7 @@ public class MusicInfoHudRenderer {
         graphics.pose().popMatrix();
     }
 
-    private void drawLiteCard(GuiGraphics graphics, Minecraft client, MusicPlaybackService player, Song song) {
+    private void drawLiteCard(DrawContext graphics, Minecraft client, MusicPlaybackService player, Song song) {
         int bg = Config.hudTheme == Config.HudTheme.LIGHT ? 0xDDF8FAFC : 0xCC0C1018;
         int primary = Config.hudTheme == Config.HudTheme.LIGHT ? 0xFF111827 : 0xFFFFFFFF;
         int secondary = Config.hudTheme == Config.HudTheme.LIGHT ? 0xAA111827 : 0xCCFFFFFF;
@@ -128,7 +128,7 @@ public class MusicInfoHudRenderer {
         drawVanillaProgress(graphics, client, player, 56, 39, 122, muted);
     }
 
-    private void renderCard(GuiGraphics graphics, Minecraft client, MusicPlaybackService player, Song song, boolean blurMode) {
+    private void renderCard(DrawContext graphics, Minecraft client, MusicPlaybackService player, Song song, boolean blurMode) {
         int screenW = client.getWindow().getGuiScaledWidth();
         int screenH = client.getWindow().getGuiScaledHeight();
         float userScale = getScale();
@@ -244,7 +244,7 @@ public class MusicInfoHudRenderer {
         lastOverlayBlurMode = blurMode;
     }
 
-    private void drawCover(GuiGraphics graphics, Song song, int x, int y, int size) {
+    private void drawCover(DrawContext graphics, Song song, int x, int y, int size) {
         graphics.fill(x, y, x + size, y + size, 0xFF273244);
         Identifier texture = NeteaseMusicCovers.texture(song.image());
         if (texture != null) {
@@ -257,7 +257,7 @@ public class MusicInfoHudRenderer {
         graphics.drawString(Minecraft.getInstance().font, "♪", x + size / 2 - 4, y + size / 2 - 5, 0xFFFFFFFF, false);
     }
 
-    private void drawVanillaProgress(GuiGraphics graphics, Minecraft client, MusicPlaybackService player, int x, int y, int w, int muted) {
+    private void drawVanillaProgress(DrawContext graphics, Minecraft client, MusicPlaybackService player, int x, int y, int w, int muted) {
         long total = Math.max(0L, player.totalDurationMs());
         long position = Math.max(0L, Math.min(player.positionMs(), Math.max(total, 0L)));
         float progress = total <= 0L ? 0f : Mth.clamp(position / (float) total, 0f, 1f);

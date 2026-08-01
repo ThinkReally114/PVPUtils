@@ -7,7 +7,7 @@ import com.pvp_utils.client.modules.impl.Tool.NickHiderManager;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.components.ChatComponent;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
@@ -35,14 +35,14 @@ public abstract class BetterChatChatMixin {
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void pvp_utils$chatRenderStart(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
+    private void pvp_utils$chatRenderStart(DrawContext context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
         if (!Config.betterChat || !Config.betterChatMessageAnimation) return;
         int offset = BetterChatState.getInstance().calculateChatDisplacementY(this.getLineHeight(), this.chatScrollbarPos);
         context.pose().translate(0, offset);
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void pvp_utils$chatRenderEnd(GuiGraphics context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
+    private void pvp_utils$chatRenderEnd(DrawContext context, Font font, int currentTick, int mouseX, int mouseY, boolean focused, boolean open, CallbackInfo ci) {
         if (!Config.betterChat || !Config.betterChatMessageAnimation) return;
         int offset = BetterChatState.getInstance().calculateChatDisplacementY(this.getLineHeight(), this.chatScrollbarPos);
         context.pose().translate(0, -offset);

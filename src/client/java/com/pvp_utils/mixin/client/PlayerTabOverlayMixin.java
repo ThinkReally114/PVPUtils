@@ -5,7 +5,7 @@ import com.pvp_utils.client.irc.IrcBridge;
 import com.pvp_utils.client.modules.impl.Render.BetterPingDisplayRenderer;
 import com.pvp_utils.client.modules.impl.Render.DynamicIsland.DynamicIslandRenderer;
 import com.pvp_utils.client.modules.impl.Tool.NickHiderManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
@@ -27,7 +27,7 @@ public class PlayerTabOverlayMixin {
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$dynamicIslandTabList(GuiGraphics guiGraphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
+    private void pvp_utils$dynamicIslandTabList(DrawContext guiGraphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
         if (!Config.dynamicIsland) {
             return;
         }
@@ -37,7 +37,7 @@ public class PlayerTabOverlayMixin {
     }
 
     @Inject(method = "renderPingIcon", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$betterPingDisplay(GuiGraphics guiGraphics, int slotWidth, int x, int y, PlayerInfo playerInfo, CallbackInfo ci) {
+    private void pvp_utils$betterPingDisplay(DrawContext guiGraphics, int slotWidth, int x, int y, PlayerInfo playerInfo, CallbackInfo ci) {
         if (!Config.betterPingDisplay || Config.dynamicIsland) {
             return;
         }

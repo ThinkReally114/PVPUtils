@@ -2,7 +2,7 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.Version;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class TitleScreenMixin {
     @Inject(method = "render", at = @At("TAIL"))
-    private void pvp_utils$renderVersionText(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void pvp_utils$renderVersionText(DrawContext guiGraphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
         String version = Version.displayName();
         String type = Version.typeName();

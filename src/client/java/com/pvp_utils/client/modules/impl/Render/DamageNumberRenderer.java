@@ -3,7 +3,7 @@ package com.pvp_utils.client.modules.impl.Render;
 import com.pvp_utils.Config;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -100,7 +100,7 @@ public final class DamageNumberRenderer {
         numbers.removeIf(number -> now - number.createdAtMs > NUMBER_MS);
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(DrawContext graphics) {
         if (!Config.damageNumbers || !projectionReady || numbers.isEmpty()) {
             return;
         }

@@ -1,7 +1,7 @@
 package com.pvp_utils.client.modules.impl.Tool.FoodInfo;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.entity.player.Player;
@@ -73,12 +73,12 @@ public class FoodInfoTooltipComponent implements TooltipComponent, ClientTooltip
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics graphics) {
+    public void renderImage(Font font, int x, int y, int width, int height, DrawContext graphics) {
         renderHunger(font, graphics, x, y);
         renderSaturation(font, graphics, x, y + 10);
     }
 
-    private void renderHunger(Font font, GuiGraphics graphics, int x, int y) {
+    private void renderHunger(Font font, DrawContext graphics, int x, int y) {
         int drawX = x + (hungerBars - 1) * 9;
         boolean rotten = consumable != null && FoodInfoHelper.isRotten(consumable);
         int defaultHunger = defaultFood.nutrition();
@@ -107,7 +107,7 @@ public class FoodInfoTooltipComponent implements TooltipComponent, ClientTooltip
         }
     }
 
-    private void renderSaturation(Font font, GuiGraphics graphics, int x, int y) {
+    private void renderSaturation(Font font, DrawContext graphics, int x, int y) {
         int drawX = x + (saturationBars - 1) * 7;
         float saturation = modifiedFood.saturation();
         float absSaturation = Math.abs(saturation);
