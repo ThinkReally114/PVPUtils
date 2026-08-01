@@ -2,6 +2,8 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.client.modules.impl.Tool.TitleDetector;
+import com.pvp_utils.client.modules.impl.Tool.AutoChestDepositManager;
+import com.pvp_utils.client.modules.impl.Optimize.InputMethodFix.InputMethodFix;
 import com.pvp_utils.client.modules.impl.Render.NotificationOverlay;
 import com.pvp_utils.client.modules.impl.Combat.HitMarkerRenderer;
 import com.pvp_utils.client.modules.impl.Render.KeystrokesRenderer;
@@ -27,6 +29,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -125,5 +128,17 @@ public class GuiMixin {
         if (Config.hideBossBar) {
             ci.cancel();
         }
+    }
+
+    @Inject(method = "setScreen", at = @At("HEAD"), cancellable = true)
+    private void hideAutoChestDepositScreen(Screen screen, CallbackInfo ci) {
+        if (AutoChestDepositManager.shouldHideContainerScreen(screen)) {
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "setScreen", at = @At("TAIL"))
+    private void pvp_utils$onScreenChanged(Screen screen, CallbackInfo ci) {
+        InputMethodFix.onScreenChanged(screen, Minecraft.getInstance());
     }
 }

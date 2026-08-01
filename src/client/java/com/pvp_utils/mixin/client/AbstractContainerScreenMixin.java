@@ -20,7 +20,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
     private void addGlobalSettingsButton(CallbackInfo ci) {
         this.addRenderableWidget(Button.builder(Component.literal("PVPUtils"), (button) -> {
             Config.applyFirstUseLanguageDefault();
-            if (this.minecraft != null) this.minecraft.setScreen(Config.termsRead ? new NewSettingsScreen(this) : new TermsScreen(this));
+            if (this.minecraft != null) this.minecraft.gui.setScreen(Config.termsRead ? new NewSettingsScreen(this) : new TermsScreen(this));
         }).bounds(this.width - 82, 2, 80, 20).build());
     }
 }

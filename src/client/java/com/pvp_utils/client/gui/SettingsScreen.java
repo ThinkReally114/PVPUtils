@@ -174,7 +174,7 @@ public class SettingsScreen extends Screen {
                     Config.animationMode = Config.AnimMode.MODE_1_7;
                     Config.motionBlurAlgorithm = Config.MotionBlurAlgorithm.VELOCITY_BASED;
                     Config.save();
-                    if (this.minecraft != null) this.minecraft.setScreen(new SettingsScreen(this.lastScreen));
+                    if (this.minecraft != null) this.minecraft.gui.setScreen(new SettingsScreen(this.lastScreen));
                     inResetConfirmPage = true;
                     resettingAll = true;
                     this.init();
@@ -185,11 +185,11 @@ public class SettingsScreen extends Screen {
                 (button) -> {
                     if (this.minecraft != null) {
                         String url = "https://space.bilibili.com/3546915648047958";
-                        this.minecraft.setScreen(new net.minecraft.client.gui.screens.ConfirmLinkScreen((confirmed) -> {
+                        this.minecraft.gui.setScreen(new net.minecraft.client.gui.screens.ConfirmLinkScreen((confirmed) -> {
                             if (confirmed) {
                                 Util.getPlatform().openUri(url);
                             }
-                            this.minecraft.setScreen(this);
+                            this.minecraft.gui.setScreen(this);
                         }, url, true));
                     }
                 }).bounds(5, this.height - 50, 90, 20).build());
@@ -197,7 +197,7 @@ public class SettingsScreen extends Screen {
         this.addRenderableWidget(Button.builder(Component.literal(cn ? "Language: CN" : "Language: EN"), (button) -> {
             Config.isChinese = !Config.isChinese;
             Config.save();
-            if (this.minecraft != null) this.minecraft.setScreen(new SettingsScreen(this.lastScreen));
+            if (this.minecraft != null) this.minecraft.gui.setScreen(new SettingsScreen(this.lastScreen));
         }).bounds(5, this.height - 25, 90, 20).build());
 
         this.addRenderableWidget(Button.builder(Component.literal(cn ? "完成" : "Done"), (button) -> this.onClose())
@@ -601,6 +601,6 @@ public class SettingsScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.setScreen(this.lastScreen);
+        if (this.minecraft != null) this.minecraft.gui.setScreen(this.lastScreen);
     }
 }

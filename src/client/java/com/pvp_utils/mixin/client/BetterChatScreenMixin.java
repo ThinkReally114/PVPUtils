@@ -26,7 +26,7 @@ public class BetterChatScreenMixin {
     private void pvp_utils$renderEnd(GuiGraphics context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (!Config.betterChat || !Config.betterChatInputAnimation) return;
         if (BetterChatState.getInstance().shouldCloseChatScreen() && client != null) {
-            client.setScreen(null);
+            client.gui.setScreen(null);
         }
     }
 

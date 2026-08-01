@@ -151,7 +151,7 @@ public final class ModuleKeybindManager {
     private static void trigger(Minecraft client, String id) {
         if (ACTION_CLICK_GUI.equals(id)) {
             Config.applyFirstUseLanguageDefault();
-            client.setScreen(Config.termsRead ? new NewSettingsScreen(null) : new TermsScreen(null));
+            client.gui.setScreen(Config.termsRead ? new NewSettingsScreen(null) : new TermsScreen(null));
             return;
         }
         if (ACTION_OPEN_MUSIC.equals(id)) {

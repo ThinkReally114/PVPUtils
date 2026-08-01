@@ -22,7 +22,7 @@ public abstract class JoinMultiplayerScreenMixin extends Screen {
         int x = 5;
         int y = 6;
         this.addRenderableWidget(Button.builder(Component.literal(Config.isChinese ? "联机设置" : "Multiplayer Settings"), button ->
-                this.minecraft.setScreen(new MultiplayerCompatibilityScreen(this)))
+                this.minecraft.gui.setScreen(new MultiplayerCompatibilityScreen(this)))
                 .bounds(x, y, 105, 20).build());
     }
 }

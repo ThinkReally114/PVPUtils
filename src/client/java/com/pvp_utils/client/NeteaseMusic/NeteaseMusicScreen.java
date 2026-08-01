@@ -195,7 +195,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int mouseY = pendingMouseY;
         AnimationState animation = animationState();
         if (closing && animation.done()) {
-            Minecraft.getInstance().setScreen(parent);
+            Minecraft.getInstance().gui.setScreen(parent);
             return;
         }
 
