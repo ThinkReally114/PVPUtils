@@ -1,11 +1,8 @@
 package com.pvp_utils.client.render.MainUI;
 
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.pvp_utils.client.render.font.FontRenderer;
-import com.pvp_utils.client.render.skia.SkiaGlBackend;
 import com.pvp_utils.client.render.skia.SkiaBlurRenderer;
+import com.pvp_utils.client.render.skia.SkiaGlBackend;
 import com.pvp_utils.client.via.ViaFabricPlusBridge;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.Image;
@@ -497,11 +494,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
     }
 
     private int mainFramebufferId() {
-        if (minecraft.getMainRenderTarget().getColorTexture() instanceof GlTexture texture
-                && RenderSystem.getDevice() instanceof GlDevice device) {
-            return texture.getFbo(device.directStateAccess(), minecraft.getMainRenderTarget().getDepthTexture());
-        }
-        return 0;
+        return SkiaBlurRenderer.currentDrawFramebufferId();
     }
 
     private boolean inside(double mx, double my, float x, float y, float w, float h) {

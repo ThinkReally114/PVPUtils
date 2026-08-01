@@ -1,10 +1,8 @@
 package com.pvp_utils.client.NeteaseMusic;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.pvp_utils.Config;
+import com.pvp_utils.client.render.skia.SkiaBlurRenderer;
 import com.pvp_utils.client.NeteaseMusic.LyricLine;
 import com.pvp_utils.client.NeteaseMusic.LyricLineProcessor;
 import com.pvp_utils.client.render.font.FontRenderer;
@@ -275,12 +273,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private int mainFramebufferId() {
-        Minecraft client = Minecraft.getInstance();
-        if (client.getMainRenderTarget().getColorTexture() instanceof GlTexture texture
-                && RenderSystem.getDevice() instanceof GlDevice device) {
-            return texture.getFbo(device.directStateAccess(), client.getMainRenderTarget().getDepthTexture());
-        }
-        return 0;
+        return SkiaBlurRenderer.currentDrawFramebufferId();
     }
 
     private void renderBackdropSkia(Canvas canvas, int w, int h, int alpha) {

@@ -1,8 +1,5 @@
 package com.pvp_utils.client.render.skia;
 
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.ColorFilter;
 import io.github.humbleui.skija.ColorType;
@@ -358,10 +355,6 @@ public final class SkiaBlurRenderer {
     }
 
     private int mainFramebufferId(Minecraft client) {
-        if (client.getMainRenderTarget().getColorTexture() instanceof GlTexture texture
-                && RenderSystem.getDevice() instanceof GlDevice device) {
-            return texture.getFbo(device.directStateAccess(), client.getMainRenderTarget().getDepthTexture());
-        }
         return currentDrawFramebufferId();
     }
 

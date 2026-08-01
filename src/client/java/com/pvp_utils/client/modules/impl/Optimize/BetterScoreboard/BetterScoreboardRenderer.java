@@ -5,9 +5,6 @@ import com.pvp_utils.client.modules.impl.Render.HudEditOverlay;
 import com.pvp_utils.client.render.font.FontRenderer;
 import com.pvp_utils.client.render.skia.SkiaBlurRenderer;
 import com.pvp_utils.client.render.skia.SkiaGlBackend;
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.humbleui.skija.Canvas;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -100,11 +97,7 @@ public final class BetterScoreboardRenderer {
     }
 
     private int mainFramebufferId(Minecraft client) {
-        if (client.getMainRenderTarget().getColorTexture() instanceof GlTexture texture
-                && RenderSystem.getDevice() instanceof GlDevice device) {
-            return texture.getFbo(device.directStateAccess(), client.getMainRenderTarget().getDepthTexture());
-        }
-        return 0;
+        return SkiaBlurRenderer.currentDrawFramebufferId();
     }
 
     private void drawCard(Canvas canvas, List<NativeGlyph> nativeGlyphs, float x, float y, float w, float h, float bgPad, String title, List<BetterScoreboardManager.Row> rows, float scale) {

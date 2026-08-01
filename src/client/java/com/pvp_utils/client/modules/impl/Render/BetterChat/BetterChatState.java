@@ -2,8 +2,6 @@ package com.pvp_utils.client.modules.impl.Render.BetterChat;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.mixin.client.ChatHudAccessor;
-import com.pvp_utils.mixin.client.ChatHudLineAccessor;
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -113,11 +111,8 @@ public final class BetterChatState {
             int ticks = client.gui.getGuiTicks();
             final int fadeTicks = 200;
             for (Object msg : messages) {
-                if (msg instanceof GuiMessage line) {
-                    int creationTick = ((ChatHudLineAccessor) (Object) line).getCreationTick();
-                    if (ticks - creationTick < fadeTicks) {
-                        return true;
-                    }
+                if (ticks > 0) {
+                    return true;
                 }
             }
         } catch (Throwable ignored) {}

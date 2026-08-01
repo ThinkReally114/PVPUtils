@@ -1,11 +1,9 @@
 package com.pvp_utils.client.render.MainUI;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.opengl.GlDevice;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.pvp_utils.Config;
+import com.pvp_utils.client.render.skia.SkiaBlurRenderer;
 import com.pvp_utils.client.alt.AltManagerScreen;
 import com.pvp_utils.client.via.ViaFabricPlusBridge;
 import com.pvp_utils.client.Version;
@@ -559,12 +557,7 @@ public class PVPUtilsMainUI extends Screen {
     }
 
     private int mainFramebufferId() {
-        Minecraft client = Minecraft.getInstance();
-        if (client.getMainRenderTarget().getColorTexture() instanceof GlTexture texture
-                && RenderSystem.getDevice() instanceof GlDevice device) {
-            return texture.getFbo(device.directStateAccess(), client.getMainRenderTarget().getDepthTexture());
-        }
-        return 0;
+        return SkiaBlurRenderer.currentDrawFramebufferId();
     }
 
     private void renderMainBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {

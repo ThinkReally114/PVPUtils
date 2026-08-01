@@ -35,7 +35,7 @@
     "AvatarRendererMixin",
     "NameTagFeatureRendererStorageMixin",
     "CapeLayerMixin",
-    "LightTextureMixin",
+    // "LightTextureMixin",
     "OverlayTextureMixin",
     "ChestRendererMixin",
     "KeyboardInputMixin",
