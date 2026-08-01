@@ -134,7 +134,7 @@ public final class DamageNumberRenderer {
             pose.pushMatrix();
             pose.translate(x, y);
             pose.scale(scale, scale);
-            graphics.drawString(client.font, Component.literal(text), 0, 0, color, true);
+            graphics.text(client.font, Component.literal(text), 0, 0, color, true);
             pose.popMatrix();
         }
         pose.popMatrix();

@@ -102,7 +102,7 @@ public class FoodInfoTooltipComponent implements TooltipComponent, ClientTooltip
             graphics.pose().pushMatrix();
             graphics.pose().translate(drawX + 18, y);
             graphics.pose().scale(0.75f, 0.75f);
-            graphics.drawString(font, hungerBarsText, 2, 2, 0xFFAAAAAA, true);
+            graphics.text(font, hungerBarsText, 2, 2, 0xFFAAAAAA, true);
             graphics.pose().popMatrix();
         }
     }
@@ -124,7 +124,7 @@ public class FoodInfoTooltipComponent implements TooltipComponent, ClientTooltip
             graphics.pose().pushMatrix();
             graphics.pose().translate(drawX + 14, y);
             graphics.pose().scale(0.75f, 0.75f);
-            graphics.drawString(font, saturationBarsText, 2, 1, 0xFFAAAAAA, true);
+            graphics.text(font, saturationBarsText, 2, 1, 0xFFAAAAAA, true);
             graphics.pose().popMatrix();
         }
     }

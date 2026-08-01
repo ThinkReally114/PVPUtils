@@ -75,8 +75,8 @@ public class ArraylistRenderer {
     public void render(GuiGraphicsExtractor graphics) {
         Minecraft client = Minecraft.getInstance();
         if (!Config.arraylist) return;
-        if (client.player == null || client.options.hideGui) return;
-        if (client.screen != null && !(client.screen instanceof ChatScreen) && !HudEditOverlay.getInstance().isActive()) return;
+        if (client.player == null || client.options.gui.hud.isHidden()) return;
+        if (client.gui.gui.screen()() != null && !(client.gui.gui.screen()() instanceof ChatScreen) && !HudEditOverlay.getInstance().isActive()) return;
 
         List<String> names = activeNames();
         if (names.isEmpty() && HudEditOverlay.getInstance().isActive()) {
@@ -104,8 +104,8 @@ public class ArraylistRenderer {
             int textX = alignRight ? width - textW - PADDING_X : PADDING_X;
             int textY = i * LINE_HEIGHT;
             int color = textColor(i, names.size());
-            graphics.drawString(client.font, name, textX + 1, textY + 1, shadowColor, false);
-            graphics.drawString(client.font, name, textX, textY, color, false);
+            graphics.text(client.font, name, textX + 1, textY + 1, shadowColor, false);
+            graphics.text(client.font, name, textX, textY, color, false);
         }
 
         graphics.pose().popMatrix();

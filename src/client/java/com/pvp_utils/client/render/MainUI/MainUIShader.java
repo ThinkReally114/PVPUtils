@@ -343,7 +343,7 @@ public final class MainUIShader {
         graphics.fillGradient(0, 0, w, mid, 0xFF330000, 0xFF111111);
         graphics.fillGradient(0, mid, w, h, 0xFF111111, 0xFF330000);
         graphics.fill(18, 18, Math.min(w - 18, 420), 74, 0xCC000000);
-        graphics.drawString(Minecraft.getInstance().font, Component.literal("PVPUtils MainUI fallback"), 28, 28, 0xFFFF5555, false);
-        graphics.drawString(Minecraft.getInstance().font, Component.literal(fragmentPath), 28, 48, 0xFFFFFFFF, false);
+        graphics.text(Minecraft.getInstance().font, Component.literal("PVPUtils MainUI fallback"), 28, 28, 0xFFFF5555, false);
+        graphics.text(Minecraft.getInstance().font, Component.literal(fragmentPath), 28, 48, 0xFFFFFFFF, false);
     }
 }

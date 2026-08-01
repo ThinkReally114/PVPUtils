@@ -78,10 +78,10 @@ public class MusicInfoHudRenderer {
         if (!Config.musicInfoHud || editActive) {
             return;
         }
-        if (client.player == null || client.options.hideGui) {
+        if (client.player == null || client.options.gui.hud.isHidden()) {
             return;
         }
-        if (client.screen != null && !(client.screen instanceof ChatScreen)) {
+        if (client.gui.gui.screen()() != null && !(client.gui.gui.screen()() instanceof ChatScreen)) {
             return;
         }
 
@@ -123,8 +123,8 @@ public class MusicInfoHudRenderer {
         graphics.fill(0, 0, Math.round(LITE_W), Math.round(LITE_H), bg);
         drawCover(graphics, song, 8, 8, COVER_SIZE);
 
-        graphics.drawString(client.font, trimVanilla(client, song.name(), 118), 56, 9, primary, false);
-        graphics.drawString(client.font, trimVanilla(client, song.displayArtist(), 118), 56, 22, secondary, false);
+        graphics.text(client.font, trimVanilla(client, song.name(), 118), 56, 9, primary, false);
+        graphics.text(client.font, trimVanilla(client, song.displayArtist(), 118), 56, 22, secondary, false);
         drawVanillaProgress(graphics, client, player, 56, 39, 122, muted);
     }
 
@@ -254,7 +254,7 @@ public class MusicInfoHudRenderer {
             return;
         }
         graphics.fill(x + size / 5, y + size / 5, x + size - size / 5, y + size - size / 5, 0x55FFFFFF);
-        graphics.drawString(Minecraft.getInstance().font, "♪", x + size / 2 - 4, y + size / 2 - 5, 0xFFFFFFFF, false);
+        graphics.text(Minecraft.getInstance().font, "♪", x + size / 2 - 4, y + size / 2 - 5, 0xFFFFFFFF, false);
     }
 
     private void drawVanillaProgress(GuiGraphicsExtractor graphics, Minecraft client, MusicPlaybackService player, int x, int y, int w, int muted) {
@@ -264,9 +264,9 @@ public class MusicInfoHudRenderer {
         graphics.fill(x, y, x + w, y + 3, muted);
         graphics.fill(x, y, x + Math.round(w * progress), y + 3, ACCENT);
         String time = MusicPlaybackService.formatTime(position) + " / " + MusicPlaybackService.formatTime(total);
-        graphics.drawString(client.font, time, x, y + 7, muted, false);
+        graphics.text(client.font, time, x, y + 7, muted, false);
         String mode = player.playbackMode().label();
-        graphics.drawString(client.font, mode, Math.round(LITE_W) - 8 - client.font.width(mode), y + 7, muted, false);
+        graphics.text(client.font, mode, Math.round(LITE_W) - 8 - client.font.width(mode), y + 7, muted, false);
     }
 
     public float getEditWidth() {

@@ -45,7 +45,7 @@ public final class ChatUtils {
         if (client == null) return;
         client.execute(() -> {
             if (client.gui != null) {
-                client.gui.getChat().addMessage(output);
+                client.gui.hud.getChat().addMessage(output);
             }
         });
     }

@@ -66,7 +66,7 @@ public class GuiMixin {
         int guiHeight = mc.getWindow().getGuiScaledHeight();
         Canvas canvas = null;
 
-        boolean skiaScreenOpen = mc.screen instanceof SkiaScreen;
+        boolean skiaScreenOpen = mc.gui.screen() instanceof SkiaScreen;
         if (!skiaScreenOpen && NotificationOverlay.getInstance().needsStandaloneCanvas()) {
             int[] bounds = NotificationOverlay.getInstance().getCanvasBounds(guiWidth, guiHeight);
             if (bounds != null) {
@@ -74,7 +74,7 @@ public class GuiMixin {
             }
         }
 
-        if (mc.options.hideGui) {
+        if (mc.options.gui.hud.isHidden()) {
             if (canvas != null) {
                 SkiaRenderer.endRegion(guiGraphics);
             }

@@ -634,8 +634,8 @@ public class PVPUtilsMainUI extends Screen {
         int reasonW = this.minecraft.font.width(reason);
         int cx = this.width / 2;
         int cy = this.height / 2;
-        graphics.drawString(this.minecraft.font, title, cx - titleW / 2, cy - 12, 0xFFFFD176, true);
-        graphics.drawString(this.minecraft.font, reason, cx - reasonW / 2, cy + 4, 0xFFE5E7EB, true);
+        graphics.text(this.minecraft.font, title, cx - titleW / 2, cy - 12, 0xFFFFD176, true);
+        graphics.text(this.minecraft.font, reason, cx - reasonW / 2, cy + 4, 0xFFE5E7EB, true);
     }
 
     private void ensureBackgroundTexture() {
@@ -723,7 +723,7 @@ public class PVPUtilsMainUI extends Screen {
         int bgX = (this.width - bgW) / 2;
         int bgY = y - 8;
         graphics.fill(bgX, bgY, bgX + bgW, bgY + bgH, (Math.round(alpha * 150f) << 24));
-        graphics.drawString(this.font, text, x, y, (a << 24) | 0xFFFFFF, false);
+        graphics.text(this.font, text, x, y, (a << 24) | 0xFFFFFF, false);
     }
 
     private float entryAlpha() {

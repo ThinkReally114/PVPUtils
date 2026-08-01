@@ -110,7 +110,7 @@ public class BlockCountDisplayRenderer {
         if (HudEditOverlay.getInstance().isActive()) return;
 
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) {
+        if (player == null || client.level == null || client.gui.screen() != null) {
             close();
             rightClicks.resetPressed();
             return;
@@ -142,7 +142,7 @@ public class BlockCountDisplayRenderer {
     public void triggerUse(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) return;
+        if (player == null || client.level == null || client.gui.screen() != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -159,7 +159,7 @@ public class BlockCountDisplayRenderer {
     public void recordPlacement(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) return;
+        if (player == null || client.level == null || client.gui.screen() != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -188,7 +188,7 @@ public class BlockCountDisplayRenderer {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
         boolean editActive = HudEditOverlay.getInstance().isActive();
-        if (player == null || client.level == null || (client.screen != null && !editActive)) {
+        if (player == null || client.level == null || (client.gui.screen() != null && !editActive)) {
             close();
             updateScale(System.currentTimeMillis());
             return;
@@ -268,8 +268,8 @@ public class BlockCountDisplayRenderer {
         graphics.pose().translate(ringCx, ringCy);
         graphics.pose().scale(iconScale, iconScale);
         graphics.pose().translate(-ringCx, -ringCy);
-        graphics.renderFakeItem(displayStack, itemX, itemY);
-        graphics.renderItemDecorations(client.font, displayStack, itemX, itemY);
+        graphics.fakeItem(displayStack, itemX, itemY);
+        graphics.itemDecorations(client.font, displayStack, itemX, itemY);
         graphics.renderDeferredElements();
         graphics.pose().popMatrix();
     }

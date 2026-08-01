@@ -302,7 +302,7 @@ public class TargetHudRenderer {
         int whiteWithAlpha = alphaBits | 0xFFFFFF;
         int grayWithAlpha = alphaBits | 0x444444;
 
-        graphics.renderOutline(x, y, HUD_WIDTH, HUD_HEIGHT, whiteWithAlpha);
+        graphics.outline(x, y, HUD_WIDTH, HUD_HEIGHT, whiteWithAlpha);
 
         int avatarX = x + BORDER + PADDING;
         int avatarY = y + (HUD_HEIGHT - AVATAR_SIZE) / 2;
@@ -339,7 +339,7 @@ public class TargetHudRenderer {
         } else {
             SpawnEggItem eggItem = SpawnEggItem.byId(target.getType());
             if (eggItem != null) {
-                graphics.renderFakeItem(new ItemStack(eggItem), iconX, iconY);
+                graphics.fakeItem(new ItemStack(eggItem), iconX, iconY);
             } else {
                 graphics.fill(avatarX, avatarY, avatarX2, avatarY2, alphaBits | 0x000000);
             }
@@ -357,7 +357,7 @@ public class TargetHudRenderer {
 
         String name = target.getDisplayName().getString();
         if (name.length() > 16) name = name.substring(0, 16) + "..";
-        graphics.drawString(client.font, Component.literal(name), infoX, y + PADDING + 2, whiteWithAlpha, false);
+        graphics.text(client.font, Component.literal(name), infoX, y + PADDING + 2, whiteWithAlpha, false);
 
         if (Config.attackReachDisplay && lastAttackDistance >= 0f && now - lastAttackDistanceTime < ATTACK_DISTANCE_DISPLAY_DURATION) {
             long elapsed = now - lastAttackDistanceTime;
@@ -367,7 +367,7 @@ public class TargetHudRenderer {
             int distColor = (distAlphaInt << 24) | 0xFFAA00;
             String distText = String.format(java.util.Locale.ROOT, "%.2fm", lastAttackDistance);
             int nameWidth = client.font.width(name);
-            graphics.drawString(client.font, Component.literal(distText), infoX + nameWidth + 4, y + PADDING + 2, distColor, false);
+            graphics.text(client.font, Component.literal(distText), infoX + nameWidth + 4, y + PADDING + 2, distColor, false);
         }
 
         float maxHealth = target.getMaxHealth();
@@ -399,7 +399,7 @@ public class TargetHudRenderer {
             int statusColor = selfHealth > currentHealth ? (alphaBits | 0x55FF55) : (alphaBits | 0xFF5555);
 
             int textWidth = client.font.width(statusText);
-            graphics.drawString(client.font, Component.literal(statusText), x + HUD_WIDTH - PADDING - textWidth, y + PADDING + 2, statusColor, false);
+            graphics.text(client.font, Component.literal(statusText), x + HUD_WIDTH - PADDING - textWidth, y + PADDING + 2, statusColor, false);
         }
         graphics.pose().popMatrix();
     }
@@ -495,7 +495,7 @@ public class TargetHudRenderer {
         } else {
             SpawnEggItem eggItem = SpawnEggItem.byId(target.getType());
             if (eggItem != null) {
-                graphics.renderFakeItem(new ItemStack(eggItem), avatarX + 11, avatarY + 11);
+                graphics.fakeItem(new ItemStack(eggItem), avatarX + 11, avatarY + 11);
             } else {
                 graphics.fill(avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarX + avatarDrawInset + avatarDrawSize, avatarY + avatarDrawInset + avatarDrawSize, alphaBits | 0x111111);
             }

@@ -43,7 +43,7 @@ public final class ModuleKeybindManager {
             boolean down = isKeyDown(client, key);
             boolean previous = LAST_DOWN.getOrDefault(id, false);
             LAST_DOWN.put(id, down);
-            if (down && !previous && client.screen == null && !isCapturing()) {
+            if (down && !previous && client.gui.screen() == null && !isCapturing()) {
                 trigger(client, id);
             }
         }

@@ -1,8 +1,8 @@
 package com.pvp_utils.client.render.MainUI;
 
 import com.pvp_utils.Config;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
-import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.fabric.api.client.gui.screen().v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.gui.screen().v1.Screens;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.TitleScreen;

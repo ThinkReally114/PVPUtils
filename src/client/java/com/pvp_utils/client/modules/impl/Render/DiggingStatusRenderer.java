@@ -38,7 +38,7 @@ public class DiggingStatusRenderer {
             return;
         }
 
-        Screen screen = client.screen;
+        Screen screen = client.gui.gui.screen()();
         if (screen != null) {
             reset();
             return;
@@ -78,11 +78,11 @@ public class DiggingStatusRenderer {
 
         if (toolSymbol != null) {
             int symbolColor = toolMatch.correct() ? 0xFF55FF55 : 0xFFFF5555;
-            graphics.drawString(client.font, toolSymbol, textX, textY, symbolColor, true);
+            graphics.text(client.font, toolSymbol, textX, textY, symbolColor, true);
             // Draw once more one pixel to the side so the marker stays visibly bold with all font renderers.
-            graphics.drawString(client.font, toolSymbol, textX + 1, textY, symbolColor, true);
+            graphics.text(client.font, toolSymbol, textX + 1, textY, symbolColor, true);
         }
-        graphics.drawString(client.font, Component.literal(text), textX + prefixW, textY, getProgressColor(progress), true);
+        graphics.text(client.font, Component.literal(text), textX + prefixW, textY, getProgressColor(progress), true);
     }
 
     private ToolMatch getToolMatch(Minecraft client, BlockPos pos) {

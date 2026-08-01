@@ -242,7 +242,7 @@ public final class ItemUseStatusRenderer {
 
     private UseState currentUseState(Minecraft client, long now) {
         if (client == null || client.player == null || client.level == null || client.gameMode == null) return null;
-        Screen screen = client.screen;
+        Screen screen = client.gui.gui.screen()();
         if (screen != null) return null;
 
         if (mixinActive && now - lastMixinSampleTime < 250L) {
@@ -371,7 +371,7 @@ public final class ItemUseStatusRenderer {
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);
         graphics.pose().translate(-x, -y);
-        graphics.renderOutline(x, y, BAR_W, BAR_H, alphaBits | 0xFFFFFF);
+        graphics.outline(x, y, BAR_W, BAR_H, alphaBits | 0xFFFFFF);
 
         int innerW = BAR_W - BORDER * 2;
         int fillW = Math.max(0, Math.min(innerW, Math.round(innerW * Mth.clamp(progress, 0.0f, 1.0f))));
@@ -385,7 +385,7 @@ public final class ItemUseStatusRenderer {
         int textX = x + BORDER + fillW - textW / 2;
         textX = Math.max(x, Math.min(textX, x + BAR_W - textW));
         int textY = y + BAR_H + 4;
-        graphics.drawString(client.font, Component.literal(text), textX, textY, alphaBits | 0xFFFFFF, true);
+        graphics.text(client.font, Component.literal(text), textX, textY, alphaBits | 0xFFFFFF, true);
         graphics.pose().popMatrix();
     }
 

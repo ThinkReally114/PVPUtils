@@ -77,7 +77,7 @@ public class ArmorHudRenderer {
             destroyTextures(client);
             return;
         }
-        if (client.player == null || client.level == null || client.options.hideGui || client.screen instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
+        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.gui.gui.screen()() instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
             return;
         }
 
@@ -198,7 +198,7 @@ public class ArmorHudRenderer {
         graphics.pose().translate(iconX, iconY);
         graphics.pose().scale(scale, scale);
         graphics.pose().translate(-iconX, -iconY);
-        graphics.renderFakeItem(stack, Math.round(iconX), Math.round(iconY));
+        graphics.fakeItem(stack, Math.round(iconX), Math.round(iconY));
         graphics.pose().popMatrix();
     }
 
@@ -222,9 +222,9 @@ public class ArmorHudRenderer {
         graphics.pose().translate(-x, -y);
         int ix = Math.round(x);
         int iy = Math.round(y);
-        graphics.renderFakeItem(stack, ix, iy);
+        graphics.fakeItem(stack, ix, iy);
         if (Config.armorHudShowBar) {
-            graphics.renderItemDecorations(client.font, stack, ix, iy);
+            graphics.itemDecorations(client.font, stack, ix, iy);
         }
         graphics.pose().popMatrix();
     }
@@ -236,7 +236,7 @@ public class ArmorHudRenderer {
         float ratio = clamp((stack.getMaxDamage() - stack.getDamageValue()) / (float) stack.getMaxDamage(), 0f, 1f);
         String text = Math.round(ratio * 100f) + "%";
         int textX = Math.round(x + (LITE_ICON * scale - client.font.width(text)) * 0.5f);
-        graphics.drawString(client.font, text, textX, Math.round(y), 0xFFFFFFFF, false);
+        graphics.text(client.font, text, textX, Math.round(y), 0xFFFFFFFF, false);
     }
 
     private void renderCardTexture(Minecraft client, CardTexture cardTexture, ItemStack stack, float guiScale) {

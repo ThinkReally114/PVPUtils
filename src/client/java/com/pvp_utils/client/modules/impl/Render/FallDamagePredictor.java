@@ -96,7 +96,7 @@ public class FallDamagePredictor {
         int textY = screenH / 2 + 16;
 
         int color = getDamageColor(afterProtection, player.getMaxHealth());
-        graphics.drawString(client.font, Component.literal(text), textX, textY, color, true);
+        graphics.text(client.font, Component.literal(text), textX, textY, color, true);
     }
 
     private boolean isResettingFallDistance(Level level, AABB box) {

@@ -28,7 +28,7 @@ public final class MainHandAssistManager {
     private MainHandAssistManager() {}
 
     public static void beforeStartUseItem(Minecraft client) {
-        if (!Config.mainHandAssist || !Config.mainHandAssistQuickUse || client.player == null || client.level == null || client.gameMode == null || client.screen != null) {
+        if (!Config.mainHandAssist || !Config.mainHandAssistQuickUse || client.player == null || client.level == null || client.gameMode == null || client.gui.screen() != null) {
             return;
         }
         LocalPlayer player = client.player;
@@ -60,7 +60,7 @@ public final class MainHandAssistManager {
     }
 
     public static void tick(Minecraft client) {
-        if (!Config.mainHandAssist || (!Config.mainHandAssistQuickUse && !Config.mainHandAssistMeleeWeapon && !Config.mainHandAssistShield) || client.player == null || client.level == null || client.gameMode == null || client.screen != null) {
+        if (!Config.mainHandAssist || (!Config.mainHandAssistQuickUse && !Config.mainHandAssistMeleeWeapon && !Config.mainHandAssistShield) || client.player == null || client.level == null || client.gameMode == null || client.gui.screen() != null) {
             reset();
             return;
         }

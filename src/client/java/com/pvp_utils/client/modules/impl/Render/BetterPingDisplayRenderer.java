@@ -27,7 +27,7 @@ public final class BetterPingDisplayRenderer {
         String text = format(playerInfo.getLatency());
         int textWidth = client.font.width(text);
         int textX = x + slotWidth - textWidth - 2;
-        graphics.drawString(client.font, text, textX, y, color(playerInfo.getLatency()), true);
+        graphics.text(client.font, text, textX, y, color(playerInfo.getLatency()), true);
     }
 
     public static String format(int latency) {

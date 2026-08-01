@@ -72,7 +72,7 @@ public class LyricsDisplayRenderer {
             clearState();
             return;
         }
-        if (client.options.hideGui || shouldSkipScreen(client)) {
+        if (client.options.gui.hud.isHidden() || shouldSkipScreen(client)) {
             return;
         }
 
@@ -381,8 +381,8 @@ public class LyricsDisplayRenderer {
     }
 
     private boolean shouldSkipScreen(Minecraft client) {
-        return client.screen instanceof SkiaScreen
-                || (client.screen != null && !(client.screen instanceof ChatScreen));
+        return client.gui.gui.screen()() instanceof SkiaScreen
+                || (client.gui.gui.screen()() != null && !(client.gui.gui.screen()() instanceof ChatScreen));
     }
 
     private float clamp(float value) {

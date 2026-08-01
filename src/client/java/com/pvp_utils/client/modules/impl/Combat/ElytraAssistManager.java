@@ -18,7 +18,7 @@ public final class ElytraAssistManager {
     private ElytraAssistManager() {}
 
     public static void tick(Minecraft client) {
-        if (!Config.elytraAssist || client.player == null || client.level == null || client.gameMode == null || client.screen != null) {
+        if (!Config.elytraAssist || client.player == null || client.level == null || client.gameMode == null || client.gui.screen() != null) {
             reset(client);
             return;
         }

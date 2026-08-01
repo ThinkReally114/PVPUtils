@@ -185,7 +185,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || Minecraft.getInstance().screen != this) {
+        if (!pendingFrame || Minecraft.getInstance().gui.screen() != this) {
             pendingFrame = false;
             return;
         }
@@ -1230,7 +1230,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         } else {
             graphics.drawCenteredString(font, "QR", qrX + qrSize / 2, qrY + 42, withAlpha(0x111111, alpha));
         }
-        graphics.drawString(font, Config.isChinese ? "使用网易云音乐扫码" : "Scan with Netease app", qrX + qrSize + 20, qrY + 12, withAlpha(0xFFFFFF, alpha), false);
+        graphics.text(font, Config.isChinese ? "使用网易云音乐扫码" : "Scan with Netease app", qrX + qrSize + 20, qrY + 12, withAlpha(0xFFFFFF, alpha), false);
         drawButton(graphics, qrX + qrSize + 20, qrY + 42, 110, 24, mouseX, mouseY, qrButtonText(), alpha);
     }
 
@@ -1280,7 +1280,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
         graphics.fill(x, y, x + w, y + h, withAlpha(focused || hovered ? 0x2B313C : 0x20242A, alpha));
         if (value.isBlank() && !focused) {
-            graphics.drawString(font, trim(placeholder, 32), x + 8, y + Math.max(6, h / 2 - 4), withAlpha(0x7E8799, alpha), false);
+            graphics.text(font, trim(placeholder, 32), x + 8, y + Math.max(6, h / 2 - 4), withAlpha(0x7E8799, alpha), false);
             return;
         }
         int selA = selectionAnchor(field);
@@ -1292,7 +1292,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
             int ex = x + 8 + font.width(value.substring(0, Math.min(end, value.length())));
             graphics.fill(sx, y + 3, ex, y + h - 3, withAlpha(0x57C7FF, Math.round(alpha * 0.42F)));
         }
-        graphics.drawString(font, trim(value, Math.max(10, w / 6)), x + 8, y + Math.max(6, h / 2 - 4), withAlpha(0xFFFFFF, alpha), false);
+        graphics.text(font, trim(value, Math.max(10, w / 6)), x + 8, y + Math.max(6, h / 2 - 4), withAlpha(0xFFFFFF, alpha), false);
         if (focused && System.currentTimeMillis() / 500L % 2L == 0L) {
             int caretX = x + 8 + font.width(value.substring(0, Math.min(cursor, value.length())));
             graphics.fill(caretX, y + 4, caretX + 1, y + h - 4, withAlpha(0xFFFFFF, alpha));
@@ -1750,9 +1750,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
         Playlist playlist = currentPlaylist;
         if (playlist != null) {
             int infoX = contentX + cover + 24;
-            graphics.drawString(font, trim(playlist.name(), 44), infoX, contentY + 62, withAlpha(0xFFFFFF, alpha), false);
-            graphics.drawString(font, estimatePlaylistDuration(), infoX, contentY + 86, withAlpha(0x858992, alpha), false);
-            graphics.drawString(font, playlist.creator().isBlank() ? "Netease Music" : playlist.creator(), infoX, contentY + 116, withAlpha(0xE4E6EB, alpha), false);
+            graphics.text(font, trim(playlist.name(), 44), infoX, contentY + 62, withAlpha(0xFFFFFF, alpha), false);
+            graphics.text(font, estimatePlaylistDuration(), infoX, contentY + 86, withAlpha(0x858992, alpha), false);
+            graphics.text(font, playlist.creator().isBlank() ? "Netease Music" : playlist.creator(), infoX, contentY + 116, withAlpha(0xE4E6EB, alpha), false);
         }
         for (int row = 0; row < visibleRows + 1; row++) {
             int index = visualBase + row;
@@ -1765,10 +1765,10 @@ public class NeteaseMusicScreen extends SkiaScreen {
                 continue;
             }
             int rowAlpha = scrollFadeAlpha(alpha, y, listY, height - PLAYER_HEIGHT - 8);
-            graphics.drawString(font, String.valueOf(index + 1), contentX + 24, y + 15, withAlpha(0x838891, rowAlpha), false);
-            graphics.drawString(font, trim(song.name(), 42), contentX + 98, y + 8, withAlpha(0xFFFFFF, rowAlpha), false);
-            graphics.drawString(font, trim(song.displayArtist(), 48), contentX + 98, y + 22, withAlpha(0x777B84, rowAlpha), false);
-            graphics.drawString(font, MusicPlaybackService.formatTime(song.durationMs()), width - 74, y + 15, withAlpha(0x858992, rowAlpha), false);
+            graphics.text(font, String.valueOf(index + 1), contentX + 24, y + 15, withAlpha(0x838891, rowAlpha), false);
+            graphics.text(font, trim(song.name(), 42), contentX + 98, y + 8, withAlpha(0xFFFFFF, rowAlpha), false);
+            graphics.text(font, trim(song.displayArtist(), 48), contentX + 98, y + 22, withAlpha(0x777B84, rowAlpha), false);
+            graphics.text(font, MusicPlaybackService.formatTime(song.durationMs()), width - 74, y + 15, withAlpha(0x858992, rowAlpha), false);
         }
     }
 

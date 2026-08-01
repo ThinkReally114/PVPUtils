@@ -238,7 +238,7 @@ public class NotificationOverlay {
                 }
                 currentX += iconSize + iconMargin;
             } else if (hasIcon) {
-                graphics.renderFakeItem(renderIcon, currentX, y + (HEIGHT - iconSize) / 2);
+                graphics.fakeItem(renderIcon, currentX, y + (HEIGHT - iconSize) / 2);
                 currentX += iconSize + iconMargin;
             }
             if (canvas != null) {

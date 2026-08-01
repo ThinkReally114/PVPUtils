@@ -88,8 +88,8 @@ public final class MainUISharedBackground {
                 : videoBackground.getLastError();
         int x = width / 2;
         int y = height / 2;
-        graphics.drawString(client.font, title, x - client.font.width(title) / 2, y - 12, 0xFFFFD176, true);
-        graphics.drawString(client.font, reason, x - client.font.width(reason) / 2, y + 4, 0xFFE5E7EB, true);
+        graphics.text(client.font, title, x - client.font.width(title) / 2, y - 12, 0xFFFFD176, true);
+        graphics.text(client.font, reason, x - client.font.width(reason) / 2, y + 4, 0xFFE5E7EB, true);
     }
 
     public static void close() {

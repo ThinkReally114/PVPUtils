@@ -34,7 +34,7 @@ public final class InputMethodFix {
         if (!WINDOWS || client == null || client.getWindow() == null) {
             return;
         }
-        if (!Config.disableImeInGame || client.player == null || customTextInputActive || shouldAllowInputMethod(client.screen)) {
+        if (!Config.disableImeInGame || client.player == null || customTextInputActive || shouldAllowInputMethod(client.gui.screen())) {
             restore();
             return;
         }
@@ -86,7 +86,7 @@ public final class InputMethodFix {
 
     public static void refreshForFocusedTextField(Minecraft client) {
         if (!WINDOWS || client == null) return;
-        if (Config.disableImeInGame && client.player != null && (customTextInputActive || shouldAllowInputMethod(client.screen))) {
+        if (Config.disableImeInGame && client.player != null && (customTextInputActive || shouldAllowInputMethod(client.gui.screen()))) {
             restore();
         }
     }

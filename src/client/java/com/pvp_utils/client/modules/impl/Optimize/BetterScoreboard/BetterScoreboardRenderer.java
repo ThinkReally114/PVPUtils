@@ -41,13 +41,13 @@ public final class BetterScoreboardRenderer {
             return;
         }
         Minecraft client = Minecraft.getInstance();
-        if (client.level == null || client.options.hideGui) {
+        if (client.level == null || client.options.gui.hud.isHidden()) {
             return;
         }
 
         Objective objective = client.level.getScoreboard().getDisplayObjective(DisplaySlot.SIDEBAR);
         boolean editActive = HudEditOverlay.getInstance().isActive();
-        if (client.screen != null && !editActive) {
+        if (client.gui.screen() != null && !editActive) {
             return;
         }
         if (objective == null && !editActive) {
@@ -257,7 +257,7 @@ public final class BetterScoreboardRenderer {
         graphics.pose().pushMatrix();
         graphics.pose().translate(x, y);
         graphics.pose().scale(scale, scale);
-        graphics.drawString(client.font, component, 0, 0, fallbackColor, false);
+        graphics.text(client.font, component, 0, 0, fallbackColor, false);
         graphics.pose().popMatrix();
     }
 
