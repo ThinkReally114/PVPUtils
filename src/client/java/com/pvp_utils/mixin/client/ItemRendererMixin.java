@@ -2,9 +2,7 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.modules.impl.Tool.HeldItemPositionManager;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -16,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(ItemRenderer.class)
+/*@Mixin(ItemRenderer.class)
 public class ItemRendererMixin {
     @Inject(
             method = "renderItem(Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II[ILjava/util/List;Lnet/minecraft/client/renderer/rendertype/RenderType;Lnet/minecraft/client/renderer/item/ItemStackRenderState$FoilType;)V",
@@ -42,4 +40,4 @@ public class ItemRendererMixin {
     private static float pvp_utils$applyHeldItemQuadAlpha(float alpha) {
         return HeldItemPositionManager.applyQuadAlpha(alpha);
     }
-}
+}*/

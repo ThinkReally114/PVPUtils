@@ -2,7 +2,7 @@ package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.modules.impl.Tool.HeldItemPositionManager;
 import com.pvp_utils.Config;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.Direction;

@@ -1,6 +1,6 @@
 package com.pvp_utils.mixin.client;
 
-import com.pvp_utils.client.modules.impl.Optimize.BetterMouseLogicManager;
+/*import com.pvp_utils.client.modules.impl.Optimize.BetterMouseLogicManager;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.MouseButtonEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,4 +37,4 @@ public abstract class BetterMouseLogicContainerMixin {
             cir.setReturnValue(true);
         }
     }
-}
+}*/

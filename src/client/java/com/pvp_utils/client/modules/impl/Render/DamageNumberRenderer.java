@@ -1,7 +1,6 @@
 package com.pvp_utils.client.modules.impl.Render;
 
 import com.pvp_utils.Config;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.network.chat.Component;
@@ -38,11 +37,11 @@ public final class DamageNumberRenderer {
         return INSTANCE;
     }
 
-    public void captureCamera(Matrix4fc modelViewMatrix, Matrix4fc projectionMatrix, Camera camera) {
-        if (camera == null) return;
+    public void captureCamera(Matrix4fc modelViewMatrix, Matrix4fc projectionMatrix, Vec3 cameraPos) {
+        if (cameraPos == null) return;
         modelView.set(modelViewMatrix);
         projection.set(projectionMatrix);
-        cameraPos = camera.position();
+        this.cameraPos = cameraPos;
         projectionReady = true;
     }
 

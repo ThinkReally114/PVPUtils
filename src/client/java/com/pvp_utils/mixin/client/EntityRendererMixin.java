@@ -11,7 +11,7 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -28,12 +28,12 @@ public class EntityRendererMixin {
         ((NameTagPlayerFilterState) state).pvp_utils$setNameTagRealPlayer(isRealPlayer(entity));
     }
 
-    @Inject(method = "submitNameTag", at = @At("HEAD"))
+    @Inject(method = "submit", at = @At("HEAD"))
     private void pvp_utils$beginNameTagPlayerFilter(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, CallbackInfo ci) {
         NameTagPlayerFilterContext.setRealPlayer(((NameTagPlayerFilterState) state).pvp_utils$isNameTagRealPlayer());
     }
 
-    @Inject(method = "submitNameTag", at = @At("RETURN"))
+    @Inject(method = "submit", at = @At("RETURN"))
     private void pvp_utils$endNameTagPlayerFilter(EntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, CallbackInfo ci) {
         NameTagPlayerFilterContext.clear();
     }

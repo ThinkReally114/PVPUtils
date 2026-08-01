@@ -5,13 +5,13 @@ import com.mojang.blaze3d.resource.GraphicsResourceAllocator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.pvp_utils.client.modules.impl.Render.DamageNumberRenderer;
 import com.pvp_utils.client.modules.impl.Render.motionblur.MotionBlurManager;
-import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.LevelRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector4f;
@@ -32,25 +32,24 @@ public class MotionBlurLevelRendererMixin {
     @Unique private double pvp_utils$prevCamZ;
     @Unique private boolean pvp_utils$previousFrameReady = false;
 
-    @Inject(method = "renderLevel", at = @At("HEAD"))
-    private void pvp_utils$onRenderLevelHead(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, Camera camera, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Matrix4f frustumMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
-        DamageNumberRenderer.getInstance().captureCamera(modelViewMatrix, projectionMatrix, camera);
+    @Inject(method = "render", at = @At("HEAD"))
+    private void pvp_utils$onRenderLevelHead(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, CameraRenderState cameraRenderState, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
+        DamageNumberRenderer.getInstance().captureCamera(modelViewMatrix, modelViewMatrix, cameraRenderState.pos);
         boolean blurActive = MotionBlurManager.shouldRun();
-        var camPos = camera.position();
-        double cx = camPos.x();
-        double cy = camPos.y();
-        double cz = camPos.z();
+        double cx = cameraRenderState.pos.x();
+        double cy = cameraRenderState.pos.y();
+        double cz = cameraRenderState.pos.z();
 
         if (!blurActive) {
             MotionBlurManager.clearFrameAllocator();
-            pvp_utils$rememberCurrentFrameState(modelViewMatrix, projectionMatrix, cx, cy, cz);
+            pvp_utils$rememberCurrentFrameState(modelViewMatrix, modelViewMatrix, cx, cy, cz);
             return;
         }
 
         MotionBlurManager.captureAllocator(resourceAllocator);
         MotionBlurManager.beginFrame();
         pvp_utils$scratchModelView.set(modelViewMatrix);
-        pvp_utils$scratchProjection.set(projectionMatrix);
+        pvp_utils$scratchProjection.set(modelViewMatrix);
 
         if (!pvp_utils$previousFrameReady) {
             MotionBlurManager.setFrameMotionBlur(pvp_utils$scratchModelView, pvp_utils$scratchModelView, pvp_utils$scratchProjection, pvp_utils$scratchProjection, 0.0f, 0.0f, 0.0f);
@@ -69,8 +68,8 @@ public class MotionBlurLevelRendererMixin {
         pvp_utils$rememberCurrentFrameState(pvp_utils$scratchModelView, pvp_utils$scratchProjection, cx, cy, cz);
     }
 
-    @Inject(method = "submitEntities", at = @At("HEAD"))
-    private void pvp_utils$beforeSubmitEntities(PoseStack poseStack, LevelRenderState levelRenderState, SubmitNodeCollector output, CallbackInfo ci) {
+    @Inject(method = "render", at = @At("HEAD"))
+    private void pvp_utils$beforeSubmitEntities(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, CameraRenderState cameraRenderState, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         if (!MotionBlurManager.shouldRun()) return;
         if (pvp_utils$shouldUseSpecialSingleBlur()) {
             MotionBlurManager.applyF5EntityRideBlur();
@@ -79,8 +78,8 @@ public class MotionBlurLevelRendererMixin {
         MotionBlurManager.applyPreEntityBlur();
     }
 
-    @Inject(method = "renderLevel", at = @At("TAIL"))
-    private void pvp_utils$onRenderLevelTail(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, Camera camera, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Matrix4f frustumMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
+    @Inject(method = "render", at = @At("TAIL"))
+    private void pvp_utils$onRenderLevelTail(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, CameraRenderState cameraRenderState, Matrix4fc modelViewMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         if (MotionBlurManager.shouldRun() && !pvp_utils$shouldUseSpecialSingleBlur()) {
             MotionBlurManager.applyPostRenderVelocityOnly();
         }

@@ -11,7 +11,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -144,7 +144,7 @@ public final class AutoChestDepositManager {
 
         int menuSlot = findSelectedHotbarSlot(menu, player);
         if (menuSlot >= 0) {
-            gameMode.handleInventoryMouseClick(menu.containerId, menuSlot, 0, ClickType.QUICK_MOVE, player);
+            gameMode.handleContainerInput(menu.containerId, menuSlot, 0, ContainerInput.QUICK_MOVE, player);
         }
 
         ticksRemaining = Math.max(0, Config.autoChestDepositCloseDelay);
