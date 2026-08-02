@@ -15,7 +15,7 @@ public final class FishingRodAssistManager {
     private FishingRodAssistManager() {}
 
     public static void tick(Minecraft client) {
-        if (!Config.fishingRodAssist || client.player == null || client.gameMode == null || client.screen != null) {
+        if (!Config.fishingRodAssist || client.player == null || client.gameMode == null || client.gui.getScreen() != null) {
             reset(client);
             return;
         }

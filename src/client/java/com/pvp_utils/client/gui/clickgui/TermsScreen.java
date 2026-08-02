@@ -28,7 +28,6 @@ public class TermsScreen extends Screen {
         this.rulesX = this.width / 2 + 8;
     }
 
-    @Override
     public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         graphics.fill(0, 0, this.width, this.height, 0xE6000000);
         int center = this.width / 2;

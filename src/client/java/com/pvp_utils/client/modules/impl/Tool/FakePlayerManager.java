@@ -2,6 +2,7 @@ package com.pvp_utils.client.modules.impl.Tool;
 
 import com.mojang.authlib.GameProfile;
 import com.pvp_utils.client.Version;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -192,12 +193,12 @@ public class FakePlayerManager {
     private static void spawnTotemParticles(ClientLevel currentLevel, int count) {
         if (currentLevel == null || fakePlayer == null) return;
         for (int i = 0; i < count; i++) {
-            double x = fakePlayer.getX() + (currentLevel.random.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
-            double y = fakePlayer.getY() + currentLevel.random.nextDouble() * fakePlayer.getBbHeight();
-            double z = fakePlayer.getZ() + (currentLevel.random.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
-            double vx = (currentLevel.random.nextDouble() - 0.5) * 0.35;
-            double vy = currentLevel.random.nextDouble() * 0.35;
-            double vz = (currentLevel.random.nextDouble() - 0.5) * 0.35;
+            double x = fakePlayer.getX() + (SharedConstants.RANDOM.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
+            double y = fakePlayer.getY() + SharedConstants.RANDOM.nextDouble() * fakePlayer.getBbHeight();
+            double z = fakePlayer.getZ() + (SharedConstants.RANDOM.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
+            double vx = (SharedConstants.RANDOM.nextDouble() - 0.5) * 0.35;
+            double vy = SharedConstants.RANDOM.nextDouble() * 0.35;
+            double vz = (SharedConstants.RANDOM.nextDouble() - 0.5) * 0.35;
             currentLevel.addParticle(ParticleTypes.TOTEM_OF_UNDYING, x, y, z, vx, vy, vz);
         }
     }

@@ -17,7 +17,6 @@ public abstract class SkiaScreen extends Screen {
         this.parent = parent;
     }
 
-    @Override
     public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (shouldRedraw()) {
             Canvas canvas = SkiaRenderer.begin();
@@ -63,13 +62,10 @@ public abstract class SkiaScreen extends Screen {
         requestRedraw();
     }
 
-    @Override
     protected void renderBlurredBackground(GuiGraphicsExtractor guiGraphics) {}
 
-    @Override
     protected void renderMenuBackground(GuiGraphicsExtractor guiGraphics) {}
 
-    @Override
     public void renderBackground(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {}
 
     protected abstract void drawSkia(Canvas canvas, int width, int height, int mouseX, int mouseY, float delta);
