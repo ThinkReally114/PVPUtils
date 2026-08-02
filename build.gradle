@@ -26,11 +26,12 @@ def versionBase = readVersionString("VERSION")
 def versionType = readVersionNumber("TYPE")
 def versionRevision = readVersionNumber("REVISION")
 def revisionSuffix = versionRevision > 0 ? ".${versionRevision}" : ""
-def versionSuffix = switch (versionType) {
-    case 0 -> ""
-    case 1 -> "-alpha${revisionSuffix}"
-    case 2 -> "-beta${revisionSuffix}"
-    default -> throw new GradleException("Invalid Version.TYPE: ${versionType}")
+def versionSuffix
+switch (versionType) {
+    case 0: versionSuffix = ""; break
+    case 1: versionSuffix = "-alpha${revisionSuffix}"; break
+    case 2: versionSuffix = "-beta${revisionSuffix}"; break
+    default: throw new GradleException("Invalid Version.TYPE: ${versionType}")
 }
 def pvpUtilsVersion = "${versionBase}${versionSuffix}"
 

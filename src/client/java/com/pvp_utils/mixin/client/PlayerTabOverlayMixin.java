@@ -47,22 +47,24 @@ public class PlayerTabOverlayMixin {
 
     @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
     private void pvp_utils$decorateIrcTabName(PlayerInfo playerInfo, CallbackInfoReturnable<Component> cir) {
-        if (!Config.irc) {
+        if (!Config.ircEnabled) {
             return;
         }
         Component original = cir.getReturnValue();
-        Component decorated = IrcBridge.decoratePlayerName(playerInfo, original);
-        if (decorated != null) {
-            cir.setReturnValue(decorated);
-        }
+        // TODO: 26.2 - IrcBridge.decoratePlayerName 方法签名变更，待适配
+        // Component decorated = IrcBridge.decoratePlayerName(playerInfo, original);
+        // if (decorated != null) {
+        //     cir.setReturnValue(decorated);
+        // }
     }
 
     @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
     private void pvp_utils$hideNickInTabList(PlayerInfo playerInfo, CallbackInfoReturnable<Component> cir) {
         Component original = cir.getReturnValue();
-        Component modified = NickHiderManager.modifyTabName(playerInfo, original);
-        if (modified != null) {
-            cir.setReturnValue(modified);
-        }
+        // TODO: 26.2 - NickHiderManager.modifyTabName 方法签名变更，待适配
+        // Component modified = NickHiderManager.modifyTabName(playerInfo, original);
+        // if (modified != null) {
+        //     cir.setReturnValue(modified);
+        // }
     }
 }
