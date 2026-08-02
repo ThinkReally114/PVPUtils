@@ -105,10 +105,10 @@ public final class BetterChatState {
     }
 
     public boolean hasActiveChatMessages(Minecraft client) {
-        if (client == null || client.gui == null || client.gui.hud.getChat() == null) return false;
+        if (client == null || client.gui == null || client.getGui().hud.getChat() == null) return false;
         try {
-            List<?> messages = ((ChatHudAccessor) client.gui.hud.getChat()).getVisibleMessages();
-            int ticks = client.gui.hud.getGuiTicks();
+            List<?> messages = ((ChatHudAccessor) client.getGui().hud.getChat()).getVisibleMessages();
+            int ticks = client.getGui().hud.getGuiTicks();
             final int fadeTicks = 200;
             for (Object msg : messages) {
                 if (ticks > 0) {

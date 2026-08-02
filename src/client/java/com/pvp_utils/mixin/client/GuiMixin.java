@@ -66,7 +66,7 @@ public class GuiMixin {
         int guiHeight = mc.getWindow().getGuiScaledHeight();
         Canvas canvas = null;
 
-        boolean skiaScreenOpen = mc.gui.screen() instanceof SkiaScreen;
+        boolean skiaScreenOpen = mc.getScreen() instanceof SkiaScreen;
         if (!skiaScreenOpen && NotificationOverlay.getInstance().needsStandaloneCanvas()) {
             int[] bounds = NotificationOverlay.getInstance().getCanvasBounds(guiWidth, guiHeight);
             if (bounds != null) {
@@ -101,13 +101,13 @@ public class GuiMixin {
         if (canvas != null) {
             SkiaRenderer.endRegion(guiGraphics);
         }
-        guiGraphics.renderDeferredElements();
+        guiGraphics.flushDeferredElements();
         LyricsDisplayRenderer.getInstance().render(guiGraphics);
-        guiGraphics.renderDeferredElements();
+        guiGraphics.flushDeferredElements();
         MusicInfoHudRenderer.getInstance().render(guiGraphics);
-        guiGraphics.renderDeferredElements();
+        guiGraphics.flushDeferredElements();
         BlockCountDisplayRenderer.getInstance().render(guiGraphics, null);
-        guiGraphics.renderDeferredElements();
+        guiGraphics.flushDeferredElements();
     }
 
     @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)

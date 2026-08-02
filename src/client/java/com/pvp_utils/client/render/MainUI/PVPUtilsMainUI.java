@@ -471,7 +471,7 @@ public class PVPUtilsMainUI extends Screen {
             embeddedViaFabricPlus.renderFrameEnd();
             return;
         }
-        if (!pendingGpuUi || this.minecraft == null || this.minecraft.screen != this) {
+        if (!pendingGpuUi || this.minecraft == null || this.minecraft.getScreen() != this) {
             pendingGpuUi = false;
             return;
         }

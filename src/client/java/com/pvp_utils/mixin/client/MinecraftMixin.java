@@ -151,7 +151,7 @@ public class MinecraftMixin {
         AABB box = target.getBoundingBox();
         RandomSource random = target.getRandom();
         for (int i = 0; i < count; i++) {
-            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, client.level);
+            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING, client.level);
             lightning.setVisualOnly(true);
             double x = target.getX() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getXsize());
             double z = target.getZ() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getZsize());
@@ -171,25 +171,25 @@ public class MinecraftMixin {
         PotionStatusRenderer.getInstance().renderFrameEnd();
         KeystrokesRenderer.getInstance().renderFrameEnd();
         Minecraft client = (Minecraft) (Object) this;
-        if (client.gui.screen() instanceof NewSettingsScreen settingsScreen) {
+        if (client.getScreen() instanceof NewSettingsScreen settingsScreen) {
             settingsScreen.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof NeteaseMusicScreen musicScreen) {
+        if (client.getScreen() instanceof NeteaseMusicScreen musicScreen) {
             musicScreen.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof PVPUtilsMainUI mainUI) {
+        if (client.getScreen() instanceof PVPUtilsMainUI mainUI) {
             mainUI.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof PVPUtilsSingleplayerScreen singleplayerScreen) {
+        if (client.getScreen() instanceof PVPUtilsSingleplayerScreen singleplayerScreen) {
             singleplayerScreen.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof PVPUtilsMultiplayerScreen multiplayerScreen) {
+        if (client.getScreen() instanceof PVPUtilsMultiplayerScreen multiplayerScreen) {
             multiplayerScreen.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof AltManagerScreen altManagerScreen) {
+        if (client.getScreen() instanceof AltManagerScreen altManagerScreen) {
             altManagerScreen.renderFrameEnd();
         }
-        if (client.gui.screen() instanceof PVPUtilsViaFabricPlusScreen viaFabricPlusScreen) {
+        if (client.getScreen() instanceof PVPUtilsViaFabricPlusScreen viaFabricPlusScreen) {
             viaFabricPlusScreen.renderFrameEnd();
         }
     }

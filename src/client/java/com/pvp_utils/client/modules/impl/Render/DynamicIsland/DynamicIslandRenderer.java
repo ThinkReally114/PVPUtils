@@ -140,7 +140,7 @@ public class DynamicIslandRenderer {
         if (client.player == null || client.getWindow() == null) {
             return;
         }
-        if (client.gui.screen() instanceof AbstractContainerScreen<?>) {
+        if (client.getScreen() instanceof AbstractContainerScreen<?>) {
             return;
         }
 
@@ -934,7 +934,7 @@ public class DynamicIslandRenderer {
             return prefixColor;
         }
         ChatFormatting formatting = team.getColor();
-        if (formatting != null && formatting.isColor() && formatting.getColor() != null) {
+        if (formatting != null && formatting.getColor() != null) {
             return 0xFF000000 | (formatting.getColor() & 0x00FFFFFF);
         }
         return fallbackColor;

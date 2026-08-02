@@ -47,7 +47,7 @@ public final class BetterScoreboardRenderer {
 
         Objective objective = client.level.getScoreboard().getDisplayObjective(DisplaySlot.SIDEBAR);
         boolean editActive = HudEditOverlay.getInstance().isActive();
-        if (client.gui.screen() != null && !editActive) {
+        if (client.getScreen() != null && !editActive) {
             return;
         }
         if (objective == null && !editActive) {

@@ -72,7 +72,7 @@ public final class AutoChestDepositManager {
     }
 
     private static void tryStart(Minecraft client) {
-        if (!Config.autoChestDeposit || phase != Phase.IDLE || client.player == null || client.level == null || client.gui.screen() != null) return;
+        if (!Config.autoChestDeposit || phase != Phase.IDLE || client.player == null || client.level == null || client.getScreen() != null) return;
         if (client.player.getMainHandItem().isEmpty()) return;
         if (!canDepositItem(client.player.getMainHandItem())) return;
 

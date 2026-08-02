@@ -75,7 +75,7 @@ public class PotionStatusRenderer {
             clearPendingFrame();
             return;
         }
-        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.gui.screen() instanceof SkiaScreen || client.gui.screen() instanceof NeteaseMusicScreen) {
+        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.getScreen() instanceof SkiaScreen || client.getScreen() instanceof NeteaseMusicScreen) {
             clearPendingFrame();
             return;
         }
@@ -113,7 +113,7 @@ public class PotionStatusRenderer {
     public void renderFrameEnd() {
         if (!pendingFrame) return;
         Minecraft client = Minecraft.getInstance();
-        if (!Config.potionStatus || client.options.gui.hud.isHidden() || client.gui.screen() instanceof SkiaScreen || client.gui.screen() instanceof NeteaseMusicScreen) {
+        if (!Config.potionStatus || client.options.gui.hud.isHidden() || client.getScreen() instanceof SkiaScreen || client.getScreen() instanceof NeteaseMusicScreen) {
             clearPendingFrame();
             return;
         }
@@ -150,7 +150,7 @@ public class PotionStatusRenderer {
     public boolean shouldHideVanillaEffects() {
         if (!Config.potionStatus || !Config.potionStatusHideVanilla) return false;
         Minecraft client = Minecraft.getInstance();
-        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.gui.screen() instanceof SkiaScreen || client.gui.screen() instanceof NeteaseMusicScreen) return false;
+        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.getScreen() instanceof SkiaScreen || client.getScreen() instanceof NeteaseMusicScreen) return false;
         return HudEditOverlay.getInstance().isActive() || !visibleEffects(client).isEmpty();
     }
 

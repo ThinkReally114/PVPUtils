@@ -37,13 +37,12 @@ public final class TimeWeatherChanger {
     }
 
     private static void saveWeather(ClientLevel level) {
-        savedRaining = level.getLevelData().isRaining();
+        savedRaining = level.getLevelData().hasRain();
         savedRainLevel = level.getRainLevel(1.0f);
         savedThunderLevel = level.getThunderLevel(1.0f);
     }
 
     private static void restoreWeather(ClientLevel level) {
-        level.getLevelData().setRaining(savedRaining);
         level.setRainLevel(savedRainLevel);
         level.setThunderLevel(savedThunderLevel);
     }
@@ -52,7 +51,6 @@ public final class TimeWeatherChanger {
         boolean rain = Config.weatherMode != Config.WeatherMode.CLEAR;
         boolean thunder = Config.weatherMode == Config.WeatherMode.THUNDER;
 
-        level.getLevelData().setRaining(rain);
         level.setRainLevel(rain ? 1.0f : 0.0f);
         level.setThunderLevel(thunder ? 1.0f : 0.0f);
     }

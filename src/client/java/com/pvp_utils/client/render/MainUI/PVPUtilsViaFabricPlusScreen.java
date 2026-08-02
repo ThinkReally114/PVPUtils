@@ -110,7 +110,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || minecraft == null || (!embedded && minecraft.screen != this)) {
+        if (!pendingFrame || minecraft == null || (!embedded && minecraft.getScreen() != this)) {
             pendingFrame = false;
             return;
         }

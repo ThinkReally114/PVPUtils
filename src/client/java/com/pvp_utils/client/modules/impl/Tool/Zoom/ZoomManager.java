@@ -15,7 +15,7 @@ public final class ZoomManager {
     }
 
     public static void tick(Minecraft client) {
-        boolean active = Config.zoom && ModuleKeybindManager.isKeyDown(client, ModuleKeybindManager.ACTION_ZOOM) && client.gui.screen() == null;
+        boolean active = Config.zoom && ModuleKeybindManager.isKeyDown(client, ModuleKeybindManager.ACTION_ZOOM) && client.getScreen() == null;
         zooming = active;
 
         double target = active ? targetDivisor() : 1.0;

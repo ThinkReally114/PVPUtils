@@ -21,7 +21,7 @@ public final class NeteaseMusicManager {
         NeteaseMusicLocalService.start();
         NeteaseMusicApi.restoreSession();
         Minecraft client = Minecraft.getInstance();
-        Screen parent = client.gui.screen();
+        Screen parent = client.getScreen();
         client.gui.setScreen(new NeteaseMusicScreen(parent));
     }
 }

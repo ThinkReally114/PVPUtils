@@ -165,7 +165,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
 
     @Override
     public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        if (embeddedBack == null || minecraft.screen == this) {
+        if (embeddedBack == null || minecraft.getScreen() == this) {
             MainUISharedBackground.render(graphics, mouseX, mouseY);
         }
         scroll += (targetScroll - scroll) * 0.24f;
@@ -177,7 +177,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
             if (embeddedBack != null) {
                 if (!backDispatched) {
                     backDispatched = true;
-                    if (minecraft.screen == this) {
+                    if (minecraft.getScreen() == this) {
                         minecraft.gui.setScreen(PVPUtilsMainUI.returningFromSingleplayer(shaderPath));
                     } else {
                         embeddedBack.run();
@@ -202,7 +202,7 @@ public class PVPUtilsSingleplayerScreen extends Screen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || minecraft == null || (embeddedBack == null && minecraft.screen != this)) {
+        if (!pendingFrame || minecraft == null || (embeddedBack == null && minecraft.getScreen() != this)) {
             pendingFrame = false;
             return;
         }

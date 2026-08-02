@@ -6,6 +6,7 @@ import com.pvp_utils.client.render.skia.SkiaBlurRenderer;
 import com.pvp_utils.client.NeteaseMusic.LyricLine;
 import com.pvp_utils.client.NeteaseMusic.LyricLineProcessor;
 import com.pvp_utils.client.render.font.FontRenderer;
+import net.minecraft.client.gui.Font;
 import com.pvp_utils.client.render.skia.SkiaGlBackend;
 import com.pvp_utils.client.render.skia.SkiaRenderer;
 import com.pvp_utils.client.render.skia.SkiaScreen;
@@ -185,7 +186,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || Minecraft.getInstance().gui.screen() != this) {
+        if (!pendingFrame || Minecraft.getInstance().getScreen() != this) {
             pendingFrame = false;
             return;
         }
@@ -798,7 +799,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
         if (recommendedPlaylists.isEmpty()) {
             String text = loading ? (Config.isChinese ? "加载中..." : "Loading...") : (NeteaseMusicApi.isLoggedIn() ? "No playlists" : "Login required");
-            graphics.drawCenteredString(font, text, gridX + availableW / 2, gridY + 70, withAlpha(0xB8C0D4, alpha));
+            drawCenteredText(graphics, font, text, gridX + availableW / 2, gridY + 70, withAlpha(0xB8C0D4, alpha));
             return;
         }
 
@@ -865,7 +866,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int rowH = 42;
         int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - listY - 10) / rowH);
         if (songs.isEmpty()) {
-            graphics.drawCenteredString(font, loading ? "Loading..." : "No songs", listX + listW / 2, listY + 50, withAlpha(0xB8C0D4, localAlpha));
+            drawCenteredText(graphics, font, loading ? "Loading..." : "No songs", listX + listW / 2, listY + 50, withAlpha(0xB8C0D4, localAlpha));
             return;
         }
         float listVisual = Math.max(0.0F, Math.min(Math.max(0, songs.size() - visibleRows), visualFirstSongIndex));
@@ -911,7 +912,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int rowH = cover + GRID_TEXT_HEIGHT;
         int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
         if (songs.isEmpty()) {
-            graphics.drawCenteredString(font, loading ? "Loading..." : "No songs", gridX + availableW / 2, gridY + 70, withAlpha(0xB8C0D4, alpha));
+            drawCenteredText(graphics, font, loading ? "Loading..." : "No songs", gridX + availableW / 2, gridY + 70, withAlpha(0xB8C0D4, alpha));
             return;
         }
         GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxGridStart(columns, visibleRows * columns));
@@ -1199,9 +1200,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.fill(x - 8, y - 8, x + w + 8, y + h + 8, withAlpha(0x000000, Math.round(alpha * 0.35F)));
         graphics.fill(x, y, x + w, y + h, withAlpha(0x14181F, alpha));
         graphics.fill(x, y, x + w, y + 2, withAlpha(0xD63B35, alpha));
-        graphics.drawCenteredString(font, "Netease Music Login", x + w / 2, y + 14, withAlpha(0xFFFFFF, alpha));
+        drawCenteredText(graphics, font, "Netease Music Login", x + w / 2, y + 14, withAlpha(0xFFFFFF, alpha));
         if (loginMode == LoginMode.PASSWORD) {
-            graphics.drawCenteredString(font, trim(statusText, 42), x + w / 2, y + 32, withAlpha(loading ? 0xE6C45B : 0xB8C0D4, alpha));
+            drawCenteredText(graphics, font, trim(statusText, 42), x + w / 2, y + 32, withAlpha(loading ? 0xE6C45B : 0xB8C0D4, alpha));
         }
         drawButton(graphics, x + 62, y + 52, 88, 22, mouseX, mouseY, "QR", alpha);
         drawButton(graphics, x + 170, y + 52, 88, 22, mouseX, mouseY, "Password", alpha);
@@ -1228,7 +1229,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
                 graphics.blit(RenderPipelines.GUI_TEXTURED, texture, qrX + 4, qrY + 4, 0f, 0f, qrSize - 8, qrSize - 8, 96, 96, 96, 96);
             }
         } else {
-            graphics.drawCenteredString(font, "QR", qrX + qrSize / 2, qrY + 42, withAlpha(0x111111, alpha));
+            drawCenteredText(graphics, font, "QR", qrX + qrSize / 2, qrY + 42, withAlpha(0x111111, alpha));
         }
         graphics.text(font, Config.isChinese ? "使用网易云音乐扫码" : "Scan with Netease app", qrX + qrSize + 20, qrY + 12, withAlpha(0xFFFFFF, alpha), false);
         drawButton(graphics, qrX + qrSize + 20, qrY + 42, 110, 24, mouseX, mouseY, qrButtonText(), alpha);
@@ -1272,7 +1273,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int x = width - 40;
         int y = 8;
         boolean hovered = hit(x, y, 30, 30, mouseX, mouseY);
-        graphics.drawCenteredString(font, "\u00D7", x + 15, y + 9, withAlpha(hovered ? 0xFF646B : 0xFFFFFF, alpha));
+        drawCenteredText(graphics, font, "\u00D7", x + 15, y + 9, withAlpha(hovered ? 0xFF646B : 0xFFFFFF, alpha));
     }
 
     private void drawInput(GuiGraphicsExtractor graphics, int x, int y, int w, int h, int mouseX, int mouseY, String value, String placeholder, Focus field, int alpha) {
@@ -1302,7 +1303,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     private void drawButton(GuiGraphicsExtractor graphics, int x, int y, int w, int h, int mouseX, int mouseY, String text, int alpha) {
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
         graphics.fill(x, y, x + w, y + h, withAlpha(hovered ? 0x3A4558 : 0x262D3A, alpha));
-        graphics.drawCenteredString(font, text, x + w / 2, y + Math.max(5, h / 2 - 4), withAlpha(0xFFFFFF, alpha));
+        drawCenteredText(graphics, font, text, x + w / 2, y + Math.max(5, h / 2 - 4), withAlpha(0xFFFFFF, alpha));
     }
 
     private void drawIconButton(GuiGraphicsExtractor graphics, int x, int y, int w, int h, int mouseX, int mouseY, String icon, int alpha) {
@@ -1318,7 +1319,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int color = hovered ? 0x4A4A4A : 0x303030;
         graphics.fill(x, y + 6, x + size, y + size - 6, withAlpha(color, Math.round(alpha * 0.72F)));
         graphics.fill(x + 6, y, x + size - 6, y + size, withAlpha(color, Math.round(alpha * 0.72F)));
-        graphics.drawCenteredString(font, text, x + size / 2, y + 8, withAlpha(0xBFC2C7, alpha));
+        drawCenteredText(graphics, font, text, x + size / 2, y + 8, withAlpha(0xBFC2C7, alpha));
     }
 
     private void renderCover(GuiGraphicsExtractor graphics, String url, int x, int y, int size, int alpha) {
@@ -1331,7 +1332,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
                     withAlpha(0xFFFFFF, alpha));
             return;
         }
-        graphics.drawCenteredString(font, "Music", x + size / 2, y + size / 2 - 4, withAlpha(0x57C7FF, alpha));
+        drawCenteredText(graphics, font, "Music", x + size / 2, y + size / 2 - 4, withAlpha(0x57C7FF, alpha));
     }
 
     private void renderRoundedCover(GuiGraphicsExtractor graphics, String url, int x, int y, int size, int alpha, int radius, float hoverProgress, int maskColor) {
@@ -3214,5 +3215,13 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private record ContentTransition(float alpha, float scale, boolean oldPage) {
+    }
+
+    private void drawCenteredText(GuiGraphicsExtractor graphics, Font font, String text, float x, float y, int color) {
+        graphics.text(font, text, x - font.width(text) / 2f, y, color, false);
+    }
+
+    private void drawCenteredText(GuiGraphicsExtractor graphics, Font font, Component text, float x, float y, int color) {
+        graphics.text(font, text, x - font.width(text) / 2f, y, color, false);
     }
 }

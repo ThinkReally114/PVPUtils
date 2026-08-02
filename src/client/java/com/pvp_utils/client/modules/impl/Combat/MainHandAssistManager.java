@@ -28,7 +28,7 @@ public final class MainHandAssistManager {
     private MainHandAssistManager() {}
 
     public static void beforeStartUseItem(Minecraft client) {
-        if (!Config.mainHandAssist || !Config.mainHandAssistQuickUse || client.player == null || client.level == null || client.gameMode == null || client.gui.screen() != null) {
+        if (!Config.mainHandAssist || !Config.mainHandAssistQuickUse || client.player == null || client.level == null || client.gameMode == null || client.getScreen() != null) {
             return;
         }
         LocalPlayer player = client.player;
@@ -60,7 +60,7 @@ public final class MainHandAssistManager {
     }
 
     public static void tick(Minecraft client) {
-        if (!Config.mainHandAssist || (!Config.mainHandAssistQuickUse && !Config.mainHandAssistMeleeWeapon && !Config.mainHandAssistShield) || client.player == null || client.level == null || client.gameMode == null || client.gui.screen() != null) {
+        if (!Config.mainHandAssist || (!Config.mainHandAssistQuickUse && !Config.mainHandAssistMeleeWeapon && !Config.mainHandAssistShield) || client.player == null || client.level == null || client.gameMode == null || client.getScreen() != null) {
             reset();
             return;
         }
@@ -242,7 +242,7 @@ public final class MainHandAssistManager {
     private static boolean hasMissingUsefulPotionEffect(LocalPlayer player, ItemStack stack) {
         for (MobEffectInstance effect : potionEffects(stack)) {
             MobEffect mobEffect = effect.getEffect().value();
-            if (!mobEffect.isInstantenous() && mobEffect.isBeneficial() && !player.hasEffect(effect.getEffect())) {
+            if (!mobEffect.isInstant() && mobEffect.isBeneficial() && !player.hasEffect(effect.getEffect())) {
                 return true;
             }
         }
@@ -251,7 +251,7 @@ public final class MainHandAssistManager {
 
     private static boolean hasInstantHealing(ItemStack stack) {
         for (MobEffectInstance effect : potionEffects(stack)) {
-            if (effect.getEffect().value().isInstantenous() && effect.getEffect().value().isBeneficial()) {
+            if (effect.getEffect().value().isInstant() && effect.getEffect().value().isBeneficial()) {
                 return true;
             }
         }

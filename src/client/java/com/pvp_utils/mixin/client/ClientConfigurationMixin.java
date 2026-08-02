@@ -29,6 +29,6 @@ public class ClientConfigurationMixin {
         if (original == null) {
             return;
         }
-        ci.setReturnValue(new CommonRegisterPayload(original.version(), original.phase(), Collections.emptySet()));
+        ci.setReturnValue(new CommonRegisterPayload(original.version(), original.getPhase(), Collections.emptySet()));
     }
 }
