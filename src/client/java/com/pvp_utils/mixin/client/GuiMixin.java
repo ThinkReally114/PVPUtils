@@ -100,13 +100,9 @@ public class GuiMixin {
         if (canvas != null) {
             SkiaRenderer.endRegion(guiGraphics);
         }
-        // guiGraphics.renderDeferredElements(); // 26.2: 方法已移除
         LyricsDisplayRenderer.getInstance().render(guiGraphics);
-        // guiGraphics.renderDeferredElements(); // 26.2: 方法已移除
         MusicInfoHudRenderer.getInstance().render(guiGraphics);
-        // guiGraphics.renderDeferredElements(); // 26.2: 方法已移除
         BlockCountDisplayRenderer.getInstance().render(guiGraphics, null);
-        // guiGraphics.renderDeferredElements(); // 26.2: 方法已移除
     }
 
     @Inject(method = "renderEffects", at = @At("HEAD"), cancellable = true)
