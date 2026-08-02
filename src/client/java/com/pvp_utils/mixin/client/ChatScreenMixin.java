@@ -1,12 +1,10 @@
-/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
 import com.pvp_utils.client.command.CommandManager;
 import com.pvp_utils.client.modules.impl.Render.HudEditOverlay;
-import net.minecraft.client.gui.components.CommandSuggestions;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,9 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ChatScreenMixin {
     @Shadow
     protected EditBox input;
-
-    @Shadow
-    CommandSuggestions commandSuggestions;
 
     @Inject(method = "<init>(Ljava/lang/String;Z)V", at = @At("RETURN"))
     private void constructorHook(String string, boolean bl, CallbackInfo ci) {
@@ -50,30 +45,14 @@ public class ChatScreenMixin {
         }
     }
 
-    @Inject(method = "onEdited", at = @At("TAIL"))
-    private void showDotCommandSuggestions(String value, CallbackInfo ci) {
-        if (input == null || commandSuggestions == null || !CommandManager.isClientCommandInput(value)) {
-            return;
-        }
-        if (CommandManager.vanillaTabSuggestions(value).isEmpty()) {
-            commandSuggestions.hide();
-            commandSuggestions.setAllowSuggestions(false);
-            return;
-        }
-        commandSuggestions.setAllowSuggestions(true);
-        commandSuggestions.updateCommandInfo();
-        commandSuggestions.showSuggestions(false);
-    }
-
-    @Inject(method = "render", at = @At("TAIL"))
-    private void highlightClientCommand(DrawContext graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    private void highlightClientCommand(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (input != null && CommandManager.isClientCommandInput(input.getValue())) {
             int left = Math.max(0, input.getX());
             int right = Math.min(Minecraft.getInstance().getWindow().getGuiScaledWidth(), input.getX() + input.getWidth());
             if (right > left) {
-                graphics.renderOutline(left, input.getY(), right - left, input.getHeight(), 0xFFFFFFFF);
+                graphics.outline(left, input.getY(), right - left, input.getHeight(), 0xFFFFFFFF);
             }
         }
     }
 }
-*/

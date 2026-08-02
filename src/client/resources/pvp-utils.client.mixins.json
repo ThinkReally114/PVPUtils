@@ -87,7 +87,21 @@
     "LoadingOverlayMixin",
     "GuiMixin",
     "PlayerTabOverlayMixin",
-    "HotbarSmoothMixin"
+    "HotbarSmoothMixin",
+    "ChatHudAccessor",
+    "ChatScreenAccessor",
+    "ChatHudLineAccessor",
+    "ChatComponentDrawingBackgroundGraphicsAccessor",
+    "ChatComponentDrawingFocusedGraphicsAccessor",
+    "ScreenEffectRendererMixin",
+    "WeatherEffectRendererMixin",
+    "CustomBlockOutlineLevelRendererMixin",
+    "BetterChatGuiMessageMixin",
+    "BetterChatGuiMessageLineMixin",
+    "BetterChatScreenMixin",
+    "BetterChatChatMixin",
+    "BetterChatLineRenderMixin",
+    "ChatScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

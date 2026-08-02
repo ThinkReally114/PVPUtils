@@ -1,9 +1,8 @@
-/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,4 +17,3 @@ public class BetterChatGuiMessageMixin {
         }
     }
 }
-*/
