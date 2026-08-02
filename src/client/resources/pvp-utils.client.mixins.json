@@ -78,7 +78,13 @@
     "CreativeModeTabMixin",
     "ChatComponentAccessor",
     // "ClientConfigurationMixin",
-    "ClientNetworkMixin"
+    "ClientNetworkMixin",
+    "TitleScreenMixin",
+    "BetterScoreboardGuiMixin",
+    "ScreenMixin",
+    "FoodInfoGuiMixin",
+    "ConnectScreenMixin",
+    "LoadingOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

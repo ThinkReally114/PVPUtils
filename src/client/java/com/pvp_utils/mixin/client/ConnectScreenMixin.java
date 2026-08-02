@@ -1,8 +1,7 @@
-/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.client.modules.impl.Tool.ServerConnectionOverlay;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ConnectScreen;
@@ -42,8 +41,7 @@ public abstract class ConnectScreenMixin extends Screen {
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void pvp_utils$renderConnectionOverlay(DrawContext graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void pvp_utils$renderConnectionOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         ServerConnectionOverlay.render(graphics, this.width, this.height, this.status);
     }
 }
-*/
