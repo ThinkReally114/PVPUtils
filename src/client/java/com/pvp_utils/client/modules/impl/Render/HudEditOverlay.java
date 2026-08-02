@@ -148,7 +148,7 @@ public class HudEditOverlay {
     public void renderFrameEnd() {
         if (!pendingFrame) return;
         Minecraft client = Minecraft.getInstance();
-        if (!active || client.getGui().hud.isHidden()) {
+        if (!active || client.gui.hud.isHidden()) {
             pendingFrame = false;
             return;
         }

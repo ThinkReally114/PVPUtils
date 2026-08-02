@@ -171,25 +171,25 @@ public class MinecraftMixin {
         PotionStatusRenderer.getInstance().renderFrameEnd();
         KeystrokesRenderer.getInstance().renderFrameEnd();
         Minecraft client = (Minecraft) (Object) this;
-        if (client.screen instanceof NewSettingsScreen settingsScreen) {
+        if (client.gui.screen() instanceof NewSettingsScreen settingsScreen) {
             settingsScreen.renderFrameEnd();
         }
-        if (client.screen instanceof NeteaseMusicScreen musicScreen) {
+        if (client.gui.screen() instanceof NeteaseMusicScreen musicScreen) {
             musicScreen.renderFrameEnd();
         }
-        if (client.screen instanceof PVPUtilsMainUI mainUI) {
+        if (client.gui.screen() instanceof PVPUtilsMainUI mainUI) {
             mainUI.renderFrameEnd();
         }
-        if (client.screen instanceof PVPUtilsSingleplayerScreen singleplayerScreen) {
+        if (client.gui.screen() instanceof PVPUtilsSingleplayerScreen singleplayerScreen) {
             singleplayerScreen.renderFrameEnd();
         }
-        if (client.screen instanceof PVPUtilsMultiplayerScreen multiplayerScreen) {
+        if (client.gui.screen() instanceof PVPUtilsMultiplayerScreen multiplayerScreen) {
             multiplayerScreen.renderFrameEnd();
         }
-        if (client.screen instanceof AltManagerScreen altManagerScreen) {
+        if (client.gui.screen() instanceof AltManagerScreen altManagerScreen) {
             altManagerScreen.renderFrameEnd();
         }
-        if (client.screen instanceof PVPUtilsViaFabricPlusScreen viaFabricPlusScreen) {
+        if (client.gui.screen() instanceof PVPUtilsViaFabricPlusScreen viaFabricPlusScreen) {
             viaFabricPlusScreen.renderFrameEnd();
         }
     }

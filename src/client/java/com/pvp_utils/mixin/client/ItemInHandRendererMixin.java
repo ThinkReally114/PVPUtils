@@ -81,7 +81,7 @@ public abstract class ItemInHandRendererMixin {
         boolean isEatingSwing = Config.legacy17Animations && Config.legacy17UseSwing
                 && client.player.isUsingItem() && !currentStack.is(ItemTags.SPEARS);
         boolean shouldSuppressCooldownRaise = Config.noAttackCooldownAnimation && isWeapon && visibleItemMatches && !waitingForWeaponCooldown && !client.player.isUsingItem();
-        if (shouldSuppressCooldownRaise || isBlocking || isEatingSwing || client.screen instanceof SettingsScreen) {
+        if (shouldSuppressCooldownRaise || isBlocking || isEatingSwing || client.gui.screen() instanceof SettingsScreen) {
             this.mainHandHeight = 1.0F;
             this.oMainHandHeight = 1.0F;
         }
@@ -98,7 +98,7 @@ public abstract class ItemInHandRendererMixin {
         boolean hasShield = offHandStack.is(Items.SHIELD);
         boolean hasTarget = Config.autoMode && isEntityInRange();
 
-        boolean isBlocking = Config.swordBlock && isSword && (client.options.keyUse.isDown() || hasTarget || client.screen instanceof SettingsScreen);
+        boolean isBlocking = Config.swordBlock && isSword && (client.options.keyUse.isDown() || hasTarget || client.gui.screen() instanceof SettingsScreen);
 
         if (interactionHand == InteractionHand.OFF_HAND && isBlocking && hasShield) {
             ci.cancel();

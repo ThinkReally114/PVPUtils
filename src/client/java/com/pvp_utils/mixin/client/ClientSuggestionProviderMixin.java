@@ -27,7 +27,7 @@ public class ClientSuggestionProviderMixin {
     }
 
     private static String currentChatInput() {
-        if (!(Minecraft.getInstance().screen instanceof ChatScreen chatScreen)) {
+        if (!(Minecraft.getInstance().gui.screen() instanceof ChatScreen chatScreen)) {
             return null;
         }
         EditBox input = ((ChatScreenAccessor) chatScreen).pvp_utils$getInput();
