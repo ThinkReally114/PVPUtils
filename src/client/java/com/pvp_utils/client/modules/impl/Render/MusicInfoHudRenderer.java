@@ -78,7 +78,7 @@ public class MusicInfoHudRenderer {
         if (!Config.musicInfoHud || editActive) {
             return;
         }
-        if (client.player == null || client.options.gui.hud.isHidden()) {
+        if (client.player == null || client.getGui().hud.isHidden()) {
             return;
         }
         if (client.gui.screen() != null && !(client.gui.screen() instanceof ChatScreen)) {

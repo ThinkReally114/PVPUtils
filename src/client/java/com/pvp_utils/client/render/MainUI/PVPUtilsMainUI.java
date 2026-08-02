@@ -471,7 +471,7 @@ public class PVPUtilsMainUI extends Screen {
             embeddedViaFabricPlus.renderFrameEnd();
             return;
         }
-        if (!pendingGpuUi || this.minecraft == null || this.minecraft.getScreen() != this) {
+        if (!pendingGpuUi || this.minecraft == null || this.minecraft.gui.screen() != this) {
             pendingGpuUi = false;
             return;
         }
@@ -947,22 +947,22 @@ public class PVPUtilsMainUI extends Screen {
     private boolean renderEmbeddedPage(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (embeddedSingleplayer != null) {
             renderMainBackground(graphics, mouseX, mouseY);
-            embeddedSingleplayer.render(graphics, mouseX, mouseY, delta);
+            embeddedSingleplayer.extractRenderState(graphics, mouseX, mouseY, delta);
             return true;
         }
         if (embeddedMultiplayer != null) {
             renderMainBackground(graphics, mouseX, mouseY);
-            embeddedMultiplayer.render(graphics, mouseX, mouseY, delta);
+            embeddedMultiplayer.extractRenderState(graphics, mouseX, mouseY, delta);
             return true;
         }
         if (embeddedAltManager != null) {
             renderMainBackground(graphics, mouseX, mouseY);
-            embeddedAltManager.render(graphics, mouseX, mouseY, delta);
+            embeddedAltManager.extractRenderState(graphics, mouseX, mouseY, delta);
             return true;
         }
         if (embeddedViaFabricPlus != null) {
             renderMainBackground(graphics, mouseX, mouseY);
-            embeddedViaFabricPlus.render(graphics, mouseX, mouseY, delta);
+            embeddedViaFabricPlus.extractRenderState(graphics, mouseX, mouseY, delta);
             return true;
         }
         return false;

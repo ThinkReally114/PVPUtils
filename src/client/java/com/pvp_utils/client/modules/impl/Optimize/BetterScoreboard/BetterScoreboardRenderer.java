@@ -41,7 +41,7 @@ public final class BetterScoreboardRenderer {
             return;
         }
         Minecraft client = Minecraft.getInstance();
-        if (client.level == null || client.options.gui.hud.isHidden()) {
+        if (client.level == null || client.getGui().hud.isHidden()) {
             return;
         }
 

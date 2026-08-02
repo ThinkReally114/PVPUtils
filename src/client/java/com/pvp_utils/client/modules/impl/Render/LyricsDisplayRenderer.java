@@ -72,7 +72,7 @@ public class LyricsDisplayRenderer {
             clearState();
             return;
         }
-        if (client.options.gui.hud.isHidden() || shouldSkipScreen(client)) {
+        if (client.getGui().hud.isHidden() || shouldSkipScreen(client)) {
             return;
         }
 

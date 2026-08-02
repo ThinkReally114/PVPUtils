@@ -193,12 +193,12 @@ public class FakePlayerManager {
     private static void spawnTotemParticles(ClientLevel currentLevel, int count) {
         if (currentLevel == null || fakePlayer == null) return;
         for (int i = 0; i < count; i++) {
-            double x = fakePlayer.getX() + (SharedConstants.RANDOM.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
-            double y = fakePlayer.getY() + SharedConstants.RANDOM.nextDouble() * fakePlayer.getBbHeight();
-            double z = fakePlayer.getZ() + (SharedConstants.RANDOM.nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
-            double vx = (SharedConstants.RANDOM.nextDouble() - 0.5) * 0.35;
-            double vy = SharedConstants.RANDOM.nextDouble() * 0.35;
-            double vz = (SharedConstants.RANDOM.nextDouble() - 0.5) * 0.35;
+            double x = fakePlayer.getX() + (new Random().nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
+            double y = fakePlayer.getY() + new Random().nextDouble() * fakePlayer.getBbHeight();
+            double z = fakePlayer.getZ() + (new Random().nextDouble() - 0.5) * fakePlayer.getBbWidth() * 1.7;
+            double vx = (new Random().nextDouble() - 0.5) * 0.35;
+            double vy = new Random().nextDouble() * 0.35;
+            double vz = (new Random().nextDouble() - 0.5) * 0.35;
             currentLevel.addParticle(ParticleTypes.TOTEM_OF_UNDYING, x, y, z, vx, vy, vz);
         }
     }
