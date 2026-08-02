@@ -185,7 +185,7 @@ public class NewSettingsScreen extends SkiaScreen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || this.minecraft == null || this.minecraft.gui.getScreen() != this) {
+        if (!pendingFrame || this.minecraft == null || this.minecraft.gui.screen != this) {
             pendingFrame = false;
             return;
         }

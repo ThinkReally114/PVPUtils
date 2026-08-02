@@ -242,7 +242,7 @@ public final class ItemUseStatusRenderer {
 
     private UseState currentUseState(Minecraft client, long now) {
         if (client == null || client.player == null || client.level == null || client.gameMode == null) return null;
-        Screen screen = client.screen;
+        Screen screen = client.gui.screen();
         if (screen != null) return null;
 
         if (mixinActive && now - lastMixinSampleTime < 250L) {

@@ -76,7 +76,7 @@ public class ArraylistRenderer {
         Minecraft client = Minecraft.getInstance();
         if (!Config.arraylist) return;
         if (client.player == null || client.options.gui.hud.isHidden()) return;
-        if (client.screen != null && !(client.screen instanceof ChatScreen) && !HudEditOverlay.getInstance().isActive()) return;
+        if (client.gui.screen() != null && !(client.gui.screen() instanceof ChatScreen) && !HudEditOverlay.getInstance().isActive()) return;
 
         List<String> names = activeNames();
         if (names.isEmpty() && HudEditOverlay.getInstance().isActive()) {

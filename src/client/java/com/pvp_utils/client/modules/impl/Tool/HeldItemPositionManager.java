@@ -126,7 +126,7 @@ public final class HeldItemPositionManager {
     private static boolean isSettingsScreenOpen() {
         try {
             net.minecraft.client.Minecraft client = net.minecraft.client.Minecraft.getInstance();
-            return client != null && client.gui.getScreen() instanceof com.pvp_utils.client.gui.SettingsScreen;
+            return client != null && client.gui.screen() instanceof com.pvp_utils.client.gui.SettingsScreen;
         } catch (Throwable ignored) {
             return false;
         }

@@ -110,7 +110,7 @@ public class BlockCountDisplayRenderer {
         if (HudEditOverlay.getInstance().isActive()) return;
 
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) {
+        if (player == null || client.level == null || client.gui.screen() != null) {
             close();
             rightClicks.resetPressed();
             return;
@@ -142,7 +142,7 @@ public class BlockCountDisplayRenderer {
     public void triggerUse(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) return;
+        if (player == null || client.level == null || client.gui.screen() != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -159,7 +159,7 @@ public class BlockCountDisplayRenderer {
     public void recordPlacement(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.screen != null) return;
+        if (player == null || client.level == null || client.gui.screen() != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -188,7 +188,7 @@ public class BlockCountDisplayRenderer {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
         boolean editActive = HudEditOverlay.getInstance().isActive();
-        if (player == null || client.level == null || (client.screen != null && !editActive)) {
+        if (player == null || client.level == null || (client.gui.screen() != null && !editActive)) {
             close();
             updateScale(System.currentTimeMillis());
             return;

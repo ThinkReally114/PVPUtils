@@ -141,7 +141,7 @@ public class DynamicIslandRenderer {
         if (client.player == null || client.getWindow() == null) {
             return;
         }
-        if (client.screen instanceof AbstractContainerScreen<?>) {
+        if (client.gui.screen() instanceof AbstractContainerScreen<?>) {
             return;
         }
 

@@ -77,7 +77,7 @@ public class ArmorHudRenderer {
             destroyTextures(client);
             return;
         }
-        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.screen instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
+        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.gui.screen() instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
             return;
         }
 
