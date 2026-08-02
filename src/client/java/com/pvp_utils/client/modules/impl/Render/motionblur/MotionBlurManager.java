@@ -162,7 +162,7 @@ public final class MotionBlurManager {
 
         GpuBuffer ubo = managedUBO.put(processor, uniformBuffers, uboKey);
         try {
-            try (GpuBuffer.MappedView view = ubo.map(false, true)) {
+            try (var view = ubo.map(false, true)) {
                 Std140Builder b = Std140Builder.intoBuffer(view.data());
                 b.putMat4f(cameraState.getMvInverse());
                 b.putMat4f(cameraState.getProjInverse());

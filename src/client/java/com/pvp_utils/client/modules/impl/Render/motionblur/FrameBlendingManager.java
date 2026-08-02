@@ -328,7 +328,7 @@ public final class FrameBlendingManager {
     }
 
     private static void writeFloatUBO(GpuBuffer ubo, float value) {
-        try (GpuBuffer.MappedView view = ubo.map(false, true)) {
+        try (var view = ubo.map(false, true)) {
             Std140Builder b = Std140Builder.intoBuffer(view.data());
             b.putFloat(value);
             b.putInt(0);
@@ -338,7 +338,7 @@ public final class FrameBlendingManager {
     }
 
     private static void writeBlendParamsUBO(GpuBuffer ubo, float invTotalWeight, int sampleCount) {
-        try (GpuBuffer.MappedView view = ubo.map(false, true)) {
+        try (var view = ubo.map(false, true)) {
             Std140Builder b = Std140Builder.intoBuffer(view.data());
             b.putFloat(invTotalWeight);
             b.putInt(sampleCount);
