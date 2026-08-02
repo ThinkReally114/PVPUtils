@@ -381,8 +381,8 @@ public class LyricsDisplayRenderer {
     }
 
     private boolean shouldSkipScreen(Minecraft client) {
-        return client.gui.gui.screen()() instanceof SkiaScreen
-                || (client.gui.gui.screen()() != null && !(client.gui.gui.screen()() instanceof ChatScreen));
+        return client.gui.screen() instanceof SkiaScreen
+                || (client.gui.screen() != null && !(client.gui.screen() instanceof ChatScreen));
     }
 
     private float clamp(float value) {
