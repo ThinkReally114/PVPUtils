@@ -171,7 +171,7 @@ public final class MainUIShader {
 
         GpuTexture gpuTexture = dynamicTexture.getTexture();
         RenderSystem.getDevice().createCommandEncoder()
-                .writeToTexture(gpuTexture, readBuffer, NativeImage.Format.RGBA, 0, 0, 0, 0, fbW, fbH);
+                .writeToTexture(gpuTexture, readBuffer, 0, 0, 0, fbW, fbH, 0);
         graphics.blit(textureId, 0, 0, guiW, guiH, 0f, 1f, 1f, 0f);
     }
 

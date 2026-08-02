@@ -296,7 +296,7 @@ public class SkiaRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, uploadW, uploadH);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, uploadW, uploadH, 0);
             return true;
         } finally {
             pixmap.close();

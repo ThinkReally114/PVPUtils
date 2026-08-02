@@ -19,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Random;
 import java.util.UUID;
 
 public class FakePlayerManager {

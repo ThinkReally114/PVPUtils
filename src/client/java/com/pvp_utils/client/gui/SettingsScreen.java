@@ -591,7 +591,6 @@ public class SettingsScreen extends Screen {
 
     public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         this.renderBackground(graphics, mouseX, mouseY, partialTick);
-        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {

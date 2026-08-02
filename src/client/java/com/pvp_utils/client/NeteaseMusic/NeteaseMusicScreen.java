@@ -3218,10 +3218,10 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void drawCenteredText(GuiGraphicsExtractor graphics, Font font, String text, float x, float y, int color) {
-        graphics.text(font, text, x - font.width(text) / 2f, y, color, false);
+        graphics.text(font, text, (int)(x - font.width(text) / 2f), (int)y, color, false);
     }
 
     private void drawCenteredText(GuiGraphicsExtractor graphics, Font font, Component text, float x, float y, int color) {
-        graphics.text(font, text, x - font.width(text) / 2f, y, color, false);
+        graphics.text(font, text.getString(), (int)(x - font.width(text) / 2f), (int)y, color, false);
     }
 }

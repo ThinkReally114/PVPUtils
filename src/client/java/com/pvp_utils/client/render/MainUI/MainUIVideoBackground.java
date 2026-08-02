@@ -193,7 +193,7 @@ public final class MainUIVideoBackground {
             buffer.flip();
             GpuTexture gpuTexture = texture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buffer, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buffer, 0, 0, 0, width, height, 0);
         } finally {
             MemoryUtil.memFree(buffer);
         }

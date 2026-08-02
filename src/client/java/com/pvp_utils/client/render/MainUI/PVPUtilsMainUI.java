@@ -684,7 +684,7 @@ public class PVPUtilsMainUI extends Screen {
             client.getTextureManager().register(BACKGROUND_TEXTURE_ID, backgroundTexture);
             GpuTexture gpuTexture = backgroundTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buffer, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buffer, 0, 0, 0, width, height, 0);
             MemoryUtil.memFree(buffer);
             backgroundTextureW = width;
             backgroundTextureH = height;
@@ -786,7 +786,7 @@ public class PVPUtilsMainUI extends Screen {
         int byteSize = textPixelH * pixmap.getRowBytes();
         GpuTexture gpuTexture = textTexture.getTexture();
         RenderSystem.getDevice().createCommandEncoder()
-                .writeToTexture(gpuTexture, MemoryUtil.memByteBuffer(addr, byteSize), 0, 0, textPixelW, textPixelH);
+                .writeToTexture(gpuTexture, MemoryUtil.memByteBuffer(addr, byteSize), 0, 0, 0, textPixelW, textPixelH, 0);
         pixmap.close();
     }
 
