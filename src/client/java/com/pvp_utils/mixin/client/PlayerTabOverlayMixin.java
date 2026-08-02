@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
+
 @Mixin(PlayerTabOverlay.class)
 public class PlayerTabOverlayMixin {
     @ModifyConstant(method = "render", constant = @Constant(intValue = 13))
@@ -51,20 +53,18 @@ public class PlayerTabOverlayMixin {
             return;
         }
         Component original = cir.getReturnValue();
-        // TODO: 26.2 - IrcBridge.decoratePlayerName 方法签名变更，待适配
-        // Component decorated = IrcBridge.decoratePlayerName(playerInfo, original);
-        // if (decorated != null) {
-        //     cir.setReturnValue(decorated);
-        // }
+        Component decorated = IrcBridge.decorateName(original, playerInfo.getProfile().id());
+        if (decorated != null) {
+            cir.setReturnValue(decorated);
+        }
     }
 
     @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
     private void pvp_utils$hideNickInTabList(PlayerInfo playerInfo, CallbackInfoReturnable<Component> cir) {
         Component original = cir.getReturnValue();
-        // TODO: 26.2 - NickHiderManager.modifyTabName 方法签名变更，待适配
-        // Component modified = NickHiderManager.modifyTabName(playerInfo, original);
-        // if (modified != null) {
-        //     cir.setReturnValue(modified);
-        // }
+        Component modified = NickHiderManager.replaceTabName(original, playerInfo);
+        if (modified != null) {
+            cir.setReturnValue(modified);
+        }
     }
 }

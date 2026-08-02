@@ -19,11 +19,15 @@ import com.pvp_utils.client.alt.AltManagerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +35,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+
+import java.util.Optional;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -147,7 +153,16 @@ public class MinecraftMixin {
     }
 
     private void spawnAttackLightning(Minecraft client, Entity target) {
-        // TODO: 26.2 EntityType API变更，LightningBolt创建方式待适配
+        if (client.level == null) return;
+        Identifier id = Identifier.withDefaultNamespace("lightning_bolt");
+        Optional<Holder.Reference<EntityType<?>>> optional = BuiltInRegistries.ENTITY_TYPE.get(id);
+        if (optional.isEmpty()) return;
+        EntityType<?> type = optional.get().value();
+        LightningBolt bolt = (LightningBolt) type.create(client.level, EntitySpawnReason.TRIGGERED);
+        if (bolt == null) return;
+        bolt.setPos(target.getX(), target.getY(), target.getZ());
+        bolt.setVisualOnly(true);
+        client.level.addEntity(bolt);
     }
 
     @Inject(
