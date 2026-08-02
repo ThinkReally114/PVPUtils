@@ -77,7 +77,7 @@
     "BetterChatPlayerChatMessageMixin",
     "CreativeModeTabMixin",
     "ChatComponentAccessor",
-    "ClientConfigurationMixin",
+    // "ClientConfigurationMixin",
     "ClientNetworkMixin"
   ],
   "injectors": {

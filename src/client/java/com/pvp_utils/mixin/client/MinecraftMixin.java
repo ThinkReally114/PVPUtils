@@ -151,7 +151,7 @@ public class MinecraftMixin {
         AABB box = target.getBoundingBox();
         RandomSource random = target.getRandom();
         for (int i = 0; i < count; i++) {
-            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING_BOLT, client.level);
+            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING, client.level);
             lightning.setVisualOnly(true);
             double x = target.getX() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getXsize());
             double z = target.getZ() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getZsize());
