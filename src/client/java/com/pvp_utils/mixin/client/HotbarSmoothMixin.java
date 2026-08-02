@@ -1,4 +1,3 @@
-/*
 package com.pvp_utils.mixin.client;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
@@ -9,7 +8,7 @@ import com.pvp_utils.client.modules.impl.Optimize.BetterItemSelector.BetterItemS
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.resources.Identifier;
@@ -26,7 +25,7 @@ public class HotbarSmoothMixin {
     @Unique private float pvp_utils$smoothSelectorPos;
 
     @WrapMethod(method = "renderHotbarAndDecorations")
-    private void pvp_utils$wrapHotbarAndDecorations(DrawContext graphics, DeltaTracker deltaTracker, Operation<Void> operation) {
+    private void pvp_utils$wrapHotbarAndDecorations(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, Operation<Void> operation) {
         if (!Config.smoothHotbarScrolling && !Config.betterItemSelector) {
             operation.call(graphics, deltaTracker);
             return;
@@ -47,9 +46,9 @@ public class HotbarSmoothMixin {
 
     @WrapOperation(
             method = "renderItemHotbar",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", ordinal = 0)
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", ordinal = 0)
     )
-    private void pvp_utils$drawBetterHotbar(DrawContext graphics, RenderPipeline pipeline, Identifier texture, int x, int y, int width, int height, Operation<Void> operation) {
+    private void pvp_utils$drawBetterHotbar(GuiGraphicsExtractor graphics, RenderPipeline pipeline, Identifier texture, int x, int y, int width, int height, Operation<Void> operation) {
         if (!Config.betterItemSelector) {
             operation.call(graphics, pipeline, texture, x, y, width, height);
             return;
@@ -59,9 +58,9 @@ public class HotbarSmoothMixin {
 
     @WrapOperation(
             method = "renderItemHotbar",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", ordinal = 1)
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V", ordinal = 1)
     )
-    private void pvp_utils$moveSelector(DrawContext graphics, RenderPipeline pipeline, Identifier texture, int x, int y, int width, int height, Operation<Void> operation) {
+    private void pvp_utils$moveSelector(GuiGraphicsExtractor graphics, RenderPipeline pipeline, Identifier texture, int x, int y, int width, int height, Operation<Void> operation) {
         if (!Config.smoothHotbarScrolling && !Config.betterItemSelector) {
             operation.call(graphics, pipeline, texture, x, y, width, height);
             return;
@@ -84,4 +83,3 @@ public class HotbarSmoothMixin {
         return (selectedSlot + rollover * SLOT_COUNT) * SLOT_WIDTH;
     }
 }
-*/

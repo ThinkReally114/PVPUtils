@@ -84,7 +84,10 @@
     "ScreenMixin",
     "FoodInfoGuiMixin",
     "ConnectScreenMixin",
-    "LoadingOverlayMixin"
+    "LoadingOverlayMixin",
+    "GuiMixin",
+    "PlayerTabOverlayMixin",
+    "HotbarSmoothMixin"
   ],
   "injectors": {
     "defaultRequire": 1

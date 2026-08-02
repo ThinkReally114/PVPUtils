@@ -1,4 +1,3 @@
-/*
 package com.pvp_utils.mixin.client;
 
 import com.pvp_utils.Config;
@@ -6,7 +5,7 @@ import com.pvp_utils.client.irc.IrcBridge;
 import com.pvp_utils.client.modules.impl.Render.BetterPingDisplayRenderer;
 import com.pvp_utils.client.modules.impl.Render.DynamicIsland.DynamicIslandRenderer;
 import com.pvp_utils.client.modules.impl.Tool.NickHiderManager;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.PlayerTabOverlay;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
@@ -28,7 +27,7 @@ public class PlayerTabOverlayMixin {
     }
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$dynamicIslandTabList(DrawContext guiGraphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
+    private void pvp_utils$dynamicIslandTabList(GuiGraphicsExtractor guiGraphics, int width, Scoreboard scoreboard, Objective objective, CallbackInfo ci) {
         if (!Config.dynamicIsland) {
             return;
         }
@@ -38,7 +37,7 @@ public class PlayerTabOverlayMixin {
     }
 
     @Inject(method = "renderPingIcon", at = @At("HEAD"), cancellable = true)
-    private void pvp_utils$betterPingDisplay(DrawContext guiGraphics, int slotWidth, int x, int y, PlayerInfo playerInfo, CallbackInfo ci) {
+    private void pvp_utils$betterPingDisplay(GuiGraphicsExtractor guiGraphics, int slotWidth, int x, int y, PlayerInfo playerInfo, CallbackInfo ci) {
         if (!Config.betterPingDisplay || Config.dynamicIsland) {
             return;
         }
@@ -48,11 +47,22 @@ public class PlayerTabOverlayMixin {
 
     @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
     private void pvp_utils$decorateIrcTabName(PlayerInfo playerInfo, CallbackInfoReturnable<Component> cir) {
-        if (playerInfo == null || playerInfo.getProfile() == null) {
+        if (!Config.irc) {
             return;
         }
-        Component name = IrcBridge.decorateName(cir.getReturnValue(), playerInfo.getProfile().id());
-        cir.setReturnValue(NickHiderManager.replaceTabName(name, playerInfo));
+        Component original = cir.getReturnValue();
+        Component decorated = IrcBridge.decoratePlayerName(playerInfo, original);
+        if (decorated != null) {
+            cir.setReturnValue(decorated);
+        }
+    }
+
+    @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
+    private void pvp_utils$hideNickInTabList(PlayerInfo playerInfo, CallbackInfoReturnable<Component> cir) {
+        Component original = cir.getReturnValue();
+        Component modified = NickHiderManager.modifyTabName(playerInfo, original);
+        if (modified != null) {
+            cir.setReturnValue(modified);
+        }
     }
 }
-*/
