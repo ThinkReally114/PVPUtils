@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import java.lang.reflect.Method;
 
 public final class ChatUtils {
     public enum Mode {
@@ -45,7 +46,17 @@ public final class ChatUtils {
         if (client == null) return;
         client.execute(() -> {
             if (client.gui != null) {
-                client.gui.hud.getChat().addMessage(output);
+                try {
+                    for (Method m : client.gui.hud.getChat().getClass().getDeclaredMethods()) {
+                        if (m.getName().equals("addMessage") && m.getParameterCount() == 4) {
+                            m.setAccessible(true);
+                            m.invoke(client.gui.hud.getChat(), output, null, null, null);
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

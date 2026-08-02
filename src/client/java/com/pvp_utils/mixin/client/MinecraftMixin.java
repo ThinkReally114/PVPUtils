@@ -147,17 +147,7 @@ public class MinecraftMixin {
     }
 
     private void spawnAttackLightning(Minecraft client, Entity target) {
-        int count = Math.max(1, Math.min(5, Config.attackEffectsLightningCount));
-        AABB box = target.getBoundingBox();
-        RandomSource random = target.getRandom();
-        for (int i = 0; i < count; i++) {
-            LightningBolt lightning = new LightningBolt(EntityType.LIGHTNING, client.level);
-            lightning.setVisualOnly(true);
-            double x = target.getX() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getXsize());
-            double z = target.getZ() + (random.nextDouble() - 0.5D) * Math.max(0.2D, box.getZsize());
-            lightning.setPos(x, target.getY(), z);
-            client.level.addEntity(lightning);
-        }
+        // TODO: 26.2 EntityType API变更，LightningBolt创建方式待适配
     }
 
     @Inject(
