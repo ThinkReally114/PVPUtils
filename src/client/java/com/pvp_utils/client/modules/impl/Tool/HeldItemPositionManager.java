@@ -68,7 +68,7 @@ public final class HeldItemPositionManager {
             return renderType;
         }
         Identifier texture = textureOf(renderType);
-        return texture == null ? renderType : RenderTypes.itemEntityTranslucent(texture);
+        return texture == null ? renderType : RenderTypes.itemTranslucent(texture);
     }
 
     public static RenderType applySubmittedItemRenderType(RenderType renderType, int[] colors) {
@@ -76,7 +76,7 @@ public final class HeldItemPositionManager {
             return renderType;
         }
         Identifier texture = textureOf(renderType);
-        return texture == null ? renderType : RenderTypes.itemEntityTranslucent(texture);
+        return texture == null ? renderType : RenderTypes.itemTranslucent(texture);
     }
 
     public static boolean isHoldingTransparentItem() {

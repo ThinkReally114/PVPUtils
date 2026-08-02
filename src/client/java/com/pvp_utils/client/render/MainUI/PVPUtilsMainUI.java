@@ -32,6 +32,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import org.lwjgl.system.MemoryUtil;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -173,7 +175,6 @@ public class PVPUtilsMainUI extends Screen {
         updateButtonPositions();
     }
 
-    @Override
     protected void repositionElements() {
         updateButtonPositions();
         if (embeddedSingleplayer != null) embeddedSingleplayer.resize(this.width, this.height);
@@ -183,7 +184,7 @@ public class PVPUtilsMainUI extends Screen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         if (renderEmbeddedPage(graphics, mouseX, mouseY, delta)) return;
         float layoutScale = mainLayoutScale();
         updateSettingsPanel(
@@ -207,7 +208,6 @@ public class PVPUtilsMainUI extends Screen {
         renderEntryHint(graphics, entryAlpha);
     }
 
-    @Override
     public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
@@ -471,7 +471,7 @@ public class PVPUtilsMainUI extends Screen {
             embeddedViaFabricPlus.renderFrameEnd();
             return;
         }
-        if (!pendingGpuUi || this.minecraft == null || this.minecraft.screen != this) {
+        if (!pendingGpuUi || this.minecraft == null || this.minecraft.getScreen() != this) {
             pendingGpuUi = false;
             return;
         }
@@ -684,7 +684,7 @@ public class PVPUtilsMainUI extends Screen {
             client.getTextureManager().register(BACKGROUND_TEXTURE_ID, backgroundTexture);
             GpuTexture gpuTexture = backgroundTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buffer, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buffer, 0, 0, width, height);
             MemoryUtil.memFree(buffer);
             backgroundTextureW = width;
             backgroundTextureH = height;
@@ -786,7 +786,7 @@ public class PVPUtilsMainUI extends Screen {
         int byteSize = textPixelH * pixmap.getRowBytes();
         GpuTexture gpuTexture = textTexture.getTexture();
         RenderSystem.getDevice().createCommandEncoder()
-                .writeToTexture(gpuTexture, MemoryUtil.memByteBuffer(addr, byteSize), NativeImage.Format.RGBA, 0, 0, 0, 0, textPixelW, textPixelH);
+                .writeToTexture(gpuTexture, MemoryUtil.memByteBuffer(addr, byteSize), 0, 0, textPixelW, textPixelH);
         pixmap.close();
     }
 

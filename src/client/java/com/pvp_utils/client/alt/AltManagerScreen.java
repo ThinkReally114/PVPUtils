@@ -143,8 +143,8 @@ public final class AltManagerScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        if (embeddedBack == null || minecraft.screen == this) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        if (embeddedBack == null || minecraft.getScreen() == this) {
             MainUISharedBackground.render(graphics, mouseX, mouseY);
         }
         this.mouseX = mouseX;
@@ -157,7 +157,7 @@ public final class AltManagerScreen extends Screen {
         pendingFrame = true;
         if (closingToMain && closeProgress() >= 1f && minecraft != null && !backDispatched) {
             backDispatched = true;
-            if (embeddedBack != null && minecraft.screen != this) {
+            if (embeddedBack != null && minecraft.getScreen() != this) {
                 embeddedBack.run();
             } else {
                 minecraft.gui.setScreen(parent);
@@ -165,12 +165,11 @@ public final class AltManagerScreen extends Screen {
         }
     }
 
-    @Override
     public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || minecraft == null || (embeddedBack == null && minecraft.screen != this)) {
+        if (!pendingFrame || minecraft == null || (embeddedBack == null && minecraft.getScreen() != this)) {
             pendingFrame = false;
             return;
         }

@@ -82,7 +82,7 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         MainUISharedBackground.render(graphics, mouseX, mouseY);
         scroll += (targetScroll - scroll) * 0.18f;
         detailScroll += (targetDetailScroll - detailScroll) * 0.18f;
@@ -105,12 +105,11 @@ public final class PVPUtilsViaFabricPlusScreen extends Screen {
         }
     }
 
-    @Override
     public void renderBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || minecraft == null || (!embedded && minecraft.screen != this)) {
+        if (!pendingFrame || minecraft == null || (!embedded && minecraft.getScreen() != this)) {
             pendingFrame = false;
             return;
         }

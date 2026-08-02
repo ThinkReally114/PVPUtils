@@ -22,7 +22,7 @@ public final class VersionWarningManager {
         if (Version.TYPE != 1 && Version.TYPE != 2) return;
 
         shown = true;
-        client.player.sendMessage(Config.isChinese ? chineseMessage() : englishMessage());
+        client.player.sendSystemMessage(Config.isChinese ? chineseMessage() : englishMessage());
     }
 
     private static MutableComponent chineseMessage() {

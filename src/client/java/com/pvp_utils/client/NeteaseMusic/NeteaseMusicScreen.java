@@ -186,7 +186,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     public void renderFrameEnd() {
-        if (!pendingFrame || Minecraft.getInstance().screen != this) {
+        if (!pendingFrame || Minecraft.getInstance().getScreen() != this) {
             pendingFrame = false;
             return;
         }

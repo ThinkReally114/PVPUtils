@@ -98,8 +98,8 @@ public final class MotionBlurManager {
                 frameTimer.getFPS(),
                 frameTimer.getRefreshRate(),
                 Config.dynamicMotionBlurRefreshRateScaling);
-        float viewW = client.getMainTarget().width;
-        float viewH = client.getMainTarget().height;
+        float viewW = client.gameRenderer.mainRenderTarget().width;
+        float viewH = client.gameRenderer.mainRenderTarget().height;
 
         switch (pass) {
             case NORMAL_PRE -> {
@@ -175,7 +175,7 @@ public final class MotionBlurManager {
                 b.putInt(0);
                 b.putInt(1);
             }
-            processor.process(client.getMainTarget(), frameAllocator);
+            processor.process(client.gameRenderer.mainRenderTarget(), frameAllocator);
         } catch (RuntimeException e) {
             if (managedUBO.resetIfClosed(e)) return;
             throw e;

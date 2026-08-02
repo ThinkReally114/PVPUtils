@@ -72,8 +72,7 @@ public class FoodInfoTooltipComponent implements TooltipComponent, ClientTooltip
         return Math.max(hungerWidth, saturationWidth);
     }
 
-    @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor graphics) {
+    public void renderImage(Font font, int x, int y, GuiGraphicsExtractor graphics) {
         renderHunger(font, graphics, x, y);
         renderSaturation(font, graphics, x, y + 10);
     }

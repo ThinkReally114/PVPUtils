@@ -69,7 +69,7 @@ public final class FrameBlendingManager {
 
     public static void applyFrameBlending(GraphicsResourceAllocator allocator, float fps, int refreshRate) {
         Minecraft client = Minecraft.getInstance();
-        RenderTarget main = client.getMainTarget();
+        RenderTarget main = client.gameRenderer.mainRenderTarget();
         updateSmoothedFPS(fps);
         if (refreshRate <= 0) {
             historyWriteIndex = 0;
@@ -215,7 +215,7 @@ public final class FrameBlendingManager {
 
     private static void applyAccumulationInternal(GraphicsResourceAllocator allocator, float strength, String shaderName, boolean isMax) {
         Minecraft client = Minecraft.getInstance();
-        RenderTarget main = client.getMainTarget();
+        RenderTarget main = client.gameRenderer.mainRenderTarget();
         ensureTargets(main.width, main.height);
         if (!accumHasPrevious) {
             copyTexture(main, accumReadTarget);
