@@ -98,8 +98,8 @@ public final class MotionBlurManager {
                 frameTimer.getFPS(),
                 frameTimer.getRefreshRate(),
                 Config.dynamicMotionBlurRefreshRateScaling);
-        float viewW = client.getMainTarget().width;
-        float viewH = client.getMainTarget().height;
+        float viewW = client.getMainRenderTarget().width;
+        float viewH = client.getMainRenderTarget().height;
 
         switch (pass) {
             case NORMAL_PRE -> {
@@ -162,7 +162,7 @@ public final class MotionBlurManager {
 
         GpuBuffer ubo = managedUBO.put(processor, uniformBuffers, uboKey);
         try {
-            try (GpuBuffer.View view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
+            try (GpuBuffer.MappedView view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
                 Std140Builder b = Std140Builder.intoBuffer(view.data());
                 b.putMat4f(cameraState.getMvInverse());
                 b.putMat4f(cameraState.getProjInverse());
@@ -175,7 +175,7 @@ public final class MotionBlurManager {
                 b.putInt(0);
                 b.putInt(1);
             }
-            processor.process(client.getMainTarget(), frameAllocator);
+            processor.process(client.getMainRenderTarget(), frameAllocator);
         } catch (RuntimeException e) {
             if (managedUBO.resetIfClosed(e)) return;
             throw e;

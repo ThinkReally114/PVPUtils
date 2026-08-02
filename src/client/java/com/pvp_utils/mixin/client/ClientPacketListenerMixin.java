@@ -34,7 +34,7 @@ public class ClientPacketListenerMixin {
             ClientLevel level = client.level;
             if (level != null) {
                 long time = Math.floorMod(Config.clientTime, 24000);
-                level.setTimeFromServer(packet.gameTime(), time, false);
+                level.setTimeFromServer(time, false);
                 ci.cancel();
             }
         }

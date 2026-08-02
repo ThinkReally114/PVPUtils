@@ -28,6 +28,9 @@ import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.Optional;
+import net.minecraft.core.Holder;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.InputStream;
@@ -337,12 +340,9 @@ public class TargetHudRenderer {
                 graphics.fill(avatarX, avatarY, avatarX2, avatarY2, alphaBits | 0x000000);
             }
         } else {
-            SpawnEggItem eggItem = SpawnEggItem.byId(target.getType());
-            if (eggItem != null) {
-                graphics.fakeItem(new ItemStack(eggItem), iconX, iconY);
-            } else {
-                graphics.fill(avatarX, avatarY, avatarX2, avatarY2, alphaBits | 0x000000);
-            }
+            SpawnEggItem.byId(target.getType()).ifPresent(holder ->
+                graphics.fakeItem(new ItemStack(holder.value()), iconX, iconY)
+            );
         }
 
         if (flashAlphaFactor > 0.0f) {
@@ -493,12 +493,9 @@ public class TargetHudRenderer {
                 graphics.fill(avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarX + avatarDrawInset + avatarDrawSize, avatarY + avatarDrawInset + avatarDrawSize, alphaBits | 0x111111);
             }
         } else {
-            SpawnEggItem eggItem = SpawnEggItem.byId(target.getType());
-            if (eggItem != null) {
-                graphics.fakeItem(new ItemStack(eggItem), avatarX + 11, avatarY + 11);
-            } else {
-                graphics.fill(avatarX + avatarDrawInset, avatarY + avatarDrawInset, avatarX + avatarDrawInset + avatarDrawSize, avatarY + avatarDrawInset + avatarDrawSize, alphaBits | 0x111111);
-            }
+            SpawnEggItem.byId(target.getType()).ifPresent(holder ->
+                graphics.fakeItem(new ItemStack(holder.value()), avatarX + 11, avatarY + 11)
+            );
         }
         if (lastAvatarFlashKey != 0) {
             graphics.blit(RenderPipelines.GUI_TEXTURED, AVATAR_FLASH_TEXTURE_ID, avatarX, avatarY, 0f, 0f, NEW_AVATAR_SIZE, NEW_AVATAR_SIZE, avatarFlashW, avatarFlashH, avatarFlashW, avatarFlashH);
@@ -1034,7 +1031,7 @@ public class TargetHudRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
         } finally {
             pixmap.close();
         }

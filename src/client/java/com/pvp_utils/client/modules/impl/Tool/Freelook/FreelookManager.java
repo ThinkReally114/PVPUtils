@@ -21,7 +21,7 @@ public final class FreelookManager {
         boolean canUse = Config.freelook
                 && client.player != null
                 && client.level != null
-                && client.getScreen() == null;
+                && client.screen == null;
         boolean keyDown = canUse && ModuleKeybindManager.isKeyDown(client, ModuleKeybindManager.ACTION_FREELOOK);
 
         if (!canUse) {

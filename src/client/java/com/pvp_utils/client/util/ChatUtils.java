@@ -44,8 +44,8 @@ public final class ChatUtils {
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
         client.execute(() -> {
-            if (client.getGui() != null) {
-                client.getGui().hud.getChat().addMessage(output);
+            if (client.gui != null) {
+                client.gui.hud.getChat().addMessage(output);
             }
         });
     }

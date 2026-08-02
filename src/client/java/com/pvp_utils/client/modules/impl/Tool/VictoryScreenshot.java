@@ -34,7 +34,7 @@ public class VictoryScreenshot {
 
         CompletableFuture.delayedExecutor(600, TimeUnit.MILLISECONDS).execute(() -> {
             client.execute(() -> {
-                Screenshot.grab(client.gameDirectory, client.getMainTarget(), (component) -> {
+                Screenshot.grab(client.gameDirectory, client.getMainRenderTarget(), (component) -> {
                     String fileName = extractFileName(component.getString());
                     if (fileName != null) {
                         transferFile(client, fileName, customFileName);

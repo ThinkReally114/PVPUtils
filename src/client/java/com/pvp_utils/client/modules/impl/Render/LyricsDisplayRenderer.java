@@ -197,7 +197,7 @@ public class LyricsDisplayRenderer {
             int byteSize = cachePixelH * pixmap.getRowBytes();
             ByteBuffer buffer = MemoryUtil.memByteBuffer(addr, byteSize);
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(cacheTexture.getTexture(), buffer, NativeImage.Format.RGBA, 0, 0, 0, 0, cachePixelW, cachePixelH);
+                    .writeToTexture(cacheTexture.getTexture(), buffer, 0, 0, 0, 0, cachePixelW, cachePixelH);
             return true;
         } finally {
             pixmap.close();
@@ -381,8 +381,8 @@ public class LyricsDisplayRenderer {
     }
 
     private boolean shouldSkipScreen(Minecraft client) {
-        return client.getScreen() instanceof SkiaScreen
-                || (client.getScreen() != null && !(client.getScreen() instanceof ChatScreen));
+        return client.screen instanceof SkiaScreen
+                || (client.screen != null && !(client.screen instanceof ChatScreen));
     }
 
     private float clamp(float value) {

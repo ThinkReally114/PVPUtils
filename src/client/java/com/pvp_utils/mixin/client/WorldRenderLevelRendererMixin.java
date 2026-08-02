@@ -23,7 +23,7 @@ public class WorldRenderLevelRendererMixin {
     @Inject(method = "renderLevel", at = @At("HEAD"))
     private void pvp_utils$renderWorld(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker, boolean renderOutline, Camera camera, Matrix4f modelViewMatrix, Matrix4f projectionMatrix, Matrix4f frustumMatrix, GpuBufferSlice terrainFog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci) {
         WorldRender.capture(camera, modelViewMatrix, projectionMatrix);
-        try (Gizmos.TemporaryCollection ignored = ((LevelRenderer) (Object) this).gizmos().temporaryCollection()) {
+        try (Gizmos.TemporaryCollection ignored = ((LevelRenderer) (Object) this).collectPerFrameGizmos()) {
             FireballLandingPredictor.render();
             ProjectileTrajectoryPredictor.render(deltaTracker.getGameTimeDeltaPartialTick(false));
             CustomBlockOutlineRenderer.render();

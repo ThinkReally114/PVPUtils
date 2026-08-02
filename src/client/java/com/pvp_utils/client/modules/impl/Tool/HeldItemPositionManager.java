@@ -68,7 +68,7 @@ public final class HeldItemPositionManager {
             return renderType;
         }
         Identifier texture = textureOf(renderType);
-        return texture == null ? renderType : RenderTypes.itemEntityTranslucent(texture);
+        return texture == null ? renderType : RenderTypes.itemEntityTranslucentCull(texture);
     }
 
     public static RenderType applySubmittedItemRenderType(RenderType renderType, int[] colors) {
@@ -76,7 +76,7 @@ public final class HeldItemPositionManager {
             return renderType;
         }
         Identifier texture = textureOf(renderType);
-        return texture == null ? renderType : RenderTypes.itemEntityTranslucent(texture);
+        return texture == null ? renderType : RenderTypes.itemEntityTranslucentCull(texture);
     }
 
     public static boolean isHoldingTransparentItem() {
@@ -126,7 +126,7 @@ public final class HeldItemPositionManager {
     private static boolean isSettingsScreenOpen() {
         try {
             net.minecraft.client.Minecraft client = net.minecraft.client.Minecraft.getInstance();
-            return client != null && client.getScreen() instanceof com.pvp_utils.client.gui.SettingsScreen;
+            return client != null && client.screen instanceof com.pvp_utils.client.gui.SettingsScreen;
         } catch (Throwable ignored) {
             return false;
         }

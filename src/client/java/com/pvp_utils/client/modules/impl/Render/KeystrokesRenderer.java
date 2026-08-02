@@ -71,7 +71,7 @@ public class KeystrokesRenderer {
         if (!Config.keystrokes) return;
 
         Minecraft client = Minecraft.getInstance();
-        if (client.getScreen() instanceof SkiaScreen || client.getScreen() instanceof NeteaseMusicScreen) return;
+        if (client.screen instanceof SkiaScreen || client.screen instanceof NeteaseMusicScreen) return;
         LocalPlayer player = client.player;
         if (player == null) return;
 
@@ -162,7 +162,7 @@ public class KeystrokesRenderer {
     public void renderFrameEnd() {
         if (!pendingFrame) return;
         Minecraft client = Minecraft.getInstance();
-        if (!Config.keystrokes || Config.keystrokesMode == Config.KeystrokesMode.LITE || client.options.gui.hud.isHidden() || client.getScreen() instanceof SkiaScreen || client.getScreen() instanceof NeteaseMusicScreen) {
+        if (!Config.keystrokes || Config.keystrokesMode == Config.KeystrokesMode.LITE || client.options.gui.hud.isHidden() || client.screen instanceof SkiaScreen || client.screen instanceof NeteaseMusicScreen) {
             clearPendingFrame();
             return;
         }

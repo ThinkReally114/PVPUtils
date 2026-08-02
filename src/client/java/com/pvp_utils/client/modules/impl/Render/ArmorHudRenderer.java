@@ -77,7 +77,7 @@ public class ArmorHudRenderer {
             destroyTextures(client);
             return;
         }
-        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.getScreen() instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
+        if (client.player == null || client.level == null || client.options.gui.hud.isHidden() || client.screen instanceof com.pvp_utils.client.render.skia.SkiaScreen) {
             return;
         }
 
@@ -451,7 +451,7 @@ public class ArmorHudRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
             return true;
         } finally {
             pixmap.close();

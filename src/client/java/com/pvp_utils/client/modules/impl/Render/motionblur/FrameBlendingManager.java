@@ -69,7 +69,7 @@ public final class FrameBlendingManager {
 
     public static void applyFrameBlending(GraphicsResourceAllocator allocator, float fps, int refreshRate) {
         Minecraft client = Minecraft.getInstance();
-        RenderTarget main = client.getMainTarget();
+        RenderTarget main = client.getMainRenderTarget();
         updateSmoothedFPS(fps);
         if (refreshRate <= 0) {
             historyWriteIndex = 0;
@@ -215,7 +215,7 @@ public final class FrameBlendingManager {
 
     private static void applyAccumulationInternal(GraphicsResourceAllocator allocator, float strength, String shaderName, boolean isMax) {
         Minecraft client = Minecraft.getInstance();
-        RenderTarget main = client.getMainTarget();
+        RenderTarget main = client.getMainRenderTarget();
         ensureTargets(main.width, main.height);
         if (!accumHasPrevious) {
             copyTexture(main, accumReadTarget);
@@ -328,7 +328,7 @@ public final class FrameBlendingManager {
     }
 
     private static void writeFloatUBO(GpuBuffer ubo, float value) {
-        try (GpuBuffer.View view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
+        try (GpuBuffer.MappedView view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
             Std140Builder b = Std140Builder.intoBuffer(view.data());
             b.putFloat(value);
             b.putInt(0);
@@ -338,7 +338,7 @@ public final class FrameBlendingManager {
     }
 
     private static void writeBlendParamsUBO(GpuBuffer ubo, float invTotalWeight, int sampleCount) {
-        try (GpuBuffer.View view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
+        try (GpuBuffer.MappedView view = RenderSystem.getDevice().createCommandEncoder().mapBuffer(ubo, false, true)) {
             Std140Builder b = Std140Builder.intoBuffer(view.data());
             b.putFloat(invTotalWeight);
             b.putInt(sampleCount);

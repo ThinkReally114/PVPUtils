@@ -14,6 +14,7 @@ import io.github.humbleui.skija.impl.Library;
 import io.github.humbleui.types.RRect;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.scores.TeamColor;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -140,7 +141,7 @@ public class DynamicIslandRenderer {
         if (client.player == null || client.getWindow() == null) {
             return;
         }
-        if (client.getScreen() instanceof AbstractContainerScreen<?>) {
+        if (client.screen instanceof AbstractContainerScreen<?>) {
             return;
         }
 
@@ -933,9 +934,9 @@ public class DynamicIslandRenderer {
         if (prefixColor != null) {
             return prefixColor;
         }
-        ChatFormatting formatting = team.getColor();
-        if (formatting != null && formatting.getColor() != null) {
-            return 0xFF000000 | (formatting.getColor() & 0x00FFFFFF);
+        java.util.Optional<TeamColor> teamColor = team.getColor();
+        if (teamColor.isPresent()) {
+            return 0xFF000000 | (teamColor.get().rgb() & 0x00FFFFFF);
         }
         return fallbackColor;
     }
@@ -1065,7 +1066,7 @@ public class DynamicIslandRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
         } finally {
             pixmap.close();
         }

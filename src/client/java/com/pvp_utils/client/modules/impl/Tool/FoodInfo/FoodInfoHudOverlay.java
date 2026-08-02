@@ -56,7 +56,7 @@ public final class FoodInfoHudOverlay {
 
         Minecraft mc = Minecraft.getInstance();
         FoodData stats = player.getFoodData();
-        int ticks = mc.getGui() != null ? mc.getGui().hud.getGuiTicks() : 0;
+        int ticks = mc.gui != null ? mc.gui.hud.getGuiTicks() : 0;
         drawSaturationOverlay(graphics, 0.0f, stats.getSaturationLevel(), right, top, 1.0f, ticks, player);
 
         FoodInfoHelper.QueriedFoodResult food = FoodInfoHelper.queryHeldFood(player);
@@ -87,7 +87,7 @@ public final class FoodInfoHudOverlay {
         float gained = FoodInfoHelper.estimatedHealthIncrement(player, new ConsumableFood(food.modifiedFood(), food.consumable()));
         float currentHealth = player.getHealth();
         float modifiedHealth = Math.min(currentHealth + gained, player.getMaxHealth());
-        drawHealthOverlay(graphics, currentHealth, modifiedHealth, left, top, flashAlpha, Minecraft.getInstance().getGui().hud.getGuiTicks(), player);
+        drawHealthOverlay(graphics, currentHealth, modifiedHealth, left, top, flashAlpha, Minecraft.getInstance().gui.hud.getGuiTicks(), player);
     }
 
     private void drawSaturationOverlay(GuiGraphicsExtractor graphics, float saturationGained, float saturationLevel, int right, int top, float alpha, int ticks, Player player) {

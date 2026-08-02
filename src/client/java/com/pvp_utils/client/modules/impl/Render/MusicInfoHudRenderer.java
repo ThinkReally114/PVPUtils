@@ -81,7 +81,7 @@ public class MusicInfoHudRenderer {
         if (client.player == null || client.options.gui.hud.isHidden()) {
             return;
         }
-        if (client.getScreen() != null && !(client.getScreen() instanceof ChatScreen)) {
+        if (client.screen != null && !(client.screen instanceof ChatScreen)) {
             return;
         }
 
@@ -324,7 +324,7 @@ public class MusicInfoHudRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
         } finally {
             pixmap.close();
         }

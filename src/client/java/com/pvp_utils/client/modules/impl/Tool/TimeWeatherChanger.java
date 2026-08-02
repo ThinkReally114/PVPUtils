@@ -21,7 +21,7 @@ public final class TimeWeatherChanger {
 
         if (Config.timeChange) {
             long time = Math.floorMod(Config.clientTime, 24000);
-            level.setTimeFromServer(level.getGameTime(), time, false);
+            level.setTimeFromServer(time, false);
         }
 
         if (Config.weatherChange) {
@@ -37,7 +37,6 @@ public final class TimeWeatherChanger {
     }
 
     private static void saveWeather(ClientLevel level) {
-        savedRaining = level.getLevelData().hasRain();
         savedRainLevel = level.getRainLevel(1.0f);
         savedThunderLevel = level.getThunderLevel(1.0f);
     }

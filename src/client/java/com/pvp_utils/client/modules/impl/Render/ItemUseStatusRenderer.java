@@ -242,7 +242,7 @@ public final class ItemUseStatusRenderer {
 
     private UseState currentUseState(Minecraft client, long now) {
         if (client == null || client.player == null || client.level == null || client.gameMode == null) return null;
-        Screen screen = client.getScreen();
+        Screen screen = client.screen;
         if (screen != null) return null;
 
         if (mixinActive && now - lastMixinSampleTime < 250L) {
@@ -480,7 +480,7 @@ public final class ItemUseStatusRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
         } finally {
             pixmap.close();
         }

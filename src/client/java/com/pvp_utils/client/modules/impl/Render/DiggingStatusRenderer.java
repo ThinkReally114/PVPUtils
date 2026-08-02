@@ -38,7 +38,7 @@ public class DiggingStatusRenderer {
             return;
         }
 
-        Screen screen = client.getScreen();
+        Screen screen = client.screen;
         if (screen != null) {
             reset();
             return;

@@ -110,7 +110,7 @@ public class BlockCountDisplayRenderer {
         if (HudEditOverlay.getInstance().isActive()) return;
 
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.getScreen() != null) {
+        if (player == null || client.level == null || client.screen != null) {
             close();
             rightClicks.resetPressed();
             return;
@@ -142,7 +142,7 @@ public class BlockCountDisplayRenderer {
     public void triggerUse(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.getScreen() != null) return;
+        if (player == null || client.level == null || client.screen != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -159,7 +159,7 @@ public class BlockCountDisplayRenderer {
     public void recordPlacement(Minecraft client) {
         if (!isFeatureActive() || HudEditOverlay.getInstance().isActive()) return;
         LocalPlayer player = client.player;
-        if (player == null || client.level == null || client.getScreen() != null) return;
+        if (player == null || client.level == null || client.screen != null) return;
         ItemStack stack = player.getMainHandItem();
         if (!(stack.getItem() instanceof BlockItem)) return;
 
@@ -188,7 +188,7 @@ public class BlockCountDisplayRenderer {
         Minecraft client = Minecraft.getInstance();
         LocalPlayer player = client.player;
         boolean editActive = HudEditOverlay.getInstance().isActive();
-        if (player == null || client.level == null || (client.getScreen() != null && !editActive)) {
+        if (player == null || client.level == null || (client.screen != null && !editActive)) {
             close();
             updateScale(System.currentTimeMillis());
             return;
@@ -270,7 +270,7 @@ public class BlockCountDisplayRenderer {
         graphics.pose().translate(-ringCx, -ringCy);
         graphics.fakeItem(displayStack, itemX, itemY);
         graphics.itemDecorations(client.font, displayStack, itemX, itemY);
-        graphics.flushDeferredElements();
+        // flushDeferredElements was removed in MC 26.2
         graphics.pose().popMatrix();
     }
 
@@ -486,7 +486,7 @@ public class BlockCountDisplayRenderer {
             ByteBuffer buf = MemoryUtil.memByteBuffer(addr, byteSize);
             GpuTexture gpuTexture = targetTexture.getTexture();
             RenderSystem.getDevice().createCommandEncoder()
-                    .writeToTexture(gpuTexture, buf, NativeImage.Format.RGBA, 0, 0, 0, 0, width, height);
+                    .writeToTexture(gpuTexture, buf, 0, 0, 0, 0, width, height);
         } finally {
             pixmap.close();
         }
