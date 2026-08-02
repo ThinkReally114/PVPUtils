@@ -111,7 +111,7 @@ public class FakePlayerManager {
         fakePlayer.hurtTime = 10;
         fakePlayer.hurtDuration = 10;
         fakePlayer.animateHurt((float) client.player.getYRot());
-        fakePlayer.knockback(0.45, -look.x, -look.z);
+        fakePlayer.knockback(0.45, -look.x, -look.z, fakePlayer.damageSources().generic(), 0.0f, false);
         if (fakePlayer.getHealth() - damage <= 0.0f && totem && fakePlayer.getOffhandItem().is(Items.TOTEM_OF_UNDYING)) {
             triggerTotem(client);
             return true;

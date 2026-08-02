@@ -31,7 +31,7 @@ public class TermsScreen extends Screen {
     public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         graphics.fill(0, 0, this.width, this.height, 0xE6000000);
         int center = this.width / 2;
-        graphics.text(this.font, this.title, center - this.font.width(this.title) / 2f, 36, 0xFFFFFFFF, false);
+        graphics.text(this.font, this.title.getString(), (int)(center - this.font.width(this.title) / 2f), 36, 0xFFFFFFFF, false);
 
         if (Config.isChinese) {
             drawCentered(graphics, "本模组包含可能被部分服务器限制的功能，请先阅读规则文件。", center, 82, 0xFFFFFFFF);
@@ -61,7 +61,7 @@ public class TermsScreen extends Screen {
             fill = brighten(fill);
         }
         graphics.fill(x, y, x + w, y + h, fill);
-        graphics.text(this.font, text, x + w / 2f - this.font.width(text) / 2f, y + 7, 0xFFFFFFFF, false);
+        graphics.text(this.font, text, (int)(x + w / 2f - this.font.width(text) / 2f), y + 7, 0xFFFFFFFF, false);
     }
 
     private int brighten(int color) {
@@ -73,7 +73,7 @@ public class TermsScreen extends Screen {
     }
 
     private void drawCentered(GuiGraphicsExtractor graphics, String text, int x, int y, int color) {
-        graphics.text(this.font, text, x - this.font.width(text) / 2f, y, color, false);
+        graphics.text(this.font, text, (int)(x - this.font.width(text) / 2f), y, color, false);
     }
 
     @Override

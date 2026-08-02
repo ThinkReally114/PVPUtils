@@ -21,7 +21,7 @@ public final class TimeWeatherChanger {
 
         if (Config.timeChange) {
             long time = Math.floorMod(Config.clientTime, 24000);
-            level.setTimeFromServer(time, false);
+            level.setTimeFromServer(time);
         }
 
         if (Config.weatherChange) {

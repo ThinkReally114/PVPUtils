@@ -93,7 +93,7 @@ public final class BetterScoreboardManager {
         if (client.level != null) {
             Objective objective = client.level.getScoreboard().getDisplayObjective(DisplaySlot.SIDEBAR);
             if (objective != null && client.gui != null) {
-                lastRect = measure(client.getFont(), guiW > 0 ? guiW : client.getWindow().getGuiScaledWidth(), guiH > 0 ? guiH : client.getWindow().getGuiScaledHeight(), objective);
+                lastRect = measure(client.gui.getFont(), guiW > 0 ? guiW : client.getWindow().getGuiScaledWidth(), guiH > 0 ? guiH : client.getWindow().getGuiScaledHeight(), objective);
                 return lastRect;
             }
         }
@@ -141,7 +141,7 @@ public final class BetterScoreboardManager {
     }
 
     private static Rect measure(GuiGraphicsExtractor graphics, Objective objective) {
-        return measure(Minecraft.getInstance().getFont(), graphics.guiWidth(), graphics.guiHeight(), objective);
+        return measure(Minecraft.getInstance().gui.getFont(), graphics.guiWidth(), graphics.guiHeight(), objective);
     }
 
     private static Rect measure(Font font, int guiW, int guiH, Objective objective) {

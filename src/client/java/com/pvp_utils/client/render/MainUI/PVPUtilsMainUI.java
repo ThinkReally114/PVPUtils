@@ -167,7 +167,7 @@ public class PVPUtilsMainUI extends Screen {
             }));
         }
         buttons.add(new MenuButton("Options", "\uE8B8", () -> {
-            if (this.minecraft != null) this.minecraft.gui.setScreen(new OptionsScreen(returnParent(), this.minecraft.options));
+            if (this.minecraft != null) this.minecraft.gui.setScreen(new OptionsScreen(returnParent(), this.minecraft.options, false));
         }));
         buttons.add(new MenuButton("Shutdown", "\uE8AC", () -> {
             if (this.minecraft != null) this.minecraft.stop();
