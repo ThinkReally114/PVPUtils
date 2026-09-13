@@ -6,7 +6,7 @@ import com.mojang.blaze3d.opengl.GlTexture;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pvp_utils.Config;
 import com.pvp_utils.client.NeteaseMusic.LyricLine;
-import com.pvp_utils.client.NeteaseMusic.LyricLineProcessor;
+import com.pvp_utils.client.gui.clickgui.theme.ClickGuiThemeColors;
 import com.pvp_utils.client.render.font.FontRenderer;
 import com.pvp_utils.client.render.skia.SkiaGlBackend;
 import com.pvp_utils.client.render.skia.SkiaRenderer;
@@ -61,12 +61,18 @@ public class NeteaseMusicScreen extends SkiaScreen {
     private static final float BASE_UI_W = 740f;
     private static final float BASE_UI_H = 500f;
     private static final float SCREEN_MARGIN = 24f;
+    private static final float CARD_W = 780f;
+    private static final float CARD_H = 500f;
+    private static final float CARD_RADIUS = 16f;
+    private static final float CARD_SIDEBAR_W = 190f;
     private static final ExecutorService IO = Executors.newCachedThreadPool(runnable -> {
         Thread thread = new Thread(runnable, "PVPUtils-NeteaseMusicUi");
         thread.setDaemon(true);
         return thread;
     });
 
+    private ClickGuiThemeColors tc;
+    private float cardX, cardY;
     private final SkiaGlBackend glBackend = new SkiaGlBackend();
     private final Paint uiPaint = new Paint().setAntiAlias(true);
     private final List<Song> songs = new ArrayList<>();
@@ -78,6 +84,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
     private final Map<String, Float> sidebarSelectAnimations = new HashMap<>();
     private final Map<String, Float> coverHoverAnimations = new HashMap<>();
     private final Map<String, Float> playerButtonPressAnimations = new HashMap<>();
+    private final Map<String, Float> iconHoverAnimations = new HashMap<>();
     private long openStartedAt;
     private long closeStartedAt;
     private boolean closing;
@@ -191,6 +198,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
             pendingFrame = false;
             return;
         }
+        tc = ClickGuiThemeColors.current();
         int mouseX = pendingMouseX;
         int mouseY = pendingMouseY;
         AnimationState animation = animationState();
@@ -205,6 +213,8 @@ public class NeteaseMusicScreen extends SkiaScreen {
         float uiScale = getUiScale(actualW, actualH);
         int layoutW = layoutWidth(actualW, uiScale);
         int layoutH = layoutHeight(actualH, uiScale);
+        cardX = (layoutW - CARD_W) / 2f;
+        cardY = (layoutH - CARD_H) / 2f;
         float uiOffsetX = uiOffsetX(actualW, layoutW, uiScale);
         float uiOffsetY = uiOffsetY(actualH, layoutH, uiScale);
         activeUiScale = uiScale;
@@ -284,38 +294,43 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void renderBackdropSkia(Canvas canvas, int w, int h, int alpha) {
-        fill(canvas, 0, 0, w, h, withAlpha(0x111315, Math.round(alpha * 0.68F)));
-        fill(canvas, 0, 0, w, h, withAlpha(0x07120E, Math.round(alpha * 0.25F)));
+        fill(canvas, 0, 0, w, h, withAlpha(0x000000, Math.round(alpha * 0.45F)));
     }
 
     private void renderUiBackgroundSkia(Canvas canvas, int alpha) {
-        fill(canvas, 0, 0, SIDEBAR_WIDTH, height, withAlpha(0x1E1D17, Math.round(alpha * 0.64F)));
-        fill(canvas, 0, height - PLAYER_HEIGHT, width, height, withAlpha(0x111315, Math.round(alpha * 0.78F)));
+        rounded(canvas, cardX, cardY, CARD_W, CARD_H, CARD_RADIUS, withAlpha(tc.window, Math.round(alpha * 0.95F)));
+        canvas.save();
+        canvas.clipRRect(RRect.makeXYWH(cardX, cardY, CARD_W, CARD_H, CARD_RADIUS), true);
+        rounded(canvas, cardX, cardY, CARD_SIDEBAR_W, CARD_H, CARD_RADIUS, withAlpha(tc.sidebar, Math.round(alpha * 0.64F)));
+        fill(canvas, cardX + CARD_SIDEBAR_W - 1, cardY + 14, cardX + CARD_SIDEBAR_W, cardY + CARD_H - 14, withAlpha(tc.border, Math.round(alpha * 0.25F)));
+        fill(canvas, cardX, cardY + CARD_H - PLAYER_HEIGHT, cardX + CARD_W, cardY + CARD_H, withAlpha(tc.window, Math.round(alpha * 0.78F)));
+        fill(canvas, cardX + CARD_SIDEBAR_W, cardY + CARD_H - PLAYER_HEIGHT, cardX + CARD_W, cardY + CARD_H - PLAYER_HEIGHT + 1, withAlpha(tc.border, Math.round(alpha * 0.18F)));
+        canvas.restore();
     }
 
     private void renderSidebarSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        searchInputX = 12;
-        searchInputY = 14;
-        searchInputW = SIDEBAR_WIDTH - 24;
+        searchInputX = Math.round(cardX + 14);
+        searchInputY = Math.round(cardY + 14);
+        searchInputW = Math.round(CARD_SIDEBAR_W - 28);
         searchInputH = 22;
         drawInputSkia(canvas, searchInputX, searchInputY, searchInputW, searchInputH, mouseX, mouseY, query,
                 Config.isChinese ? "\u641c\u7d22..." : "Search...", Focus.SEARCH, alpha);
-        drawSidebarItemSkia(canvas, 14, 74, SIDEBAR_WIDTH - 28, "Home", viewMode == ViewMode.HOME, mouseX, mouseY, alpha, "home");
+        drawSidebarItemSkia(canvas, Math.round(cardX + 16), Math.round(cardY + 74), Math.round(CARD_SIDEBAR_W - 30), "Home", viewMode == ViewMode.HOME, mouseX, mouseY, alpha, "home");
         if (NeteaseMusicApi.isLoggedIn()) {
-            int y = 136;
+            int y = Math.round(cardY + 116);
             for (int i = 0; i < Math.min(12, playlists.size()); i++) {
                 Playlist playlist = playlists.get(i);
-                drawSidebarItemSkia(canvas, 24, y, SIDEBAR_WIDTH - 36, trim(playlist.name(), 17), selectedPlaylistIndex == i, mouseX, mouseY, alpha, "playlist:" + playlist.id());
+                drawSidebarItemSkia(canvas, Math.round(cardX + 26), y, Math.round(CARD_SIDEBAR_W - 40), trim(playlist.name(), 17), selectedPlaylistIndex == i, mouseX, mouseY, alpha, "playlist:" + playlist.id());
                 y += 28;
             }
         }
-        int avatarY = height - PLAYER_HEIGHT - 34;
-        fill(canvas, 0, height - PLAYER_HEIGHT - 50, SIDEBAR_WIDTH, height - PLAYER_HEIGHT, withAlpha(0x0D1412, Math.round(alpha * 0.55F)));
+        int avatarY = Math.round(cardY + CARD_H - PLAYER_HEIGHT - 34);
+        fill(canvas, Math.round(cardX), Math.round(cardY + CARD_H - PLAYER_HEIGHT - 50), Math.round(cardX + CARD_SIDEBAR_W), Math.round(cardY + CARD_H - PLAYER_HEIGHT), withAlpha(tc.sidebar, Math.round(alpha * 0.55F)));
         NeteaseMusicApi.LoginSession session = NeteaseMusicApi.currentSession();
         if (session != null && !session.avatarUrl().isBlank()) {
-            renderCoverSkia(canvas, session.avatarUrl(), 14, avatarY, 18, alpha, 9f);
+            renderCoverSkia(canvas, session.avatarUrl(), cardX + 16, avatarY, 18, alpha, 9f);
         } else {
-            rounded(canvas, 14, avatarY, 18, 18, 9f, withAlpha(0xDDEBFF, alpha));
+            rounded(canvas, cardX + 16, avatarY, 18, 18, 9f, withAlpha(tc.subModule, alpha));
         }
     }
 
@@ -325,9 +340,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
         float current = approach(sidebarSelectAnimations.getOrDefault(key, 0.0F), target, 0.18F);
         if (current < 0.01F) sidebarSelectAnimations.remove(key); else sidebarSelectAnimations.put(key, current);
         if (current > 0.01F) {
-            rounded(canvas, x - 6, y - 6, w + 6, 22, 6f, withAlpha(selected ? 0x30342D : 0x242830, Math.round(alpha * 0.58F * current)));
+            rounded(canvas, x - 6, y - 6, w + 6, 22, 8f, withAlpha(selected ? tc.indicator : tc.hoverBackground, Math.round(alpha * 0.58F * current)));
         }
-        if (selected) fill(canvas, x - 6, y - 2, x - 3, y + 12, withAlpha(0xE60012, Math.round(alpha * current)));
+        if (selected) fill(canvas, x - 6, y - 2, x - 3, y + 12, withAlpha(tc.accent, Math.round(alpha * current)));
     }
 
     private void renderContentSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
@@ -337,139 +352,169 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void renderHomeSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        int gridX = SIDEBAR_WIDTH + 22;
-        int gridY = 82;
-        int availableW = Math.max(1, width - gridX - 24);
+        int gridX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - gridX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
         int rowH = cardW + GRID_TEXT_HEIGHT;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH);
         if (recommendedPlaylists.isEmpty()) return;
         GridScroll scroll = gridScroll(visualFirstPlaylistIndex, columns, rowH, maxPlaylistGridStart(columns, visibleRows * columns));
-        int visibleCards = (visibleRows + 1) * columns;
-        preloadPlaylistCovers(scroll.base(), visibleCards + columns * 2);
-        int clipBottom = height - PLAYER_HEIGHT - 16;
-        if (!safeClipRect(canvas, gridX - 8, gridY, gridX + availableW + 8, clipBottom)) return;
-        try {
-            for (int slot = 0; slot < visibleCards; slot++) {
-                int index = scroll.base() + slot;
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(gridX - 8, gridY - 8, availableW + 16, visibleRows * rowH + 16));
+        for (int row = 0; row < visibleRows + 1; row++) {
+            for (int col = 0; col < columns; col++) {
+                int index = row * columns + col;
                 if (index >= recommendedPlaylists.size()) break;
-                int x = gridX + (slot % columns) * (cardW + GRID_GAP);
-                int y = Math.round(gridY + (slot / columns) * rowH - scroll.offset());
-                if (y > clipBottom || y + cardW + 30 < gridY) continue;
-                Playlist playlist = recommendedPlaylists.get(index);
-                boolean hovered = hit(x, y, cardW, cardW + 30, mouseX, mouseY);
-                if (hovered) rounded(canvas, x - 5, y - 5, cardW + 10, cardW + 38, 16f, withAlpha(0x252A31, Math.round(alpha * 0.70F)));
-                renderRoundedCoverSkia(canvas, playlist.coverUrl(), x, y, cardW, alpha, 15f, hoverProgress("playlist:" + playlist.id(), hovered));
+                float progress = clamp((contentAppearProgress() * 1.18F) - index * 0.025F);
+                float x = gridX + col * (cardW + GRID_GAP);
+                float y = gridY + row * rowH - scroll.offset() + Math.round((1.0F - progress) * 10.0F);
+                if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < gridY) continue;
+                boolean hovered = hit(Math.round(x - 4), Math.round(y - 4), Math.round(cardW + 8), Math.round(cardW + 38), mouseX, mouseY);
+                boolean selected = index == selectedPlaylistIndex;
+                if (hovered) rounded(canvas, x - 5, y - 5, cardW + 10, cardW + 38, 10f, withAlpha(tc.hoverBackground, Math.round(alpha * 0.70F)));
+                if (selected) rounded(canvas, x - 5, y - 5, cardW + 10, cardW + 38, 10f, withAlpha(tc.indicator, Math.round(alpha * 0.42F)));
+                renderCoverSkia(canvas, recommendedPlaylists.get(index).coverUrl(), x, y, cardW, Math.round(alpha * progress), 10f);
             }
-        } finally { canvas.restore(); }
-        renderPlaylistGridSliderSkia(canvas, gridX + availableW + 8, gridY, visibleRows * rowH - 12, columns, visibleRows * columns, mouseX, mouseY, alpha);
+        }
+        canvas.restore();
+        renderPlaylistGridSliderSkia(canvas, Math.round(gridX + availableW + 8), gridY, visibleRows * rowH - 12, columns, visibleRows * columns, mouseX, mouseY, alpha);
     }
 
     private void renderSongGridSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        int gridX = SIDEBAR_WIDTH + 22;
-        int gridY = 72;
-        int availableW = Math.max(1, width - gridX - 24);
+        int gridX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - gridX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
         int rowH = cardW + GRID_TEXT_HEIGHT;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH);
         if (songs.isEmpty()) return;
-        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxGridStart(columns, visibleRows * columns));
-        int visibleCards = (visibleRows + 1) * columns;
-        preloadSongCovers(scroll.base(), visibleCards + columns * 2);
-        int clipBottom = height - PLAYER_HEIGHT - 16;
-        if (!safeClipRect(canvas, gridX - 8, gridY, gridX + availableW + 8, clipBottom)) return;
-        try {
-            for (int slot = 0; slot < visibleCards; slot++) {
-                int index = scroll.base() + slot;
+        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxSongGridStart(columns, visibleRows * columns));
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(gridX - 8, gridY - 8, availableW + 16, visibleRows * rowH + 16));
+        for (int row = 0; row < visibleRows + 1; row++) {
+            for (int col = 0; col < columns; col++) {
+                int index = row * columns + col;
                 if (index >= songs.size()) break;
-                int x = gridX + (slot % columns) * (cardW + GRID_GAP);
-                int y = Math.round(gridY + (slot / columns) * rowH - scroll.offset());
-                if (y > clipBottom || y + cardW + 30 < gridY) continue;
+                float progress = clamp((contentAppearProgress() * 1.18F) - index * 0.025F);
+                float x = gridX + col * (cardW + GRID_GAP);
+                float y = gridY + row * rowH - scroll.offset() + Math.round((1.0F - progress) * 10.0F);
+                if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < gridY) continue;
                 Song song = songs.get(index);
-                boolean current = song.equals(MusicPlaybackService.INSTANCE.currentSong());
-                boolean hovered = hit(x, y, cardW, cardW + 30, mouseX, mouseY);
-                if (current || hovered) rounded(canvas, x - 5, y - 5, cardW + 10, cardW + 38, 16f, withAlpha(current ? 0x1D355E : 0x252A31, Math.round(alpha * 0.70F)));
-                renderRoundedCoverSkia(canvas, song.image(), x, y, cardW, alpha, 15f, hoverProgress("song:" + song.id(), hovered));
+                boolean hovered = hit(Math.round(x - 4), Math.round(y - 4), Math.round(cardW + 8), Math.round(cardW + 38), mouseX, mouseY);
+                boolean current = MusicPlaybackService.INSTANCE.getId() == song.id();
+                if (current || hovered) rounded(canvas, x - 5, y - 5, cardW + 10, cardW + 38, 10f, withAlpha(current ? tc.indicator : tc.hoverBackground, Math.round(alpha * 0.70F)));
+                renderCoverSkia(canvas, song.image(), x, y, cardW, Math.round(alpha * progress), 10f);
             }
-        } finally { canvas.restore(); }
-        renderGridSliderSkia(canvas, gridX + availableW + 8, gridY, visibleRows * rowH - 12, columns, visibleRows * columns, mouseX, mouseY, alpha);
+        }
+        canvas.restore();
+        renderGridSliderSkia(canvas, mouseX, mouseY, alpha, scroll);
     }
 
-    private void renderPlaylistDetailSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        float appear = contentAppearProgress();
-        int localAlpha = Math.round(alpha * appear);
-        int contentX = SIDEBAR_WIDTH + 28;
-        int contentY = 24 + Math.round((1.0F - appear) * 18.0F);
-        int cover = playlistCoverSize();
-        Playlist playlist = currentPlaylist;
-        if (playlist != null) {
-            rounded(canvas, contentX - 10, contentY - 10, cover + 20, cover + 20, 16f, withAlpha(0x000000, Math.round(localAlpha * 0.22F)));
-            renderCoverSkia(canvas, playlist.coverUrl(), contentX, contentY, cover, localAlpha, 12f);
-            int infoX = contentX + cover + 24;
-            int buttonY = contentY + cover - 46;
-            drawRedButtonSkia(canvas, infoX, buttonY, 86, 26, mouseX, mouseY, localAlpha);
-            drawRedButtonSkia(canvas, infoX + 102, buttonY, 112, 26, mouseX, mouseY, localAlpha);
-            playlistSearchInputX = infoX + 232;
-            playlistSearchInputY = buttonY + 1;
-            playlistSearchInputW = Math.max(128, Math.min(220, width - playlistSearchInputX - 28));
-            playlistSearchInputH = 24;
-            drawInputSkia(canvas, playlistSearchInputX, playlistSearchInputY, playlistSearchInputW, playlistSearchInputH, mouseX, mouseY, playlistSearchQuery, Config.isChinese ? "\u641c\u7d22\u6b4c\u66f2..." : "Filter songs...", Focus.PLAYLIST_SEARCH, localAlpha);
+        private void renderPlaylistDetailSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int contentY = Math.round(cardY + 22);
+        int listX = contentX;
+        int listW = Math.round(CARD_W - CARD_SIDEBAR_W - 46);
+        int listY = contentY + 128;
+        int listH = (int) (CARD_H - PLAYER_HEIGHT - 128 - 16);
+        if (songs.isEmpty() && !loading) return;
+        float localAlpha = clamp(alpha * (1.0F - visualTransitionProgress()) + alpha * visualTransitionProgress());
+        int cover = Math.min(180, Math.round(listW * 0.26f));
+        if (currentPlaylist != null) {
+            float coverY = contentY - 8f;
+            renderCoverSkia(canvas, currentPlaylist.coverUrl(), contentX, coverY, cover, alpha, 14f);
         }
-        int listY = contentY + cover + 48;
-        int listW = width - contentX - 26;
-        int rowH = 42;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - listY - 10) / rowH);
-        float listVisual = Math.max(0.0F, Math.min(Math.max(0, songs.size() - visibleRows), visualFirstSongIndex));
-        int base = (int) Math.floor(listVisual);
-        float offset = (listVisual - base) * rowH;
-        preloadSongCovers(base, visibleRows + 8);
-        int clipBottom = height - PLAYER_HEIGHT - 8;
-        if (!safeClipRect(canvas, contentX, listY, contentX + listW, clipBottom)) return;
-        try {
-            for (int row = 0; row < visibleRows + 2; row++) {
-                int index = base + row;
-                if (index >= songs.size()) break;
-                float rowProgress = clamp((appear * 1.18F) - row * 0.025F);
-                int y = Math.round(listY + row * rowH - offset + (1.0F - rowProgress) * 10.0F);
-                if (y > clipBottom || y + rowH < listY) continue;
-                Song song = songs.get(index);
-                boolean current = song.equals(MusicPlaybackService.INSTANCE.currentSong());
-                boolean hovered = hit(contentX, y, listW, rowH - 5, mouseX, mouseY);
-                rounded(canvas, contentX, y, listW, rowH - 5, 7f, withAlpha(current ? 0x263754 : 0x2A2A2A, Math.round(localAlpha * rowProgress * (current ? 0.46F : hovered ? 0.36F : 0.22F))));
-                renderCoverSkia(canvas, song.image(), contentX + 58, y + 6, 30, Math.round(localAlpha * rowProgress), 5f);
-            }
-        } finally { canvas.restore(); }
+        int rowH = Math.round(listH / Math.max(1, visibleRowCount(listH)));
+        int visibleRows = visibleRowCount(listH);
+        int maxStart = Math.max(0, songs.size() - visibleRows);
+        float rawVisualStart = visualFirstSongIndex;
+        int visualBase = Math.max(0, Math.min(maxStart, Math.round(rawVisualStart)));
+        float rowOffset = (rawVisualStart - visualBase) * rowH;
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(listX - 2, listY - 2, listW + 4, listH + 4));
+        int y = Math.round(listY - rowOffset);
+        for (int row = 0; row < visibleRows + 1; row++) {
+            int index = visualBase + row;
+            if (index >= songs.size()) break;
+            float rowProgress = clamp((localAlpha * 1.18F) - row * 0.025F);
+            int rowY = Math.round(listY + row * rowH - rowOffset + Math.round((1.0F - rowProgress) * 10.0F));
+            if (rowY > cardY + CARD_H - PLAYER_HEIGHT || rowY + rowH < listY) continue;
+            int scrollVal = scrollFadeAlpha(alpha, rowY, listY, (int) (cardY + CARD_H - PLAYER_HEIGHT - 8));
+            float tempAlpha = scrollVal * rowProgress;
+            int rowAlpha = (int) Math.round(tempAlpha);
+            Song song = songs.get(index);
+            boolean hovered = hit(contentX, rowY, listW, rowH, mouseX, mouseY);
+            boolean current = MusicPlaybackService.INSTANCE.getId() == song.id();
+            rounded(canvas, contentX, rowY, listW, rowH - 5, 8f, withAlpha(current ? tc.indicator : tc.hoverBackground, Math.round(localAlpha * rowProgress * (current ? 0.46F : hovered ? 0.36F : 0.22F))));
+            y += rowH;
+        }
+        canvas.restore();
     }
 
     private void renderPlayerSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        MusicPlaybackService player = MusicPlaybackService.INSTANCE;
-        int y = height - PLAYER_HEIGHT;
-        Song current = player.currentSong();
-        if (current != null) renderCoverSkia(canvas, current.image(), SIDEBAR_WIDTH + 44, y + 14, 48, alpha, 8f);
-        int controlX = playerControlStartX();
-        int controlY = y + 17;
-        renderVolumeSliderSkia(canvas, controlX + 232, controlY + 13, volumeSliderWidth(controlX), mouseX, mouseY, alpha);
-        int centerX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2;
-        renderProgressSkia(canvas, centerX - 160, y + 58, 320, alpha);
+        float playerY = cardY + CARD_H - PLAYER_HEIGHT;
+        float playerH = PLAYER_HEIGHT;
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(cardX, playerY, CARD_W, playerH));
+        float coverSize = 46;
+        float coverX = cardX + 22;
+        float coverY = playerY + (playerH - coverSize) / 2;
+        float textX = coverX + coverSize + 14;
+        float textMaxW = Math.max(100, cardX + CARD_W - 350 - textX);
+        float sliderX = textX;
+        float sliderW = textMaxW;
+        float sliderY = playerSliderY();
+        float iconBaseY = coverY + coverSize / 2;
+        float controlCenterX = playerControlCenterX();
+        float controlSpacing = playerControlSpacing();
+        float volumeX = playerVolumeX();
+        float volumeW = playerVolumeW();
+        MusicPlaybackService playback = MusicPlaybackService.INSTANCE;
+        boolean playing = playback.isPlaying();
+        float playHover = approach(playHoverProgress(), playing ? 1.0f : 0.0f, 0.12f);
+        float playScale = 0.9f + 0.1f * playHover;
+        renderCoverSkia(canvas, playback.getCoverUrl(), coverX, coverY, coverSize, alpha, 6f);
+        renderProgressSkia(canvas, mouseX, mouseY, alpha, sliderX, sliderY, sliderW);
+        renderVolumeSliderSkia(canvas, mouseX, mouseY, alpha, volumeX, sliderY, volumeW);
+        drawPlayerIcon(canvas, "\uE5DC", controlCenterX - controlSpacing, iconBaseY, 22, mouseX, mouseY, alpha, "prev");
+        drawPlayerIcon(canvas, playing ? "\uE036" : "\uE039", controlCenterX, iconBaseY, 28, mouseX, mouseY, playScale, alpha, "play");
+        drawPlayerIcon(canvas, "\uE044", controlCenterX + controlSpacing, iconBaseY, 22, mouseX, mouseY, alpha, "next");
+        canvas.restore();
     }
 
     private void renderVolumeSliderSkia(Canvas canvas, int x, int y, int w, int mouseX, int mouseY, int alpha) {
         float volume = draggingVolume && pendingVolume >= 0.0F ? pendingVolume : MusicPlaybackService.INSTANCE.volume();
         boolean hovered = hit(x - 4, y - 7, w + 8, 18, mouseX, mouseY);
-        rounded(canvas, x, y, w, 3, 1.5f, withAlpha(0xFFFFFF, Math.round(alpha * 0.22F)));
-        rounded(canvas, x, y, Math.round(w * clamp(volume)), 3, 1.5f, withAlpha(0xFFFFFF, alpha));
+        rounded(canvas, x, y, w, 3, 1.5f, withAlpha(tc.scrollbarTrack, Math.round(alpha * 0.5F)));
+        rounded(canvas, x, y, Math.round(w * clamp(volume)), 3, 1.5f, withAlpha(tc.accent, alpha));
         int knobX = x + Math.round(w * clamp(volume));
-        rounded(canvas, knobX - 2, y - 3, 4, 9, 2f, withAlpha(hovered || draggingVolume ? 0xFFFFFF : 0xAEB6C4, alpha));
+        rounded(canvas, knobX - 2, y - 3, 4, 9, 2f, withAlpha(hovered || draggingVolume ? tc.primaryText : tc.scrollbarThumb, alpha));
+    }
+
+    private void renderVolumeSliderSkia(Canvas canvas, int mouseX, int mouseY, int alpha, float x, float y, float w) {
+        renderVolumeSliderSkia(canvas, Math.round(x), Math.round(y), Math.round(w), mouseX, mouseY, alpha);
     }
 
     private void renderProgressSkia(Canvas canvas, int x, int y, int w, int alpha) {
         MusicPlaybackService player = MusicPlaybackService.INSTANCE;
         long total = player.totalDurationMs();
         float progress = draggingProgress && pendingProgress >= 0.0F ? pendingProgress : total <= 0L ? 0.0F : clamp(player.positionMs() / (float) total);
-        rounded(canvas, x, y, w, 3, 1.5f, withAlpha(0xFFFFFF, Math.round(alpha * 0.35F)));
-        rounded(canvas, x, y, Math.round(w * progress), 3, 1.5f, withAlpha(0xFFFFFF, alpha));
+        rounded(canvas, x, y, w, 3, 1.5f, withAlpha(tc.scrollbarTrack, Math.round(alpha * 0.5F)));
+        rounded(canvas, x, y, Math.round(w * progress), 3, 1.5f, withAlpha(tc.primaryText, alpha));
+    }
+
+    private void renderProgressSkia(Canvas canvas, int mouseX, int mouseY, int alpha, float x, float y, float w) {
+        MusicPlaybackService player = MusicPlaybackService.INSTANCE;
+        long total = player.totalDurationMs();
+        float progress = draggingProgress && pendingProgress >= 0.0F ? pendingProgress : total <= 0L ? 0.0F : clamp(player.positionMs() / (float) total);
+        rounded(canvas, x, y, w, 3, 1.5f, withAlpha(tc.scrollbarTrack, Math.round(alpha * 0.5F)));
+        rounded(canvas, x, y, Math.round(w * progress), 3, 1.5f, withAlpha(tc.primaryText, alpha));
+        int knobX = Math.round(x + w * progress);
+        boolean hovered = hit(Math.round(x - 4), Math.round(y - 7), Math.round(w + 8), 18, mouseX, mouseY);
+        rounded(canvas, knobX - 2, y - 3, 4, 9, 2f, withAlpha(hovered || draggingProgress ? tc.primaryText : tc.scrollbarThumb, alpha));
     }
 
     private void renderNowPlayingOverlaySkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
@@ -480,19 +525,18 @@ public class NeteaseMusicScreen extends SkiaScreen {
         if (progress <= 0.0F && nowPlayingClosing) { nowPlayingClosing = false; nowPlayingOpen = false; return; }
         float eased = easeOutCubic(progress);
         int overlayAlpha = Math.round(alpha * eased);
-        fill(canvas, 0, 0, width, height, withAlpha(0x05070A, Math.round(overlayAlpha * 0.92F)));
-        fill(canvas, 0, 0, width, height, withAlpha(0x111315, Math.round(overlayAlpha * 0.55F)));
+        fill(canvas, 0, 0, width, height, withAlpha(tc.window, Math.round(overlayAlpha * 0.92F)));
         int[] target = nowPlayingCoverRect();
         int coverX = Math.round(lerp(SIDEBAR_WIDTH + 44, target[0], eased));
         int coverY = Math.round(lerp(height - PLAYER_HEIGHT + 14, target[1], eased));
         int coverSize = Math.round(lerp(48, target[2], eased));
-        rounded(canvas, coverX - 18, coverY - 18, coverSize + 36, coverSize + 36, 24f, withAlpha(0x57C7FF, Math.round(overlayAlpha * 0.18F)));
+        rounded(canvas, coverX - 18, coverY - 18, coverSize + 36, coverSize + 36, 24f, withAlpha(tc.accent, Math.round(overlayAlpha * 0.18F)));
         renderCoverSkia(canvas, current.image(), coverX, coverY, coverSize, overlayAlpha, 18f);
         nowPlayingBackHovered = hit(26, 22, 38, 32, mouseX, mouseY);
         float total = player.totalDurationMs();
         float value = draggingProgress && pendingProgress >= 0.0F ? pendingProgress : total <= 0 ? 0F : clamp(player.positionMs() / total);
-        rounded(canvas, target[0], target[1] + target[2] + 88, target[2], 5, 2.5f, withAlpha(0xFFFFFF, Math.round(overlayAlpha * 0.24F)));
-        rounded(canvas, target[0], target[1] + target[2] + 88, Math.round(target[2] * value), 5, 2.5f, withAlpha(0xFFFFFF, overlayAlpha));
+        rounded(canvas, target[0], target[1] + target[2] + 88, target[2], 5, 2.5f, withAlpha(tc.scrollbarTrack, Math.round(overlayAlpha * 0.5F)));
+        rounded(canvas, target[0], target[1] + target[2] + 88, Math.round(target[2] * value), 5, 2.5f, withAlpha(tc.primaryText, overlayAlpha));
     }
 
     private void renderNowPlayingTextSkia(Canvas canvas, int alpha) {
@@ -503,45 +547,45 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int localAlpha = Math.round(alpha * eased);
         int[] cover = nowPlayingCoverRect();
         int textAlpha = Math.round(localAlpha * clamp((eased - 0.32F) / 0.68F));
-        FontRenderer.drawText(canvas, "\uE5C4", 35f, 46f, 25f, withAlpha(nowPlayingBackHovered ? 0xFFFFFF : 0xD8DEE8, textAlpha), FontRenderer.MATERIAL_SYMBOLS);
-        FontRenderer.drawText(canvas, trimToWidth(current.name(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 38f, 24f, withAlpha(0xFFFFFF, textAlpha));
-        FontRenderer.drawText(canvas, trimToWidth(current.displayArtist(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 64f, 14f, withAlpha(0xB8C0D4, textAlpha));
+        FontRenderer.drawText(canvas, "\uE5C4", 35f, 46f, 25f, withAlpha(nowPlayingBackHovered ? tc.primaryText : tc.mutedText, textAlpha), FontRenderer.MATERIAL_SYMBOLS);
+        FontRenderer.drawText(canvas, trimToWidth(current.name(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 38f, 24f, withAlpha(tc.primaryText, textAlpha));
+        FontRenderer.drawText(canvas, trimToWidth(current.displayArtist(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 64f, 14f, withAlpha(tc.secondaryText, textAlpha));
         long total = player.totalDurationMs();
         long position = draggingProgress && total > 0L && pendingProgress >= 0.0F ? Math.round(total * pendingProgress) : player.positionMs();
-        FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(position), cover[0], cover[1] + cover[2] + 105f, 11f, withAlpha(0x8F98AA, textAlpha));
+        FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(position), cover[0], cover[1] + cover[2] + 105f, 11f, withAlpha(tc.mutedText, textAlpha));
         String right = MusicPlaybackService.formatTime(total);
-        FontRenderer.drawText(canvas, right, cover[0] + cover[2] - FontRenderer.measureTextWidth(right, 11f), cover[1] + cover[2] + 105f, 11f, withAlpha(0x8F98AA, textAlpha));
+        FontRenderer.drawText(canvas, right, cover[0] + cover[2] - FontRenderer.measureTextWidth(right, 11f), cover[1] + cover[2] + 105f, 11f, withAlpha(tc.mutedText, textAlpha));
         renderNowPlayingLyrics(canvas, player, textAlpha);
     }
 
-    private void renderLoginGateSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        fill(canvas, 0, 0, width, height, withAlpha(0x000000, Math.round(alpha * 0.62F)));
-        int w = 320;
-        int h = loginMode == LoginMode.QR ? 210 : 190;
-        int x = (width - w) / 2;
-        int y = (height - h) / 2;
+        private void renderLoginGateSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
+        int w = 260;
+        int h = 200;
+        float x = cardX + (CARD_W - w) / 2f;
+        float y = cardY + (CARD_H - h) / 2f;
         rounded(canvas, x - 8, y - 8, w + 16, h + 16, 12f, withAlpha(0x000000, Math.round(alpha * 0.35F)));
-        rounded(canvas, x, y, w, h, 10f, withAlpha(0x14181F, alpha));
-        fill(canvas, x, y, x + w, y + 2, withAlpha(0xD63B35, alpha));
-        drawSkiaCentered(canvas, "Netease Music Login", x + w / 2f, y + 28f, 14f, withAlpha(0xFFFFFF, alpha));
-        if (loginMode == LoginMode.PASSWORD) drawSkiaCentered(canvas, trim(statusText, 42), x + w / 2f, y + 45f, 11f, withAlpha(loading ? 0xE6C45B : 0xB8C0D4, alpha));
-        drawButtonSkia(canvas, x + 62, y + 52, 88, 22, mouseX, mouseY, "QR", alpha);
-        drawButtonSkia(canvas, x + 170, y + 52, 88, 22, mouseX, mouseY, "Password", alpha);
-        if (loginMode == LoginMode.QR) {
-            int qrX = x + 42;
-            int qrY = y + 88;
-            rounded(canvas, qrX, qrY, 96, 96, 4f, withAlpha(0xFFFFFF, alpha));
-            if (qrLogin != null && !qrLogin.qrImage().isBlank()) renderCoverSkia(canvas, qrLogin.qrImage(), qrX + 4, qrY + 4, 88, alpha, 0f);
-            else drawSkiaCentered(canvas, "QR", qrX + 48f, qrY + 54f, 14f, withAlpha(0x111111, alpha));
-            FontRenderer.drawText(canvas, Config.isChinese ? "\u4f7f\u7528\u7f51\u6613\u4e91\u97f3\u4e50\u626b\u7801" : "Scan with Netease app", qrX + 116f, qrY + 24f, 12f, withAlpha(0xFFFFFF, alpha));
-            drawButtonSkia(canvas, qrX + 116, qrY + 42, 110, 24, mouseX, mouseY, qrButtonText(), alpha);
+        rounded(canvas, x, y, w, h, 10f, withAlpha(tc.module, alpha));
+        fill(canvas, x, y, x + w, y + 2, withAlpha(tc.accent, alpha));
+        drawSkiaCentered(canvas, "Netease Music Login", x + w / 2, y + 34, 14f, withAlpha(tc.primaryText, alpha));
+        if (qrLogin != null) {
+            float qrSize = 96;
+            float qrX = x + (w - qrSize) / 2;
+            float qrY = y + 50;
+            rounded(canvas, qrX, qrY, qrSize, qrSize, 4f, withAlpha(tc.module, alpha));
+            Image qrImage = NeteaseMusicApi.qrImage(qrLogin.data());
+            if (qrImage != null) {
+                canvas.drawImageRect(qrImage, Rect.makeXYWH(0, 0, qrImage.getWidth(), qrImage.getHeight()), Rect.makeXYWH(qrX, qrY, qrSize, qrSize), uiPaint, true);
+            } else {
+                drawSkiaCentered(canvas, "QR", qrX + qrSize / 2, qrY + qrSize / 2 + 5, 16f, withAlpha(tc.primaryText, alpha));
+            }
+            FontRenderer.drawText(canvas, Config.isChinese ? "使用网易云音乐扫码" : "Scan with Netease app", qrX + qrSize + 20, qrY + 12, 12f, withAlpha(tc.primaryText, alpha));
+            FontRenderer.drawText(canvas, statusText, qrX + qrSize + 20, qrY + 40, 11f, withAlpha(tc.secondaryText, alpha));
         } else {
-            phoneInputX = x + 38;
-            passwordInputX = x + 38;
-            drawInputSkia(canvas, phoneInputX, y + 86, w - 76, 22, mouseX, mouseY, phone, Config.isChinese ? "\u624b\u673a\u53f7" : "Phone", Focus.PHONE, alpha);
-            drawInputSkia(canvas, passwordInputX, y + 116, w - 76, 22, mouseX, mouseY, "*".repeat(password.length()), Config.isChinese ? "\u5bc6\u7801" : "Password", Focus.PASSWORD, alpha);
-            drawButtonSkia(canvas, x + 106, y + 150, 108, 24, mouseX, mouseY, loading ? "..." : "Login", alpha);
+            FontRenderer.drawText(canvas, "Loading...", x + w / 2 - 30, y + 100, 14f, withAlpha(tc.secondaryText, alpha));
         }
+        int inputWidth = w - 32;
+        drawInputSkia(canvas, (int) (x + 16), (int) (y + h - 56), inputWidth, 22, mouseX, mouseY, phone, Config.isChinese ? "手机号..." : "Phone...", Focus.PHONE, alpha);
+        drawInputSkia(canvas, (int) (x + 16), (int) (y + h - 28), inputWidth, 22, mouseX, mouseY, password, Config.isChinese ? "密码..." : "Password...", Focus.PASSWORD, alpha);
     }
 
     private void renderGridSliderSkia(Canvas canvas, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
@@ -551,8 +595,21 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int knobH = Math.max(28, Math.round(h * (visibleCards / (float) songs.size())));
         int knobY = y + Math.round((h - knobH) * (visualFirstSongIndex / (float) maxStart));
         boolean hovered = hit(x - 4, y, 10, h, mouseX, mouseY);
-        rounded(canvas, x, y, 3, h, 1.5f, withAlpha(0xFFFFFF, Math.round(alpha * 0.16F)));
-        rounded(canvas, x - 1, knobY, 5, knobH, 2.5f, withAlpha(hovered || draggingSliderTarget == SliderTarget.SONG_GRID ? 0xFFFFFF : 0x8F98AA, alpha));
+        rounded(canvas, x, y, 3, h, 1.5f, withAlpha(tc.scrollbarTrack, Math.round(alpha * 0.5F)));
+        rounded(canvas, x - 1, knobY, 5, knobH, 2.5f, withAlpha(hovered || draggingSliderTarget == SliderTarget.SONG_GRID ? tc.primaryText : tc.scrollbarThumb, alpha));
+    }
+
+    private void renderGridSliderSkia(Canvas canvas, int mouseX, int mouseY, int alpha, GridScroll scroll) {
+        int gridX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - gridX - 24));
+        int x = Math.round(gridX + availableW + 8);
+        int gridY = Math.round(cardY + 82);
+        int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
+        int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
+        int rowH = cardW + GRID_TEXT_HEIGHT;
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH);
+        int visibleCards = visibleRows * columns;
+        renderGridSliderSkia(canvas, x, gridY, visibleRows * rowH - 12, columns, visibleCards, mouseX, mouseY, alpha);
     }
 
     private void renderPlaylistGridSliderSkia(Canvas canvas, int x, int y, int h, int columns, int visibleCards, int mouseX, int mouseY, int alpha) {
@@ -562,20 +619,20 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int knobH = Math.max(28, Math.round(h * (visibleCards / (float) recommendedPlaylists.size())));
         int knobY = y + Math.round((h - knobH) * (visualFirstPlaylistIndex / (float) maxStart));
         boolean hovered = hit(x - 4, y, 10, h, mouseX, mouseY);
-        rounded(canvas, x, y, 3, h, 1.5f, withAlpha(0xFFFFFF, Math.round(alpha * 0.16F)));
-        rounded(canvas, x - 1, knobY, 5, knobH, 2.5f, withAlpha(hovered || draggingSliderTarget == SliderTarget.PLAYLIST_GRID ? 0xFFFFFF : 0x8F98AA, alpha));
+        rounded(canvas, x, y, 3, h, 1.5f, withAlpha(tc.scrollbarTrack, Math.round(alpha * 0.5F)));
+        rounded(canvas, x - 1, knobY, 5, knobH, 2.5f, withAlpha(hovered || draggingSliderTarget == SliderTarget.PLAYLIST_GRID ? tc.primaryText : tc.scrollbarThumb, alpha));
     }
 
     private void renderCloseButtonSkia(Canvas canvas, int mouseX, int mouseY, int alpha) {
-        int x = width - 40, y = 8;
+        int x = Math.round(cardX + CARD_W - 40), y = Math.round(cardY + 8);
         boolean hovered = hit(x, y, 30, 30, mouseX, mouseY);
-        drawSkiaCentered(canvas, "\uE5CD", x + 15f, y + 22f, 21f, withAlpha(hovered ? 0xFF646B : 0xFFFFFF, alpha), FontRenderer.MATERIAL_SYMBOLS);
+        drawSkiaCentered(canvas, "\uE5CD", x + 15f, y + 22f, 21f, withAlpha(hovered ? tc.dangerHoverText : tc.primaryText, alpha), FontRenderer.MATERIAL_SYMBOLS);
     }
 
     private void drawInputSkia(Canvas canvas, int x, int y, int w, int h, int mouseX, int mouseY, String value, String placeholder, Focus field, int alpha) {
         boolean focused = focus == field;
         boolean hovered = hit(x, y, w, h, mouseX, mouseY);
-        rounded(canvas, x, y, w, h, 6f, withAlpha(focused || hovered ? 0x2B313C : 0x20242A, alpha));
+        rounded(canvas, x, y, w, h, 7f, withAlpha(focused || hovered ? tc.searchFocusedBackground : tc.searchBackground, alpha));
         int cursor = cursor(field);
         int selection = selectionAnchor(field);
         int start = Math.min(selection < 0 ? cursor : selection, cursor);
@@ -583,30 +640,30 @@ public class NeteaseMusicScreen extends SkiaScreen {
         if (focused && start != end) {
             float sx = x + 8f + FontRenderer.measureTextWidth(value.substring(0, Math.min(start, value.length())), 12f);
             float ex = x + 8f + FontRenderer.measureTextWidth(value.substring(0, Math.min(end, value.length())), 12f);
-            fill(canvas, sx, y + 3, ex, y + h - 3, withAlpha(0x57C7FF, Math.round(alpha * 0.42F)));
+            fill(canvas, sx, y + 3, ex, y + h - 3, withAlpha(tc.accent, Math.round(alpha * 0.42F)));
         }
-        if (value.isBlank() && !focused) FontRenderer.drawText(canvas, trimToWidth(placeholder, w - 16f), x + 8f, y + h * 0.65f, 12f, withAlpha(0x7E8799, alpha));
-        else FontRenderer.drawText(canvas, trimToWidth(value, w - 16f), x + 8f, y + h * 0.65f, 12f, withAlpha(0xFFFFFF, alpha));
+        if (value.isBlank() && !focused) FontRenderer.drawText(canvas, trimToWidth(placeholder, w - 16f), x + 8f, y + h * 0.65f, 12f, withAlpha(tc.searchTextPlaceholder, alpha));
+        else FontRenderer.drawText(canvas, trimToWidth(value, w - 16f), x + 8f, y + h * 0.65f, 12f, withAlpha(tc.searchText, alpha));
         if (focused && System.currentTimeMillis() / 500L % 2L == 0L) {
             float caretX = x + 8f + FontRenderer.measureTextWidth(value.substring(0, Math.min(cursor, value.length())), 12f);
-            fill(canvas, caretX, y + 4, caretX + 1, y + h - 4, withAlpha(0xFFFFFF, alpha));
+            fill(canvas, caretX, y + 4, caretX + 1, y + h - 4, withAlpha(tc.accent, alpha));
         }
     }
 
     private void drawButtonSkia(Canvas canvas, int x, int y, int w, int h, int mouseX, int mouseY, String text, int alpha) {
-        rounded(canvas, x, y, w, h, 6f, withAlpha(hit(x, y, w, h, mouseX, mouseY) ? 0x3A4558 : 0x262D3A, alpha));
-        drawSkiaCentered(canvas, text, x + w * 0.5f, y + h * 0.65f, 12f, withAlpha(0xFFFFFF, alpha));
+        rounded(canvas, x, y, w, h, 8f, withAlpha(hit(x, y, w, h, mouseX, mouseY) ? tc.hoverBackground : tc.buttonBackground, alpha));
+        drawSkiaCentered(canvas, text, x + w * 0.5f, y + h * 0.65f, 12f, withAlpha(tc.buttonText, alpha));
     }
 
     private void drawRedButtonSkia(Canvas canvas, int x, int y, int w, int h, int mouseX, int mouseY, int alpha) {
-        rounded(canvas, x, y, w, h, 7f, withAlpha(hit(x, y, w, h, mouseX, mouseY) ? 0xF0192D : 0xD80E22, alpha));
+        rounded(canvas, x, y, w, h, 8f, withAlpha(hit(x, y, w, h, mouseX, mouseY) ? tc.accent : tc.accent, alpha));
     }
 
     private void renderCoverSkia(Canvas canvas, String url, float x, float y, float size, int alpha, float radius) {
-        rounded(canvas, x, y, size, size, Math.max(0f, radius), withAlpha(0x273244, alpha));
+        rounded(canvas, x, y, size, size, Math.max(0f, radius), withAlpha(tc.subModule, alpha));
         Image image = NeteaseMusicCovers.skiaImage(url);
         if (image == null) {
-            drawSkiaCentered(canvas, "Music", x + size * 0.5f, y + size * 0.56f, Math.max(9f, size * 0.16f), withAlpha(0x57C7FF, alpha));
+            drawSkiaCentered(canvas, "Music", x + size * 0.5f, y + size * 0.56f, Math.max(9f, size * 0.16f), withAlpha(tc.accent, alpha));
             return;
         }
         canvas.save();
@@ -804,7 +861,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
 
         if (recommendedPlaylists.isEmpty()) {
-            String text = loading ? (Config.isChinese ? "加载中..." : "Loading...") : (NeteaseMusicApi.isLoggedIn() ? "No playlists" : "Login required");
+            String text = loading ? (Config.isChinese ? "加载�?.." : "Loading...") : (NeteaseMusicApi.isLoggedIn() ? "No playlists" : "Login required");
             graphics.drawCenteredString(font, text, gridX + availableW / 2, gridY + 70, withAlpha(0xB8C0D4, alpha));
             return;
         }
@@ -1058,18 +1115,18 @@ public class NeteaseMusicScreen extends SkiaScreen {
             int[] cover = nowPlayingCoverRect();
             float textAlphaFactor = clamp((eased - 0.32F) / 0.68F);
             int textAlpha = Math.round(localAlpha * textAlphaFactor);
-            int backColor = nowPlayingBackHovered ? 0xFFFFFF : 0xD8DEE8;
+            int backColor = nowPlayingBackHovered ? tc.primaryText : tc.mutedText;
             FontRenderer.drawText(canvas, "\uE5C4", 35f, 46f, 25f, withAlpha(backColor, textAlpha), FontRenderer.MATERIAL_SYMBOLS);
-            FontRenderer.drawText(canvas, trimToWidth(current.name(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 38f, 24f, withAlpha(0xFFFFFF, textAlpha));
-            FontRenderer.drawText(canvas, trimToWidth(current.displayArtist(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 64f, 14f, withAlpha(0xB8C0D4, textAlpha));
+            FontRenderer.drawText(canvas, trimToWidth(current.name(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 38f, 24f, withAlpha(tc.primaryText, textAlpha));
+            FontRenderer.drawText(canvas, trimToWidth(current.displayArtist(), cover[2] - 6f), cover[0], cover[1] + cover[2] + 64f, 14f, withAlpha(tc.secondaryText, textAlpha));
 
             long total = player.totalDurationMs();
             long position = draggingProgress && total > 0L && pendingProgress >= 0.0F ? Math.round(total * pendingProgress) : player.positionMs();
             String left = MusicPlaybackService.formatTime(position);
             String right = MusicPlaybackService.formatTime(total);
             float progressY = cover[1] + cover[2] + 105f;
-            FontRenderer.drawText(canvas, left, cover[0], progressY, 11f, withAlpha(0x8F98AA, textAlpha));
-            FontRenderer.drawText(canvas, right, cover[0] + cover[2] - FontRenderer.measureTextWidth(right, 11f), progressY, 11f, withAlpha(0x8F98AA, textAlpha));
+            FontRenderer.drawText(canvas, left, cover[0], progressY, 11f, withAlpha(tc.mutedText, textAlpha));
+            FontRenderer.drawText(canvas, right, cover[0] + cover[2] - FontRenderer.measureTextWidth(right, 11f), progressY, 11f, withAlpha(tc.mutedText, textAlpha));
 
             renderNowPlayingLyrics(canvas, player, textAlpha);
         } finally {
@@ -1087,7 +1144,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
             }
             lyrics = List.of(new LyricLine(current.name(), 0L), new LyricLine(current.displayArtist(), 60_000L));
         }
-        int currentIndex = Math.max(0, LyricLineProcessor.currentIndex(lyrics, player.positionMs()));
+        int currentIndex = Math.max(0, currentIndex(lyrics, player.positionMs()));
         Song current = player.currentSong();
         long songId = current == null ? Long.MIN_VALUE : current.id();
         if (songId != nowPlayingLyricSongId) {
@@ -1114,10 +1171,10 @@ public class NeteaseMusicScreen extends SkiaScreen {
                 float size = 17F + focus * 11F;
                 float y = centerY + delta * 68F;
                 String text = lyricText(line);
-                FontRenderer.drawText(canvas, trimToWidth(text, lyricsW), lyricsX, y, size, withAlpha(focus > 0.72F ? 0xFFFFFF : 0xAEB6C4, lineAlpha));
+                FontRenderer.drawText(canvas, trimToWidth(text, lyricsW), lyricsX, y, size, withAlpha(focus > 0.72F ? tc.primaryText : tc.secondaryText, lineAlpha));
                 String translation = line.translation() == null ? "" : line.translation().trim();
                 if (!translation.isBlank()) {
-                    FontRenderer.drawText(canvas, trimToWidth(translation, lyricsW), lyricsX, y + size + 11F, Math.max(12F, size * 0.52F), withAlpha(0x8F98AA, Math.round(lineAlpha * 0.84F)));
+                    FontRenderer.drawText(canvas, trimToWidth(translation, lyricsW), lyricsX, y + size + 11F, Math.max(12F, size * 0.52F), withAlpha(tc.mutedText, Math.round(lineAlpha * 0.84F)));
                 }
             }
         } finally {
@@ -1133,13 +1190,35 @@ public class NeteaseMusicScreen extends SkiaScreen {
         graphics.fill(x, y, x + Math.round(w * progress), y + 3, withAlpha(0xFFFFFF, alpha));
     }
 
+    private float playerControlCenterX() {
+        return cardX + CARD_W - 220;
+    }
+
+    private float playerControlSpacing() {
+        return 34;
+    }
+
+    private float playerVolumeX() {
+        return cardX + CARD_W - 120;
+    }
+
+    private float playerVolumeW() {
+        return 72;
+    }
+
+    private float playerSliderY() {
+        float coverSize = 46;
+        float playerY = cardY + CARD_H - PLAYER_HEIGHT;
+        float coverY = playerY + (PLAYER_HEIGHT - coverSize) / 2;
+        return coverY + 35;
+    }
+
     private int playerControlStartX() {
-        int centerX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2;
-        return Math.max(SIDEBAR_WIDTH + 250, centerX - 190);
+        return Math.round(playerVolumeX()) - 232;
     }
 
     private int volumeSliderWidth(int controlX) {
-        return Math.max(90, Math.min(150, width - controlX - 250));
+        return 72;
     }
 
     private void openNowPlaying() {
@@ -1192,7 +1271,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
     private String lyricText(LyricLine line) {
         if (line == null || line.text() == null || line.text().isBlank()) {
-            return Config.isChinese ? "纯音乐，请欣赏" : "Instrumental";
+            return "";
         }
         return line.text().trim();
     }
@@ -1415,10 +1494,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void renderPoweredBy(Canvas canvas, int alpha) {
-        String text = "Powered by GPT-5.6 Sol, Claude Opus 4.8 & Claude Fable 5.";
-        float size = 9.0F;
-        float textWidth = FontRenderer.measureTextWidth(text, size);
-        FontRenderer.drawText(canvas, text, width - textWidth - 10f, height - 8f, size, withAlpha(0x8A8F98, Math.round(alpha * 0.42F)));
+        String text = "Powered by Cadence";
+        float textW = FontRenderer.measureTextWidth(text, 9f);
+        FontRenderer.drawText(canvas, text, cardX + CARD_W - textW - 18, cardY + CARD_H - PLAYER_HEIGHT - 18, 9f, withAlpha(tc.mutedText, Math.round(alpha * 0.42F)));
     }
 
     private ViewMode mouseSafeViewMode() {
@@ -1426,31 +1504,27 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void renderSidebarSkiaText(Canvas canvas, int alpha, ViewMode mode) {
-        FontRenderer.drawText(canvas, "PVPUtils Music", 14f, 66f, 14f, withAlpha(0xBFC2C7, alpha));
-        float homeX = 14f;
-        FontRenderer.drawText(canvas, "\uE88A", homeX, 84f, 13f, withAlpha(mode == ViewMode.HOME ? 0xFFFFFF : 0xAEB3BD, alpha), FontRenderer.MATERIAL_SYMBOLS);
-        FontRenderer.drawText(canvas, "Home", homeX + 18f, 84f, 12f, withAlpha(mode == ViewMode.HOME ? 0xFFFFFF : 0xAEB3BD, alpha));
-        FontRenderer.drawText(canvas, Config.isChinese ? "我的歌单" : "My Playlists", 14f, 126f, 11f, withAlpha(0x7C8088, alpha));
-        if (!NeteaseMusicApi.isLoggedIn()) {
-            FontRenderer.drawText(canvas, Config.isChinese ? "登录后显示歌单" : "Login required", 24f, 146f, 11f, withAlpha(0x8F98AA, alpha));
-        } else if (playlists.isEmpty()) {
-            FontRenderer.drawText(canvas, loading ? "Loading..." : "Empty", 24f, 146f, 11f, withAlpha(0x8F98AA, alpha));
-        } else {
-            int y = 146;
-            for (int i = 0; i < Math.min(12, playlists.size()); i++) {
-                Playlist playlist = playlists.get(i);
-                String key = "playlist:" + playlist.id();
-                boolean selected = selectedPlaylistIndex == i;
-                float itemX = 24f;
-                String icon = isLikedPlaylist(playlist) ? "\uE87D" : "\uE9B9";
-                FontRenderer.drawText(canvas, icon, itemX, y, 13f, withAlpha(selected ? 0xFFFFFF : 0xAEB3BD, alpha), FontRenderer.MATERIAL_SYMBOLS);
-                FontRenderer.drawText(canvas, trimToWidth(playlist.name(), 118f), itemX + 18f, y, 12f, withAlpha(selected ? 0xFFFFFF : 0xAEB3BD, alpha));
-                y += 28;
+        FontRenderer.drawText(canvas, "PVPUtils Music", cardX + 18, cardY + 56, 14f, withAlpha(tc.secondaryText, alpha));
+        float homeIconY = cardY + 86;
+        FontRenderer.drawText(canvas, "\uE88A", cardX + 16, homeIconY, 16f, withAlpha(mode == ViewMode.HOME ? tc.primaryText : tc.inactiveText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+        FontRenderer.drawText(canvas, "Home", cardX + 38, homeIconY, 12f, withAlpha(mode == ViewMode.HOME ? tc.primaryText : tc.inactiveText, alpha));
+        if (NeteaseMusicApi.isLoggedIn()) {
+            NeteaseMusicApi.LoginSession session = NeteaseMusicApi.currentSession();
+            if (session != null) {
+                FontRenderer.drawText(canvas, Config.isChinese ? "已登录" : "Logged in", cardX + 38, cardY + CARD_H - PLAYER_HEIGHT - 36, 9f, withAlpha(tc.mutedText, alpha));
+                String displayName = session.nickname().isBlank() ? "User" : session.nickname();
+                FontRenderer.drawText(canvas, trim(displayName, 16), cardX + 38, cardY + CARD_H - PLAYER_HEIGHT - 22, 10f, withAlpha(tc.mutedText, alpha));
             }
         }
-        NeteaseMusicApi.LoginSession session = NeteaseMusicApi.currentSession();
-        String name = session == null ? Minecraft.getInstance().getUser().getName() : session.nickname();
-        FontRenderer.drawText(canvas, trimToWidth(name, 112f), 40f, height - PLAYER_HEIGHT - 20f, 12f, withAlpha(0xFFFFFF, alpha));
+        int y = Math.round(cardY + 116);
+        for (int i = 0; i < Math.min(12, playlists.size()); i++) {
+            Playlist playlist = playlists.get(i);
+            boolean selected = selectedPlaylistIndex == i;
+            float iconY = y + 6;
+            FontRenderer.drawText(canvas, "\uE88B", cardX + 16, iconY, 13f, withAlpha(selected ? tc.primaryText : tc.inactiveText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+            FontRenderer.drawText(canvas, trim(playlist.name(), 17), cardX + 36, iconY, 11f, withAlpha(selected ? tc.primaryText : tc.inactiveText, alpha));
+            y += 28;
+        }
     }
 
     private void renderCurrentSkiaText(Canvas canvas, int alpha) {
@@ -1467,170 +1541,140 @@ public class NeteaseMusicScreen extends SkiaScreen {
         if (Math.abs(scale - 1.0F) < 0.001F) {
             return;
         }
-        float centerX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2.0F;
-        float centerY = (height - PLAYER_HEIGHT) / 2.0F;
+        float centerX = cardX + CARD_SIDEBAR_W + (CARD_W - CARD_SIDEBAR_W) / 2.0F;
+        float centerY = cardY + (CARD_H - PLAYER_HEIGHT) / 2.0F;
         canvas.translate(centerX, centerY);
         canvas.scale(scale, scale);
         canvas.translate(-centerX, -centerY);
     }
 
     private void renderHomeSkiaText(Canvas canvas, int alpha) {
-        int contentX = SIDEBAR_WIDTH + 22;
-        int contentY = 24;
-        int gridX = contentX;
-        int gridY = contentY + 58;
-        int availableW = Math.max(1, width - gridX - 24);
+        int gridX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - gridX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
-        int cover = cardW;
-        int rowH = cover + GRID_TEXT_HEIGHT;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
-
-        FontRenderer.drawText(canvas, Config.isChinese ? "欢迎来到 PVPUtils Music!" : "Welcome to PVPUtils Music!",
-                contentX, contentY + 18f, 22f, withAlpha(0xF3F5F8, alpha));
-        FontRenderer.drawText(canvas, Config.isChinese ? "网易云推荐歌单" : "Netease Recommended Playlists",
-                contentX, contentY + 43f, 13f, withAlpha(0x858B96, alpha));
-        if (!statusText.isBlank()) {
-            FontRenderer.drawText(canvas, trim(statusText, 48), contentX + 260f, contentY + 43f, 12f, withAlpha(0x9AA2AF, Math.round(alpha * 0.9F)));
-        }
-
+        int rowH = cardW + GRID_TEXT_HEIGHT;
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH);
+        FontRenderer.drawText(canvas, Config.isChinese ? "\u63a8\u8350\u6b4c\u5355" : "Recommended Playlists", gridX, cardY + 38, 16f, withAlpha(tc.primaryText, alpha));
+        FontRenderer.drawText(canvas, Config.isChinese ? "\u63a2\u7d22\u4f60\u559c\u6b22\u7684\u97f3\u4e50" : "Discover music you'll love", gridX, cardY + 56, 11f, withAlpha(tc.mutedText, alpha));
         if (recommendedPlaylists.isEmpty()) {
-            String text = loading ? (Config.isChinese ? "加载中..." : "Loading...") : (NeteaseMusicApi.isLoggedIn() ? "No playlists" : "Login required");
-            drawSkiaCentered(canvas, text, gridX + availableW / 2f, gridY + 84f, 15f, withAlpha(0xB8C0D4, alpha));
-            return;
-        }
-
-        GridScroll scroll = gridScroll(visualFirstPlaylistIndex, columns, rowH, maxPlaylistGridStart(columns, visibleRows * columns));
-        int visualBase = scroll.base();
-        float rowOffset = scroll.offset();
-        int visibleCards = (visibleRows + 1) * columns;
-        int clipBottom = height - PLAYER_HEIGHT - 16;
-        if (!safeClipRect(canvas, gridX - 8, gridY, gridX + availableW + 8, clipBottom)) {
-            return;
-        }
-        try {
-            for (int slot = 0; slot < visibleCards; slot++) {
-                int index = visualBase + slot;
-                if (index >= recommendedPlaylists.size()) {
-                    break;
-                }
-                Playlist playlist = recommendedPlaylists.get(index);
-                int col = slot % columns;
-                int row = slot / columns;
-                int x = gridX + col * (cardW + GRID_GAP);
-                int y = Math.round(gridY + row * rowH - rowOffset);
-                if (y > height - PLAYER_HEIGHT || y + cover + 30 < gridY) {
-                    continue;
-                }
-                FontRenderer.drawText(canvas, trim(playlist.name(), Math.max(9, cardW / 8)), x, y + cover + 18f, 12f, withAlpha(0xF1F3F6, alpha));
-                FontRenderer.drawText(canvas, formatPlayCount(playlist.playCount()), x, y + cover + 34f, 10f, withAlpha(0x8C929D, alpha));
+            if (loading) {
+                drawSkiaCentered(canvas, Config.isChinese ? "\u52a0\u8f7d\u4e2d..." : "Loading...", gridX + availableW / 2, gridY + 50, 14f, withAlpha(tc.mutedText, alpha));
+            } else {
+                drawSkiaCentered(canvas, Config.isChinese ? "\u6ca1\u6709\u63a8\u8350\u6b4c\u5355" : "No recommended playlists", gridX + availableW / 2, gridY + 50, 14f, withAlpha(tc.mutedText, alpha));
             }
-        } finally {
-            canvas.restore();
+            return;
         }
+        GridScroll scroll = gridScroll(visualFirstPlaylistIndex, columns, rowH, maxPlaylistGridStart(columns, visibleRows * columns));
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(gridX - 8, gridY - 8, availableW + 16, visibleRows * rowH + 16));
+        for (int row = 0; row < visibleRows + 1; row++) {
+            for (int col = 0; col < columns; col++) {
+                int index = row * columns + col;
+                if (index >= recommendedPlaylists.size()) break;
+                float progress = clamp((contentAppearProgress() * 1.18F) - index * 0.025F);
+                float x = gridX + col * (cardW + GRID_GAP);
+                float y = gridY + row * rowH - scroll.offset() + Math.round((1.0F - progress) * 10.0F);
+                if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < gridY) continue;
+                Playlist playlist = recommendedPlaylists.get(index);
+                FontRenderer.drawText(canvas, trim(playlist.name(), 18), x + 2, y + cardW + 12, 11f, withAlpha(tc.primaryText, alpha));
+                FontRenderer.drawText(canvas, trim(playlist.creator(), 18), x + 2, y + cardW + 26, 9f, withAlpha(tc.mutedText, alpha));
+                if (playlist.playCount() > 0) {
+                    FontRenderer.drawText(canvas, formatCount(playlist.playCount()), x + 2, y + cardW + 38, 9f, withAlpha(tc.mutedText, alpha));
+                }
+            }
+        }
+        canvas.restore();
     }
 
     private void renderSearchSkiaText(Canvas canvas, int alpha) {
-        int contentX = SIDEBAR_WIDTH + 22;
-        int contentY = 24;
-        int gridX = contentX;
-        int gridY = contentY + 48;
-        int availableW = Math.max(1, width - gridX - 24);
+        int gridX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - gridX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
-        int cover = cardW;
-        int rowH = cover + GRID_TEXT_HEIGHT;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH);
-
-        FontRenderer.drawText(canvas, Config.isChinese ? "搜索结果" : "Search Results", contentX, contentY + 22f, 22f, withAlpha(0xF3F5F8, alpha));
-        FontRenderer.drawText(canvas, query.isBlank() ? (Config.isChinese ? "输入关键词搜索音乐" : "Type keywords to search music") : query,
-                contentX, contentY + 43f, 13f, withAlpha(0x858B96, alpha));
-
+        int rowH = cardW + GRID_TEXT_HEIGHT;
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH);
+        FontRenderer.drawText(canvas, Config.isChinese ? "\u641c\u7d22\u7ed3\u679c" : "Search Results", gridX, cardY + 38, 16f, withAlpha(tc.primaryText, alpha));
+        FontRenderer.drawText(canvas, Config.isChinese ? "\u641c\u7d22\u6b4c\u66f2\u3001\u6b4c\u624b\u3001\u6b4c\u5355" : "Search songs, artists, playlists", gridX, cardY + 56, 11f, withAlpha(tc.mutedText, alpha));
         if (songs.isEmpty()) {
-            drawSkiaCentered(canvas, loading ? "Loading..." : "No songs", gridX + availableW / 2f, gridY + 84f, 15f, withAlpha(0xB8C0D4, alpha));
-            return;
-        }
-
-        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxGridStart(columns, visibleRows * columns));
-        int visualBase = scroll.base();
-        float rowOffset = scroll.offset();
-        int visibleCards = (visibleRows + 1) * columns;
-        int clipBottom = height - PLAYER_HEIGHT - 16;
-        if (!safeClipRect(canvas, gridX - 8, gridY, gridX + availableW + 8, clipBottom)) {
-            return;
-        }
-        try {
-            for (int slot = 0; slot < visibleCards; slot++) {
-                int index = visualBase + slot;
-                if (index >= songs.size()) {
-                    break;
-                }
-                Song song = songs.get(index);
-                int col = slot % columns;
-                int row = slot / columns;
-                int x = gridX + col * (cardW + GRID_GAP);
-                int y = Math.round(gridY + row * rowH - rowOffset);
-                if (y > height - PLAYER_HEIGHT || y + cover + 30 < gridY) {
-                    continue;
-                }
-                FontRenderer.drawText(canvas, trim(song.name(), Math.max(9, cardW / 8)), x, y + cover + 18f, 12f, withAlpha(0xF1F3F6, alpha));
-                FontRenderer.drawText(canvas, trim(song.displayArtist(), Math.max(10, cardW / 7)), x, y + cover + 34f, 10f, withAlpha(0x8C929D, alpha));
+            if (loading) {
+                drawSkiaCentered(canvas, Config.isChinese ? "\u52a0\u8f7d\u4e2d..." : "Loading...", gridX + availableW / 2, gridY + 50, 14f, withAlpha(tc.mutedText, alpha));
+            } else {
+                drawSkiaCentered(canvas, Config.isChinese ? "\u6ca1\u6709\u641c\u7d22\u7ed3\u679c" : "No search results", gridX + availableW / 2, gridY + 50, 14f, withAlpha(tc.mutedText, alpha));
             }
-        } finally {
-            canvas.restore();
+            return;
         }
+        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxSongGridStart(columns, visibleRows * columns));
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(gridX - 8, gridY - 8, availableW + 16, visibleRows * rowH + 16));
+        for (int row = 0; row < visibleRows + 1; row++) {
+            for (int col = 0; col < columns; col++) {
+                int index = row * columns + col;
+                if (index >= songs.size()) break;
+                float progress = clamp((contentAppearProgress() * 1.18F) - index * 0.025F);
+                float x = gridX + col * (cardW + GRID_GAP);
+                float y = gridY + row * rowH - scroll.offset() + Math.round((1.0F - progress) * 10.0F);
+                if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < gridY) continue;
+                Song song = songs.get(index);
+                FontRenderer.drawText(canvas, trim(song.name(), 18), x + 2, y + cardW + 12, 11f, withAlpha(tc.primaryText, alpha));
+                FontRenderer.drawText(canvas, trim(song.displayArtist(), 18), x + 2, y + cardW + 26, 9f, withAlpha(tc.mutedText, alpha));
+            }
+        }
+        canvas.restore();
     }
 
     private void renderPlaylistSkiaText(Canvas canvas, int alpha) {
-        float appear = contentAppearProgress();
-        int localAlpha = Math.round(alpha * appear);
-        int slide = Math.round((1.0F - appear) * 18.0F);
-        int contentX = SIDEBAR_WIDTH + 28;
-        int contentY = 24 + slide;
-        int cover = playlistCoverSize();
-        int listY = contentY + cover + 48;
-        int rowH = 42;
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - listY - 10) / rowH);
-        float listVisual = Math.max(0.0F, Math.min(Math.max(0, songs.size() - visibleRows), visualFirstSongIndex));
-        int visualBase = (int) Math.floor(listVisual);
-        float rowOffset = (listVisual - visualBase) * rowH;
-        Playlist playlist = currentPlaylist;
-        int infoX = contentX + cover + 24;
-        if (playlist != null) {
-            String count = (playlist.trackCount() > 0 ? playlist.trackCount() : songs.size()) + (Config.isChinese ? "首歌曲" : " songs");
-            FontRenderer.drawText(canvas, trim(playlist.name(), 38), infoX, contentY + 40f, 26f, withAlpha(0xF0F0F0, localAlpha));
-            FontRenderer.drawText(canvas, count + " · " + estimatePlaylistDuration(), infoX, contentY + 64f, 12f, withAlpha(0x777A80, localAlpha));
-            FontRenderer.drawText(canvas, "\uE853", infoX, contentY + 93f, 15f, withAlpha(0xE8E8E8, localAlpha), FontRenderer.MATERIAL_SYMBOLS);
-            FontRenderer.drawText(canvas, playlist.creator().isBlank() ? "Netease Music" : playlist.creator(), infoX + 24f, contentY + 92f, 13f, withAlpha(0xE8E8E8, localAlpha));
-            int buttonY = contentY + cover - 46;
-            drawSkiaButtonLabel(canvas, "\uE037", Config.isChinese ? "播放歌单" : "Play", infoX, buttonY, 86, localAlpha);
-            drawSkiaButtonLabel(canvas, "\uE043", Config.isChinese ? "乱序播放歌单" : "Shuffle", infoX + 102, buttonY, 112, localAlpha);
-        }
-        int clipBottom = height - PLAYER_HEIGHT - 8;
-        if (!safeClipRect(canvas, contentX, listY, width - 26, clipBottom)) {
-            return;
-        }
-        try {
-            for (int row = 0; row < visibleRows + 2; row++) {
-                int index = visualBase + row;
-                if (index >= songs.size()) {
-                    break;
-                }
-                float rowProgress = clamp((appear * 1.18F) - row * 0.025F);
-                int y = Math.round(listY + row * rowH - rowOffset + Math.round((1.0F - rowProgress) * 10.0F));
-                if (y > clipBottom || y + rowH < listY) {
-                    continue;
-                }
-                int rowAlpha = Math.round(localAlpha * rowProgress);
-                Song song = songs.get(index);
-                FontRenderer.drawText(canvas, String.valueOf(index + 1), contentX + 24f, y + 28f, 13f, withAlpha(0x878A90, rowAlpha));
-                FontRenderer.drawText(canvas, trim(song.name(), 56), contentX + 98f, y + 19f, 14f, withAlpha(0xF1F1F1, rowAlpha));
-                FontRenderer.drawText(canvas, trim(song.displayArtist() + " - " + song.name(), 72), contentX + 98f, y + 36f, 12f, withAlpha(0x777A80, rowAlpha));
-                FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(song.durationMs()), width - 74f, y + 27f, 12f, withAlpha(0x858992, rowAlpha));
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int contentY = Math.round(cardY + 22);
+        int listX = contentX;
+        int listW = Math.round(CARD_W - CARD_SIDEBAR_W - 46);
+        int listY = (int) (contentY + 128);
+        float listH = CARD_H - PLAYER_HEIGHT - 128 - 16;
+        if (songs.isEmpty() && !loading) return;
+        float localAlpha = clamp(alpha * (1.0F - visualTransitionProgress()) + alpha * visualTransitionProgress());
+        int cover = Math.min(180, Math.round(listW * 0.26f));
+        if (currentPlaylist != null) {
+            float coverY = contentY - 8f;
+            int infoX = contentX + cover + 24;
+            int infoW = listW - cover - 24;
+            int titleColor = withAlpha(tc.primaryText, alpha);
+            int mutedColor = withAlpha(tc.secondaryText, alpha);
+            String count = (currentPlaylist.trackCount() > 0 ? currentPlaylist.trackCount() : songs.size()) + (Config.isChinese ? " 首歌曲" : " songs");
+            String duration = estimatePlaylistDuration();
+            FontRenderer.drawText(canvas, trim(currentPlaylist.name(), 38), infoX, coverY + 82f, 26f, titleColor);
+            FontRenderer.drawText(canvas, count + " · " + duration, infoX, coverY + 105f, 12f, mutedColor);
+            if (!currentPlaylist.creator().isBlank()) {
+                FontRenderer.drawText(canvas, "\uE853", infoX, coverY + 137f, 15f, withAlpha(tc.secondaryText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+                FontRenderer.drawText(canvas, currentPlaylist.creator(), infoX + 24f, coverY + 136f, 13f, withAlpha(tc.secondaryText, alpha));
             }
-        } finally {
-            canvas.restore();
         }
+        int rowH = Math.round(listH / Math.max(1, visibleRowCount(listH)));
+        int visibleRows = visibleRowCount(listH);
+        int maxStart = Math.max(0, songs.size() - visibleRows);
+        float rawVisualStart = visualFirstSongIndex;
+        int visualBase = Math.max(0, Math.min(maxStart, Math.round(rawVisualStart)));
+        float rowOffset = (rawVisualStart - visualBase) * rowH;
+        canvas.save();
+        canvas.clipRect(Rect.makeXYWH(listX - 2, listY - 2, listW + 4, listH + 4));
+        int y = Math.round(listY - rowOffset);
+        for (int row = 0; row < visibleRows + 1; row++) {
+            int index = visualBase + row;
+            if (index >= songs.size()) break;
+            float rowProgress = clamp((localAlpha * 1.18F) - row * 0.025F);
+            int rowY = Math.round(listY + row * rowH - rowOffset + Math.round((1.0F - rowProgress) * 10.0F));
+            if (rowY > cardY + CARD_H - PLAYER_HEIGHT || rowY + rowH < listY) continue;
+            int scrollVal = scrollFadeAlpha(alpha, rowY, listY, (int) (cardY + CARD_H - PLAYER_HEIGHT - 8));
+            float tempAlpha = scrollVal * rowProgress;
+            int rowAlpha = (int) Math.round(tempAlpha);
+            Song song = songs.get(index);
+            FontRenderer.drawText(canvas, String.valueOf(index + 1), contentX + 24f, rowY + 28f, 13f, withAlpha(tc.mutedText, rowAlpha));
+            FontRenderer.drawText(canvas, trim(song.name(), 56), contentX + 98f, rowY + 19f, 14f, withAlpha(tc.primaryText, rowAlpha));
+            FontRenderer.drawText(canvas, trim(song.displayArtist() + " - " + song.name(), 72), contentX + 98f, rowY + 36f, 12f, withAlpha(tc.secondaryText, rowAlpha));
+            FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(song.durationMs()), cardX + CARD_W - 74f, rowY + 27f, 12f, withAlpha(tc.mutedText, rowAlpha));
+        }
+        canvas.restore();
     }
 
     private boolean safeClipRect(Canvas canvas, float left, float top, float right, float bottom) {
@@ -1643,51 +1687,57 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void renderPlayerSkiaText(Canvas canvas, int alpha) {
-        MusicPlaybackService player = MusicPlaybackService.INSTANCE;
-        Song current = player.currentSong();
-        int y = height - PLAYER_HEIGHT;
-        if (current != null) {
-            FontRenderer.drawText(canvas, trim(current.name(), 34), SIDEBAR_WIDTH + 104f, y + 31f, 14f, withAlpha(0xF4F6FA, alpha));
-            FontRenderer.drawText(canvas, trim(current.displayArtist(), 38), SIDEBAR_WIDTH + 104f, y + 49f, 11f, withAlpha(0x8B929F, alpha));
-        } else {
-            FontRenderer.drawText(canvas, Config.isChinese ? "未在播放" : "Not Playing", SIDEBAR_WIDTH + 44f, y + 34f, 14f, withAlpha(0xF4F6FA, alpha));
-            FontRenderer.drawText(canvas, Config.isChinese ? "无" : "None", SIDEBAR_WIDTH + 44f, y + 52f, 11f, withAlpha(0x8B929F, alpha));
+        MusicPlaybackService playback = MusicPlaybackService.INSTANCE;
+        boolean playing = playback.isPlaying();
+        float coverSize = 46;
+        float coverX = cardX + 22;
+        float playerY = cardY + CARD_H - PLAYER_HEIGHT;
+        float coverY = playerY + (PLAYER_HEIGHT - coverSize) / 2;
+        float textX = coverX + coverSize + 14;
+        float textMaxW = Math.max(100, cardX + CARD_W - 350 - textX);
+        float sliderY = coverY + 35;
+        float trackStartX = textX;
+        float trackEndX = textX + textMaxW;
+        if (!MusicPlaybackService.hasCurrent()) {
+            drawSkiaCentered(canvas, Config.isChinese ? "\u672a\u64ad\u653e" : "Not Playing", textX + textMaxW / 2, coverY + coverSize / 2 + 5, 13f, withAlpha(tc.mutedText, alpha));
+            return;
         }
-        int centerX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2;
-        int progressX = centerX - 160;
-        int progressY = y + 58;
-        long total = player.totalDurationMs();
-        String left = MusicPlaybackService.formatTime(draggingProgress && total > 0L ? Math.round(total * pendingProgress) : player.positionMs());
-        String right = MusicPlaybackService.formatTime(total);
-        FontRenderer.drawText(canvas, left, progressX - 42f, progressY + 5f, 10f, withAlpha(0x8F98AA, alpha));
-        FontRenderer.drawText(canvas, right, progressX + 328f, progressY + 5f, 10f, withAlpha(0x8F98AA, alpha));
-        int controlX = playerControlStartX();
-        float iconY = y + 38f;
-        drawPlayerIcon(canvas, PlayerButton.MODE, playbackModeIcon(player.playbackMode()), controlX + 14f, iconY, 18f, alpha);
-        drawPlayerIcon(canvas, PlayerButton.STOP, "\uE047", controlX + 52f, iconY, 18f, alpha);
-        drawPlayerIcon(canvas, PlayerButton.PREVIOUS, "\uE045", controlX + 90f, iconY, 18f, alpha);
-        drawPlayerIcon(canvas, PlayerButton.PLAY_PAUSE, player.isPlaying() ? "\uE034" : "\uE037", controlX + 130f, iconY, 21f, alpha);
-        drawPlayerIcon(canvas, PlayerButton.NEXT, "\uE044", controlX + 170f, iconY, 18f, alpha);
-        drawPlayerIcon(canvas, PlayerButton.VOLUME, volumeIcon(), controlX + 214f, iconY, 18f, alpha);
+        String songName = trim(MusicPlaybackService.getName(), 26);
+        String songArtist = trim(MusicPlaybackService.getArtist(), 26);
+        FontRenderer.drawText(canvas, songName, textX, coverY + 14, 14f, withAlpha(tc.primaryText, alpha));
+        FontRenderer.drawText(canvas, songArtist, textX, coverY + 32, 11f, withAlpha(tc.secondaryText, alpha));
+        String left = MusicPlaybackService.formatTime(MusicPlaybackService.getPosition());
+        String right = MusicPlaybackService.formatTime(MusicPlaybackService.getDuration());
+        FontRenderer.drawText(canvas, left, trackStartX, sliderY + 18, 9f, withAlpha(tc.mutedText, alpha));
+        FontRenderer.drawText(canvas, right, trackEndX - FontRenderer.measureTextWidth(right, 9f), sliderY + 18, 9f, withAlpha(tc.mutedText, alpha));
     }
 
-    private void drawPlayerIcon(Canvas canvas, PlayerButton button, String icon, float centerX, float baselineY, float size, int alpha) {
-        float press = playerButtonPressProgress(button);
-        float scale = 1.0F - 0.14F * press;
-        canvas.save();
-        canvas.translate(centerX, baselineY - size * 0.36F);
-        canvas.scale(scale, scale);
-        canvas.translate(-centerX, -(baselineY - size * 0.36F));
-        drawSkiaCentered(canvas, icon, centerX, baselineY, size, withAlpha(0xFFFFFF, alpha), FontRenderer.MATERIAL_SYMBOLS);
-        canvas.restore();
+    private void drawPlayerIcon(Canvas canvas, String icon, float centerX, float baselineY, float size, int mouseX, int mouseY, float alpha, String key) {
+        float hitSize = size + 10;
+        boolean hovered = hit(Math.round(centerX - hitSize / 2), Math.round(baselineY - hitSize / 2), Math.round(hitSize), Math.round(hitSize), mouseX, mouseY);
+        float hover = approach(iconHoverAnimations.getOrDefault(key, 0f), hovered ? 1f : 0f, 0.14f);
+        if (hover > 0.01f) iconHoverAnimations.put(key, hover); else iconHoverAnimations.remove(key);
+        float drawSize = size * (0.92f + 0.08f * hover);
+        int color = withAlpha(tc.primaryText, Math.round(alpha * (0.7f + 0.3f * hover)));
+        drawSkiaCentered(canvas, icon, centerX, baselineY + drawSize / 2, drawSize, color, FontRenderer.MATERIAL_SYMBOLS);
+    }
+
+    private void drawPlayerIcon(Canvas canvas, String icon, float centerX, float baselineY, float size, int mouseX, int mouseY, float scale, float alpha, String key) {
+        float hitSize = 28;
+        boolean hovered = hit(Math.round(centerX - hitSize / 2), Math.round(baselineY - hitSize / 2), Math.round(hitSize), Math.round(hitSize), mouseX, mouseY);
+        float hover = approach(iconHoverAnimations.getOrDefault(key, 0f), hovered ? 1f : 0f, 0.14f);
+        if (hover > 0.01f) iconHoverAnimations.put(key, hover); else iconHoverAnimations.remove(key);
+        float drawSize = size * (0.92f + 0.08f * hover) * scale;
+        int color = withAlpha(tc.primaryText, Math.round(alpha * (0.7f + 0.3f * hover)));
+        drawSkiaCentered(canvas, icon, centerX, baselineY + drawSize / 2, drawSize, color, FontRenderer.MATERIAL_SYMBOLS);
     }
 
     private void drawSkiaButtonLabel(Canvas canvas, String icon, String text, float x, float y, float w, int alpha) {
         float textW = FontRenderer.measureTextWidth(text, 13f);
         float iconW = FontRenderer.measureTextWidth(icon, 15f, FontRenderer.MATERIAL_SYMBOLS);
         float start = x + (w - iconW - 5f - textW) / 2f;
-        FontRenderer.drawText(canvas, icon, start, y + 21f, 15f, withAlpha(0xFFFFFF, alpha), FontRenderer.MATERIAL_SYMBOLS);
-        FontRenderer.drawText(canvas, text, start + iconW + 5f, y + 18f, 13f, withAlpha(0xFFFFFF, alpha));
+        FontRenderer.drawText(canvas, icon, start, y + 21f, 15f, withAlpha(tc.buttonText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+        FontRenderer.drawText(canvas, text, start + iconW + 5f, y + 18f, 13f, withAlpha(tc.buttonText, alpha));
     }
 
     private static boolean isLikedPlaylist(Playlist playlist) {
@@ -1711,6 +1761,37 @@ public class NeteaseMusicScreen extends SkiaScreen {
         FontRenderer.drawText(canvas, text, centerX - FontRenderer.measureTextWidth(text, size, fontName) / 2.0F, baselineY, size, argb, fontName);
     }
 
+    private void renderPlaylistTextOverlay(Canvas canvas, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha, float appear) {
+        Playlist playlist = currentPlaylist;
+        int infoX = contentX + cover + 24;
+        if (playlist != null) {
+            int titleColor = withAlpha(tc.primaryText, alpha);
+            int mutedColor = withAlpha(tc.secondaryText, alpha);
+            String count = (playlist.trackCount() > 0 ? playlist.trackCount() : songs.size()) + (Config.isChinese ? " 首歌曲" : " songs");
+            String duration = estimatePlaylistDuration();
+            float coverY = contentY;
+            FontRenderer.drawText(canvas, trim(playlist.name(), 38), infoX, coverY + 82f, 26f, titleColor);
+            FontRenderer.drawText(canvas, count + " · " + duration, infoX, coverY + 105f, 12f, mutedColor);
+            if (!playlist.creator().isBlank()) {
+                FontRenderer.drawText(canvas, "\uE853", infoX, coverY + 137f, 15f, withAlpha(tc.secondaryText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+                FontRenderer.drawText(canvas, playlist.creator(), infoX + 24f, coverY + 136f, 13f, withAlpha(tc.secondaryText, alpha));
+            }
+        }
+        for (int row = 0; row < visibleRows + 1; row++) {
+            int index = visualBase + row;
+            if (index >= songs.size()) break;
+            float rowProgress = clamp((appear * 1.18F) - row * 0.025F);
+            int y = Math.round(listY + row * rowH - rowOffset + Math.round((1.0F - rowProgress) * 10.0F));
+            if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < listY) continue;
+            int rowAlpha = Math.round(scrollFadeAlpha(alpha, y, listY, Math.round(cardY + CARD_H - PLAYER_HEIGHT - 8)) * rowProgress);
+            Song song = songs.get(index);
+            FontRenderer.drawText(canvas, String.valueOf(index + 1), contentX + 24f, y + 28f, 13f, withAlpha(tc.mutedText, rowAlpha));
+            FontRenderer.drawText(canvas, trim(song.name(), 56), contentX + 98f, y + 19f, 14f, withAlpha(tc.primaryText, rowAlpha));
+            FontRenderer.drawText(canvas, trim(song.displayArtist() + " - " + song.name(), 72), contentX + 98f, y + 36f, 12f, withAlpha(tc.secondaryText, rowAlpha));
+            FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(song.durationMs()), cardX + CARD_W - 74f, y + 27f, 12f, withAlpha(tc.mutedText, rowAlpha));
+        }
+    }
+
     private void renderPlaylistTextOverlay(GuiGraphics graphics, int contentX, int contentY, int cover, int listY, int rowH, int visibleRows, int visualBase, float rowOffset, int alpha, float appear) {
         Canvas canvas = SkiaRenderer.beginRegion(0, 0, width, height);
         if (canvas == null) {
@@ -1721,15 +1802,17 @@ public class NeteaseMusicScreen extends SkiaScreen {
             Playlist playlist = currentPlaylist;
             int infoX = contentX + cover + 24;
             if (playlist != null) {
-                int titleColor = withAlpha(0xF0F0F0, alpha);
-                int mutedColor = withAlpha(0x777A80, alpha);
-                int creatorColor = withAlpha(0xE8E8E8, alpha);
+                int titleColor = withAlpha(tc.primaryText, alpha);
+                int mutedColor = withAlpha(tc.secondaryText, alpha);
+                int creatorColor = withAlpha(tc.secondaryText, alpha);
                 String count = (playlist.trackCount() > 0 ? playlist.trackCount() : songs.size()) + (Config.isChinese ? "首歌曲" : " songs");
                 String duration = estimatePlaylistDuration();
                 FontRenderer.drawText(canvas, trim(playlist.name(), 38), infoX, contentY + 82f, 26f, titleColor);
                 FontRenderer.drawText(canvas, count + " · " + duration, infoX, contentY + 105f, 12f, mutedColor);
-                FontRenderer.drawText(canvas, "\uE853", infoX, contentY + 137f, 15f, withAlpha(0xE8E8E8, alpha), FontRenderer.MATERIAL_SYMBOLS);
-                FontRenderer.drawText(canvas, playlist.creator().isBlank() ? "Netease Music" : playlist.creator(), infoX + 24f, contentY + 136f, 13f, creatorColor);
+                if (!playlist.creator().isBlank()) {
+                    FontRenderer.drawText(canvas, "\uE853", infoX, contentY + 137f, 15f, withAlpha(tc.secondaryText, alpha), FontRenderer.MATERIAL_SYMBOLS);
+                    FontRenderer.drawText(canvas, playlist.creator(), infoX + 24f, contentY + 136f, 13f, creatorColor);
+                }
             }
             for (int row = 0; row < visibleRows + 1; row++) {
                 int index = visualBase + row;
@@ -1738,15 +1821,15 @@ public class NeteaseMusicScreen extends SkiaScreen {
                 }
                 float rowProgress = clamp((appear * 1.18F) - row * 0.025F);
                 int y = Math.round(listY + row * rowH - rowOffset + Math.round((1.0F - rowProgress) * 10.0F));
-                if (y > height - PLAYER_HEIGHT || y + rowH < listY) {
+                if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < listY) {
                     continue;
                 }
-                int rowAlpha = Math.round(scrollFadeAlpha(alpha, y, listY, height - PLAYER_HEIGHT - 8) * rowProgress);
+                int rowAlpha = Math.round(scrollFadeAlpha(alpha, y, listY, Math.round(cardY + CARD_H - PLAYER_HEIGHT - 8)) * rowProgress);
                 Song song = songs.get(index);
-                FontRenderer.drawText(canvas, String.valueOf(index + 1), contentX + 24f, y + 28f, 13f, withAlpha(0x878A90, rowAlpha));
-                FontRenderer.drawText(canvas, trim(song.name(), 56), contentX + 98f, y + 19f, 14f, withAlpha(0xF1F1F1, rowAlpha));
-                FontRenderer.drawText(canvas, trim(song.displayArtist() + " - " + song.name(), 72), contentX + 98f, y + 36f, 12f, withAlpha(0x777A80, rowAlpha));
-                FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(song.durationMs()), width - 74f, y + 27f, 12f, withAlpha(0x858992, rowAlpha));
+                FontRenderer.drawText(canvas, String.valueOf(index + 1), contentX + 24f, y + 28f, 13f, withAlpha(tc.mutedText, rowAlpha));
+                FontRenderer.drawText(canvas, trim(song.name(), 56), contentX + 98f, y + 19f, 14f, withAlpha(tc.primaryText, rowAlpha));
+                FontRenderer.drawText(canvas, trim(song.displayArtist() + " - " + song.name(), 72), contentX + 98f, y + 36f, 12f, withAlpha(tc.secondaryText, rowAlpha));
+                FontRenderer.drawText(canvas, MusicPlaybackService.formatTime(song.durationMs()), cardX + CARD_W - 74f, y + 27f, 12f, withAlpha(tc.mutedText, rowAlpha));
             }
         } finally {
             SkiaRenderer.endRegion(graphics);
@@ -1759,7 +1842,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
             int infoX = contentX + cover + 24;
             graphics.drawString(font, trim(playlist.name(), 44), infoX, contentY + 62, withAlpha(0xFFFFFF, alpha), false);
             graphics.drawString(font, estimatePlaylistDuration(), infoX, contentY + 86, withAlpha(0x858992, alpha), false);
-            graphics.drawString(font, playlist.creator().isBlank() ? "Netease Music" : playlist.creator(), infoX, contentY + 116, withAlpha(0xE4E6EB, alpha), false);
+            if (!playlist.creator().isBlank()) {
+                graphics.drawString(font, playlist.creator(), infoX, contentY + 116, withAlpha(0xE4E6EB, alpha), false);
+            }
         }
         for (int row = 0; row < visibleRows + 1; row++) {
             int index = visualBase + row;
@@ -1768,14 +1853,14 @@ public class NeteaseMusicScreen extends SkiaScreen {
             }
             Song song = songs.get(index);
             int y = Math.round(listY + row * rowH - rowOffset);
-            if (y > height - PLAYER_HEIGHT || y + rowH < listY) {
+            if (y > cardY + CARD_H - PLAYER_HEIGHT || y + rowH < listY) {
                 continue;
             }
-            int rowAlpha = scrollFadeAlpha(alpha, y, listY, height - PLAYER_HEIGHT - 8);
+            int rowAlpha = scrollFadeAlpha(alpha, y, listY, Math.round(cardY + CARD_H - PLAYER_HEIGHT - 8));
             graphics.drawString(font, String.valueOf(index + 1), contentX + 24, y + 15, withAlpha(0x838891, rowAlpha), false);
             graphics.drawString(font, trim(song.name(), 42), contentX + 98, y + 8, withAlpha(0xFFFFFF, rowAlpha), false);
             graphics.drawString(font, trim(song.displayArtist(), 48), contentX + 98, y + 22, withAlpha(0x777B84, rowAlpha), false);
-            graphics.drawString(font, MusicPlaybackService.formatTime(song.durationMs()), width - 74, y + 15, withAlpha(0x858992, rowAlpha), false);
+            graphics.drawString(font, MusicPlaybackService.formatTime(song.durationMs()), Math.round(cardX + CARD_W - 74), y + 15, withAlpha(0x858992, rowAlpha), false);
         }
     }
 
@@ -1795,7 +1880,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
         useVirtualLayout(actualW, actualH, uiScale);
         try {
 
-        if (hit(width - 40, 8, 30, 30, mouseX, mouseY)) {
+        if (hit(Math.round(cardX + CARD_W - 40), Math.round(cardY + 8), 30, 30, mouseX, mouseY)) {
             onClose();
             return true;
         }
@@ -1821,36 +1906,52 @@ public class NeteaseMusicScreen extends SkiaScreen {
         }
 
         if (MusicPlaybackService.INSTANCE.currentSong() != null
-                && hit(SIDEBAR_WIDTH + 44, height - PLAYER_HEIGHT + 14, 48, 48, mouseX, mouseY)) {
+                && hit(Math.round(cardX + 22), Math.round(cardY + CARD_H - PLAYER_HEIGHT + (PLAYER_HEIGHT - 46) / 2), 46, 46, mouseX, mouseY)) {
             openNowPlaying();
             return true;
         }
 
-        if (hit(12, 14, SIDEBAR_WIDTH - 24, 22, mouseX, mouseY)) {
-            focusAt(Focus.SEARCH, 12, mouseX);
+        if (hit(Math.round(cardX + 14), Math.round(cardY + 14), Math.round(CARD_SIDEBAR_W - 28), 22, mouseX, mouseY)) {
+            focusAt(Focus.SEARCH, Math.round(cardX + 14), mouseX);
             return true;
         }
         if (viewMode == ViewMode.PLAYLIST && hit(playlistSearchInputX, playlistSearchInputY, playlistSearchInputW, playlistSearchInputH, mouseX, mouseY)) {
             focusAt(Focus.PLAYLIST_SEARCH, playlistSearchInputX, mouseX);
             return true;
         }
-        int progressX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2 - 160;
-        if (hit(progressX, height - PLAYER_HEIGHT + 50, 320, 16, mouseX, mouseY)) {
+        float sliderY = playerSliderY();
+        float coverX = cardX + 22;
+        float textX = coverX + 46 + 14;
+        float textMaxW = Math.max(100, cardX + CARD_W - 350 - textX);
+        System.out.println("[NM-CLICK] mx=" + (int) mouseX + " my=" + (int) mouseY + " barX=" + Math.round(textX) + " barY=" + Math.round(sliderY - 7) + " barW=" + Math.round(textMaxW) + " cardX=" + (int) cardX + " cardY=" + (int) cardY + " volX=" + (int) playerVolumeX());
+        if (hit(Math.round(textX), Math.round(sliderY - 7), Math.round(textMaxW), 18, mouseX, mouseY)) {
+            System.out.println("[NM-PROGHIT]");
             draggingProgress = true;
             previewSeekFromMouse(mouseX);
             return true;
         }
-        int controlX = playerControlStartX();
-        int playerY = height - PLAYER_HEIGHT;
-        int volumeX = controlX + 232;
-        int volumeY = playerY + 30;
-        int volumeW = volumeSliderWidth(controlX);
-        if (hit(controlX + 202, playerY + 17, 24, 28, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.VOLUME);
-            toggleMute();
+        float volumeX = playerVolumeX();
+        float volumeW = playerVolumeW();
+        float playerY = cardY + CARD_H - PLAYER_HEIGHT;
+        float coverSize = 46;
+        float coverYa = playerY + (PLAYER_HEIGHT - coverSize) / 2;
+        float iconBaseY = coverYa + coverSize / 2;
+        float controlCenterX = playerControlCenterX();
+        float controlSpacing = playerControlSpacing();
+        if (hit(Math.round(controlCenterX - controlSpacing - 16), Math.round(iconBaseY - 16), 32, 32, mouseX, mouseY)) {
+            MusicPlaybackService.INSTANCE.playPrevious();
             return true;
         }
-        if (hit(volumeX - 4, volumeY - 7, volumeW + 8, 18, mouseX, mouseY)) {
+        if (hit(Math.round(controlCenterX - 16), Math.round(iconBaseY - 16), 32, 32, mouseX, mouseY)) {
+            MusicPlaybackService.INSTANCE.toggle();
+            return true;
+        }
+        if (hit(Math.round(controlCenterX + controlSpacing - 16), Math.round(iconBaseY - 16), 32, 32, mouseX, mouseY)) {
+            MusicPlaybackService.INSTANCE.playNext();
+            return true;
+        }
+        if (hit(Math.round(volumeX - 4), Math.round(sliderY - 7), Math.round(volumeW + 8), 18, mouseX, mouseY)) {
+            System.out.println("[NM-VOLHIT]");
             pressPlayerButton(PlayerButton.VOLUME);
             draggingVolume = true;
             updateVolumeFromMouse(mouseX);
@@ -1871,7 +1972,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
             }
         }
 
-        if (hit(8, 68, SIDEBAR_WIDTH - 28, 28, mouseX, mouseY)) {
+        if (hit(Math.round(cardX + 16), Math.round(cardY + 74), Math.round(CARD_SIDEBAR_W - 30), 28, mouseX, mouseY)) {
             switchView(ViewMode.HOME);
             selectedPlaylistIndex = -1;
             currentPlaylist = null;
@@ -1880,43 +1981,13 @@ public class NeteaseMusicScreen extends SkiaScreen {
             }
             return true;
         }
-        int playlistY = 130;
+        int playlistY = Math.round(cardY + 116);
         for (int i = 0; i < Math.min(12, playlists.size()); i++) {
-            if (hit(18, playlistY + i * 28, SIDEBAR_WIDTH - 36, 24, mouseX, mouseY)) {
+            if (hit(Math.round(cardX + 26), playlistY + i * 28, Math.round(CARD_SIDEBAR_W - 40), 24, mouseX, mouseY)) {
                 selectedPlaylistIndex = i;
                 loadPlaylist(playlists.get(i));
                 return true;
             }
-        }
-
-        MusicPlaybackService player = MusicPlaybackService.INSTANCE;
-        int buttonY = playerY + 17;
-        if (hit(controlX, buttonY, 28, 28, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.MODE);
-            player.cyclePlaybackMode();
-            return true;
-        }
-        if (hit(controlX + 38, buttonY, 28, 28, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.STOP);
-            player.stop();
-            return true;
-        }
-        if (hit(controlX + 76, buttonY, 28, 28, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.PREVIOUS);
-            player.playPrevious();
-            ensureIndexVisible(player.currentIndex());
-            return true;
-        }
-        if (hit(controlX + 114, buttonY - 1, 32, 30, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.PLAY_PAUSE);
-            player.toggle();
-            return true;
-        }
-        if (hit(controlX + 156, buttonY, 28, 28, mouseX, mouseY)) {
-            pressPlayerButton(PlayerButton.NEXT);
-            player.playNext();
-            ensureIndexVisible(player.currentIndex());
-            return true;
         }
 
         if (viewMode == ViewMode.HOME) {
@@ -1927,21 +1998,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
                 return true;
             }
         }
-        int playlistButtonY = 24 + playlistCoverSize() - 46;
-        int playlistInfoX = SIDEBAR_WIDTH + 28 + playlistCoverSize() + 24;
-        if (viewMode == ViewMode.PLAYLIST && hit(playlistInfoX, playlistButtonY, 86, 26, mouseX, mouseY) && !songs.isEmpty()) {
-            player.setPlaylist(songs, 0);
-            player.playSong(songs.getFirst());
-            return true;
-        }
-        if (viewMode == ViewMode.PLAYLIST && hit(playlistInfoX + 102, playlistButtonY, 112, 26, mouseX, mouseY) && !songs.isEmpty()) {
-            int randomIndex = (int) (Math.random() * songs.size());
-            player.setPlaylist(songs, randomIndex);
-            player.playSong(songs.get(randomIndex));
-            return true;
-        }
         int clickedIndex = songIndexAt(mouseX, mouseY);
         if (clickedIndex >= 0 && clickedIndex < songs.size()) {
+            MusicPlaybackService player = MusicPlaybackService.INSTANCE;
             player.setPlaylist(songs, clickedIndex);
             player.playSong(songs.get(clickedIndex));
             return true;
@@ -1955,43 +2014,16 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private boolean handleLoginClick(double mouseX, double mouseY) {
-        int w = 320;
-        int h = loginMode == LoginMode.QR ? 210 : 190;
-        int x = (width - w) / 2;
-        int y = (height - h) / 2;
-        if (hit(x + 62, y + 52, 88, 22, mouseX, mouseY)) {
-            loginMode = LoginMode.QR;
-            focus = Focus.NONE;
-            if (qrLogin == null && !qrPolling) {
-                startQrLogin();
-            }
-            return true;
-        }
-        if (hit(x + 170, y + 52, 88, 22, mouseX, mouseY)) {
-            loginMode = LoginMode.PASSWORD;
-            cancelQrLogin();
-            focus = Focus.PHONE;
-            return true;
-        }
-        if (loginMode == LoginMode.QR) {
-            int qrX = x + 42;
-            int qrY = y + 88;
-            if (hit(qrX + 116, qrY + 42, 110, 24, mouseX, mouseY)) {
-                startQrLogin();
-                return true;
-            }
-            return true;
-        }
-        if (hit(phoneInputX, y + 86, w - 76, 22, mouseX, mouseY)) {
+        int w = 260;
+        int h = 200;
+        float x = cardX + (CARD_W - w) / 2f;
+        float y = cardY + (CARD_H - h) / 2f;
+        if (hit(phoneInputX, Math.round(y + h - 56), w - 32, 22, mouseX, mouseY)) {
             focusAt(Focus.PHONE, phoneInputX, mouseX);
             return true;
         }
-        if (hit(passwordInputX, y + 116, w - 76, 22, mouseX, mouseY)) {
+        if (hit(passwordInputX, Math.round(y + h - 28), w - 32, 22, mouseX, mouseY)) {
             focusAt(Focus.PASSWORD, passwordInputX, mouseX);
-            return true;
-        }
-        if (hit(x + 106, y + 150, 108, 24, mouseX, mouseY)) {
-            login();
             return true;
         }
         focus = Focus.NONE;
@@ -2007,11 +2039,11 @@ public class NeteaseMusicScreen extends SkiaScreen {
         mouseY = toLayoutY(mouseY, uiScale, uiOffsetY(actualH, layoutHeight(actualH, uiScale), uiScale));
         useVirtualLayout(actualW, actualH, uiScale);
         try {
-        if (NeteaseMusicApi.isLoggedIn() && viewMode == ViewMode.HOME && hit(SIDEBAR_WIDTH, 0, width - SIDEBAR_WIDTH, height - PLAYER_HEIGHT, mouseX, mouseY) && !recommendedPlaylists.isEmpty()) {
+        if (NeteaseMusicApi.isLoggedIn() && viewMode == ViewMode.HOME && hit(Math.round(cardX), Math.round(cardY), Math.round(CARD_W), Math.round(CARD_H - PLAYER_HEIGHT), mouseX, mouseY) && !recommendedPlaylists.isEmpty()) {
             firstPlaylistIndex = Math.max(0, Math.min(maxPlaylistGridStart(), firstPlaylistIndex - (int) Math.signum(scrollY) * playlistGridColumns()));
             return true;
         }
-        if (NeteaseMusicApi.isLoggedIn() && hit(SIDEBAR_WIDTH, 0, width - SIDEBAR_WIDTH, height - PLAYER_HEIGHT, mouseX, mouseY) && !songs.isEmpty()) {
+        if (NeteaseMusicApi.isLoggedIn() && hit(Math.round(cardX), Math.round(cardY), Math.round(CARD_W), Math.round(CARD_H - PLAYER_HEIGHT), mouseX, mouseY) && !songs.isEmpty()) {
             if (viewMode == ViewMode.PLAYLIST) {
                 int maxStart = Math.max(0, songs.size() - playlistVisibleRows());
                 firstSongIndex = Math.max(0, Math.min(maxStart, firstSongIndex - (int) Math.signum(scrollY) * 3));
@@ -2032,6 +2064,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
     @Override
     public boolean mouseReleased(MouseButtonEvent event) {
+        System.out.println("[NM-REL] btn=" + event.button() + " dv=" + draggingVolume + " dp=" + draggingProgress + " dls=" + draggingListSlider);
         if (event.button() == 0 && draggingTextSelection != Focus.NONE) {
             draggingTextSelection = Focus.NONE;
             pressedPlayerButton = PlayerButton.NONE;
@@ -2074,19 +2107,20 @@ public class NeteaseMusicScreen extends SkiaScreen {
         double mouseY = toLayoutY(event.y(), uiScale, uiOffsetY(actualH, layoutHeight(actualH, uiScale), uiScale));
         useVirtualLayout(actualW, actualH, uiScale);
         try {
-        if (event.button() == 0 && draggingTextSelection != Focus.NONE) {
+        System.out.println("[NM-DRAG] btn=" + event.button() + " dp=" + draggingProgress + " dv=" + draggingVolume + " dls=" + draggingListSlider + " mx=" + (int) mouseX + " my=" + (int) mouseY);
+        if (draggingTextSelection != Focus.NONE) {
             setCursor(draggingTextSelection, cursorFromMouse(draggingTextSelection, inputX(draggingTextSelection), mouseX));
             return true;
         }
-        if (event.button() == 0 && draggingProgress) {
+        if (draggingProgress) {
             previewSeekFromMouse(mouseX);
             return true;
         }
-        if (event.button() == 0 && draggingVolume) {
+        if (draggingVolume) {
             updateVolumeFromMouse(mouseX);
             return true;
         }
-        if (event.button() == 0 && draggingListSlider) {
+        if (draggingListSlider) {
             updateDraggedGridSlider(mouseY);
             return true;
         }
@@ -2095,6 +2129,11 @@ public class NeteaseMusicScreen extends SkiaScreen {
             width = actualW;
             height = actualH;
         }
+    }
+
+    @Override
+    public void mouseMoved(double screenX, double screenY) {
+        super.mouseMoved(screenX, screenY);
     }
 
     @Override
@@ -2498,15 +2537,17 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
     private int songIndexAt(double mouseX, double mouseY) {
         if (viewMode == ViewMode.PLAYLIST) {
-            int listX = SIDEBAR_WIDTH + 28;
-            int cover = playlistCoverSize();
-            int listY = 24 + cover + 48;
-            int listW = width - listX - 26;
-            int rowH = 42;
-            if (!hit(listX, listY, listW, playlistVisibleRows() * rowH, mouseX, mouseY)) {
+            int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+            int contentY = Math.round(cardY + 22);
+            int listX = contentX;
+int listY = (int) (contentY + 128);
+            int listW = Math.round(CARD_W - CARD_SIDEBAR_W - 46);
+            float listH = CARD_H - PLAYER_HEIGHT - 128 - 16;
+            int rowH = Math.round(listH / Math.max(1, visibleRowCount(listH)));
+            int visibleRows = visibleRowCount(listH);
+            if (!hit(Math.round(listX), Math.round(listY), Math.round(listW), visibleRows * rowH, mouseX, mouseY)) {
                 return -1;
             }
-            int visibleRows = playlistVisibleRows();
             float listVisual = Math.max(0.0F, Math.min(Math.max(0, songs.size() - visibleRows), visualFirstSongIndex));
             int visualBase = (int) Math.floor(listVisual);
             float rowOffset = (listVisual - visualBase) * rowH;
@@ -2525,17 +2566,17 @@ public class NeteaseMusicScreen extends SkiaScreen {
             }
             return -1;
         }
-        int contentX = SIDEBAR_WIDTH + 22;
-        int gridY = viewMode == ViewMode.SEARCH ? 72 : 82;
-        int availableW = Math.max(1, width - contentX - 24);
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
         int rowH = cardW + GRID_TEXT_HEIGHT;
-        if (mouseX < contentX || mouseY < gridY || mouseY > height - PLAYER_HEIGHT) {
+        if (mouseX < contentX || mouseY < gridY || mouseY > cardY + CARD_H - PLAYER_HEIGHT) {
             return -1;
         }
         int col = (int) ((mouseX - contentX) / (cardW + GRID_GAP));
-        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxGridStart(columns, Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH) * columns));
+        GridScroll scroll = gridScroll(visualFirstSongIndex, columns, rowH, maxGridStart(columns, Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH) * columns));
         int row = (int) ((mouseY - gridY + scroll.offset()) / rowH);
         int localX = (int) ((mouseX - contentX) - col * (cardW + GRID_GAP));
         int localY = (int) ((mouseY - gridY + scroll.offset()) - row * rowH);
@@ -2546,17 +2587,17 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private int playlistIndexAt(double mouseX, double mouseY) {
-        int contentX = SIDEBAR_WIDTH + 22;
-        int gridY = 82;
-        int availableW = Math.max(1, width - contentX - 24);
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         int columns = Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
         int rowH = cardW + GRID_TEXT_HEIGHT;
-        if (mouseX < contentX || mouseY < gridY || mouseY > height - PLAYER_HEIGHT) {
+        if (mouseX < contentX || mouseY < gridY || mouseY > cardY + CARD_H - PLAYER_HEIGHT) {
             return -1;
         }
         int col = (int) ((mouseX - contentX) / (cardW + GRID_GAP));
-        GridScroll scroll = gridScroll(visualFirstPlaylistIndex, columns, rowH, maxPlaylistGridStart(columns, Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / rowH) * columns));
+        GridScroll scroll = gridScroll(visualFirstPlaylistIndex, columns, rowH, maxPlaylistGridStart(columns, Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / rowH) * columns));
         int row = (int) ((mouseY - gridY + scroll.offset()) / rowH);
         int localX = (int) ((mouseX - contentX) - col * (cardW + GRID_GAP));
         int localY = (int) ((mouseY - gridY + scroll.offset()) - row * rowH);
@@ -2567,13 +2608,13 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private int playlistVisibleRows() {
-        int listY = 24 + playlistCoverSize() + 48;
-        return Math.max(1, (height - PLAYER_HEIGHT - listY - 10) / 42);
+        float listH = CARD_H - PLAYER_HEIGHT - 128 - 16;
+        return Math.max(1, Math.round(listH / 42f));
     }
 
     private int gridColumns() {
-        int contentX = SIDEBAR_WIDTH + 22;
-        int availableW = Math.max(1, width - contentX - 24);
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
         return Math.max(1, (availableW + GRID_GAP) / (cardW + GRID_GAP));
     }
@@ -2584,11 +2625,11 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
     private int maxGridStart() {
         int columns = gridColumns();
-        int contentX = SIDEBAR_WIDTH + 22;
-        int gridY = viewMode == ViewMode.SEARCH ? 72 : 82;
-        int availableW = Math.max(1, width - contentX - 24);
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
         return maxGridStart(columns, visibleRows * columns);
     }
 
@@ -2597,13 +2638,17 @@ public class NeteaseMusicScreen extends SkiaScreen {
         return maxStart <= 0 ? 0 : (maxStart / Math.max(1, columns)) * Math.max(1, columns);
     }
 
+    private int maxSongGridStart(int columns, int visibleCards) {
+        return maxGridStart(columns, visibleCards);
+    }
+
     private int maxPlaylistGridStart() {
         int columns = playlistGridColumns();
-        int contentX = SIDEBAR_WIDTH + 22;
-        int gridY = 82;
-        int availableW = Math.max(1, width - contentX - 24);
+        int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+        int gridY = Math.round(cardY + 82);
+        int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
         int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
-        int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
+        int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
         return maxPlaylistGridStart(columns, visibleRows * columns);
     }
 
@@ -2715,6 +2760,22 @@ public class NeteaseMusicScreen extends SkiaScreen {
         return easeOutCubic((System.currentTimeMillis() - openStartedAt) / 420.0F);
     }
 
+    private float visualTransitionProgress() {
+        return renderingTransitionSnapshot ? 0.0F : contentAppearProgress();
+    }
+
+    private int visibleRowCount(float h) {
+        return Math.max(1, Math.round(h / 42f));
+    }
+
+    private float playHoverProgress() {
+        return approach(iconHoverAnimations.getOrDefault("play", 0f), MusicPlaybackService.INSTANCE.isPlaying() ? 1f : 0f, 0.12f);
+    }
+
+    private static String formatCount(long count) {
+        return formatPlayCount(count);
+    }
+
     private void switchView(ViewMode next) {
         if (viewMode != next) {
             beginContentTransition();
@@ -2798,7 +2859,8 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private int playlistCoverSize() {
-        return Math.min(205, Math.max(150, (height - PLAYER_HEIGHT) / 3));
+        int listW = Math.round(CARD_W - CARD_SIDEBAR_W - 46);
+        return Math.min(180, Math.round(listW * 0.26f));
     }
 
     private String estimatePlaylistDuration() {
@@ -2824,9 +2886,11 @@ public class NeteaseMusicScreen extends SkiaScreen {
             x = cover[0];
             w = cover[2];
         } else {
-            int centerX = SIDEBAR_WIDTH + (width - SIDEBAR_WIDTH) / 2;
-            x = centerX - 160;
-            w = 320;
+            float coverX = cardX + 22;
+            float textX = coverX + 46 + 14;
+            float textMaxW = Math.max(100, cardX + CARD_W - 350 - textX);
+            x = Math.round(textX);
+            w = Math.round(textMaxW);
         }
         pendingProgress = clamp((float) ((mouseX - x) / w));
     }
@@ -2838,10 +2902,9 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private void updateVolumeFromMouse(double mouseX) {
-        int controlX = playerControlStartX();
-        int x = controlX + 232;
-        int w = volumeSliderWidth(controlX);
-        pendingVolume = clamp((float) ((mouseX - x) / Math.max(1, w)));
+        float volumeX = playerVolumeX();
+        float volumeW = playerVolumeW();
+        pendingVolume = clamp((float) ((mouseX - volumeX) / Math.max(1, volumeW)));
         if (pendingVolume > 0.001F) {
             lastNonZeroVolume = pendingVolume;
         }
@@ -2857,11 +2920,11 @@ public class NeteaseMusicScreen extends SkiaScreen {
         if (index < firstSongIndex) {
             firstSongIndex = Math.max(0, (index / columns) * columns);
         } else {
-            int contentX = SIDEBAR_WIDTH + 22;
-            int gridY = 82;
-            int availableW = Math.max(1, width - contentX - 24);
+            int contentX = Math.round(cardX + CARD_SIDEBAR_W + 22);
+            int gridY = Math.round(cardY + 82);
+            int availableW = Math.max(1, Math.round(cardX + CARD_W - contentX - 24));
             int cardW = Math.max(92, Math.min(132, (availableW - 28) / Math.max(2, availableW / 170)));
-            int visibleRows = Math.max(1, (height - PLAYER_HEIGHT - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
+            int visibleRows = Math.max(1, (Math.round(cardY + CARD_H - PLAYER_HEIGHT) - gridY - 16) / (cardW + GRID_TEXT_HEIGHT));
             int visibleCards = visibleRows * columns;
             if (index >= firstSongIndex + visibleCards) {
                 firstSongIndex = Math.min(maxStart, Math.max(0, (index / columns - visibleRows + 1) * columns));
@@ -2950,7 +3013,7 @@ public class NeteaseMusicScreen extends SkiaScreen {
 
     private int inputX(Focus field) {
         return switch (field) {
-            case SEARCH -> 12;
+            case SEARCH -> Math.round(cardX + 14);
             case PLAYLIST_SEARCH -> playlistSearchInputX;
             case PHONE -> phoneInputX;
             case PASSWORD -> passwordInputX;
@@ -3221,5 +3284,16 @@ public class NeteaseMusicScreen extends SkiaScreen {
     }
 
     private record ContentTransition(float alpha, float scale, boolean oldPage) {
+    }
+
+    private static int currentIndex(List<LyricLine> lyrics, long timeMs) {
+        int index = -1;
+        for (int i = 0; i < lyrics.size(); i++) {
+            if (lyrics.get(i).timeMs() > timeMs) {
+                break;
+            }
+            index = i;
+        }
+        return index;
     }
 }

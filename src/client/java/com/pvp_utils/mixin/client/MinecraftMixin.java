@@ -23,6 +23,8 @@ import com.pvp_utils.client.render.MainUI.PVPUtilsViaFabricPlusScreen;
 import com.pvp_utils.client.alt.AltManagerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -88,6 +90,14 @@ public class MinecraftMixin {
             swingAccessor.pvp_utils$setSwingTime(-1);
             swingAccessor.pvp_utils$setSwinging(true);
             swingAccessor.pvp_utils$setSwingingArm(InteractionHand.MAIN_HAND);
+        }
+    }
+
+    @Inject(method = "disconnect", at = @At("TAIL"))
+    private void pvp_utils$returnToCustomMultiplayerOnDisconnect(Component reason, CallbackInfo ci) {
+        Minecraft client = (Minecraft) (Object) this;
+        if (client.screen instanceof JoinMultiplayerScreen) {
+            client.setScreen(new PVPUtilsMultiplayerScreen(null));
         }
     }
 

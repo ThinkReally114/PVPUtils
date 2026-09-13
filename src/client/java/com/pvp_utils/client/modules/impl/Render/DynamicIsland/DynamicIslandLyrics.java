@@ -2,7 +2,6 @@ package com.pvp_utils.client.modules.impl.Render.DynamicIsland;
 
 import com.pvp_utils.client.NeteaseMusic.LyricFilter;
 import com.pvp_utils.client.NeteaseMusic.LyricLine;
-import com.pvp_utils.client.NeteaseMusic.LyricLineProcessor;
 import com.pvp_utils.client.NeteaseMusic.MusicPlaybackService;
 import com.pvp_utils.client.NeteaseMusic.Song;
 
@@ -55,7 +54,7 @@ public final class DynamicIslandLyrics {
         if (lyrics.isEmpty()) {
             return new LyricsCard(true, "", displayAlpha, 0L);
         }
-        int index = Math.max(0, LyricLineProcessor.currentIndex(lyrics, positionMs));
+        int index = Math.max(0, currentIndex(lyrics, positionMs));
         String songName = song.name();
         String filteredText = null;
         for (int i = index; i >= 0 && i >= index - 5; i--) {
@@ -100,5 +99,16 @@ public final class DynamicIslandLyrics {
 
     private static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private static int currentIndex(List<LyricLine> lyrics, long timeMs) {
+        int index = -1;
+        for (int i = 0; i < lyrics.size(); i++) {
+            if (lyrics.get(i).timeMs() > timeMs) {
+                break;
+            }
+            index = i;
+        }
+        return index;
     }
 }

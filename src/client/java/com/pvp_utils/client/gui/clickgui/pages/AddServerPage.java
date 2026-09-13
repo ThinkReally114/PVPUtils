@@ -21,10 +21,10 @@ public class AddServerPage extends BasePage {
         modules.add(new SettingModule(UiText.t("服务器地址", "Server Address"), UiText.t("必填，例如 mc.example.com", "Required, e.g. mc.example.com"),
                 new SettingTextBox(() -> addressDraft, v -> addressDraft = v, 255)));
 
-        modules.add(new SettingModule(UiText.t("登录密码", "Login Password"), UiText.t("可留空，输入后加密保存，显示为星号", "Optional, stored encrypted and shown as stars"),
+        modules.add(new SettingModule(UiText.t("登录密码", "Login Password"), UiText.t("可留空，输入后加密保存", "Optional, stored encrypted and shown as stars"),
                 new SettingPasswordBox(() -> passwordDraft.isEmpty() ? "" : "********", v -> passwordDraft = v, 64)));
 
-        modules.add(new SettingModule(UiText.t("登录延迟", "Login Delay"), UiText.t("进入服务器后等待多久发送登录命令(0-30秒)", "How long to wait after joining before sending the login command (0-30s)"),
+        modules.add(new SettingModule(UiText.t("登录延迟", "Login Delay"), UiText.t("进入服务器后延迟多久发送登录命令", "How long to wait after joining before sending the login command (0-30s)"),
                 new SettingSlider(0.0, 30.0, "%.0fs", () -> (double) delayDraft,
                         v -> delayDraft = Math.max(0, Math.min(30, v.intValue())))));
 

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.pvp_utils.Config;
 import com.pvp_utils.client.NeteaseMusic.LyricLine;
-import com.pvp_utils.client.NeteaseMusic.LyricLineProcessor;
 import com.pvp_utils.client.NeteaseMusic.MusicPlaybackService;
 import com.pvp_utils.client.render.font.FontRenderer;
 import com.pvp_utils.client.render.skia.SkiaScreen;
@@ -87,7 +86,7 @@ public class LyricsDisplayRenderer {
 
         if (player.currentSong() != null && player.currentSong().id() != lastSongId) {
             lastSongId = player.currentSong().id();
-            visualIndex = Math.max(0, LyricLineProcessor.currentIndex(lyrics, player.positionMs()));
+            visualIndex = Math.max(0, currentIndex(lyrics, player.positionMs()));
             displayAlpha = 1f;
             pausedSinceMs = 0L;
         }
@@ -100,7 +99,7 @@ public class LyricsDisplayRenderer {
         if (alpha <= 0.01f) {
             return;
         }
-        int currentIndex = Math.max(0, LyricLineProcessor.currentIndex(lyrics, positionMs));
+        int currentIndex = Math.max(0, currentIndex(lyrics, positionMs));
         if (Math.abs(currentIndex - visualIndex) > 4.0f) {
             visualIndex = currentIndex;
         }
@@ -246,7 +245,7 @@ public class LyricsDisplayRenderer {
     }
 
     private void drawLyrics(Canvas canvas, List<LyricLine> lyrics, long positionMs, float globalAlpha) {
-        int currentIndex = Math.max(0, LyricLineProcessor.currentIndex(lyrics, positionMs));
+        int currentIndex = Math.max(0, currentIndex(lyrics, positionMs));
         float centerX = BASE_W * 0.5f;
         float centerY = BASE_H * 0.5f + 7f;
         boolean bilingual = hasVisibleTranslation(lyrics, currentIndex);
@@ -330,7 +329,7 @@ public class LyricsDisplayRenderer {
 
     private String displayText(String text) {
         if (text == null || text.isBlank()) {
-            return Config.isChinese ? "纯音乐，请欣赏" : "Instrumental";
+            return "";
         }
         return text.trim();
     }
@@ -395,5 +394,16 @@ public class LyricsDisplayRenderer {
 
     private int withAlpha(int color, int alpha) {
         return (Math.max(0, Math.min(255, alpha)) << 24) | (color & 0xFFFFFF);
+    }
+
+    private static int currentIndex(List<LyricLine> lyrics, long timeMs) {
+        int index = -1;
+        for (int i = 0; i < lyrics.size(); i++) {
+            if (lyrics.get(i).timeMs() > timeMs) {
+                break;
+            }
+            index = i;
+        }
+        return index;
     }
 }

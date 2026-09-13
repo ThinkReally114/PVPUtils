@@ -431,6 +431,47 @@ public final class MusicPlaybackService implements StreamPlayerListener {
         return String.format("%02d:%02d", seconds / 60L, seconds % 60L);
     }
 
+    public static boolean hasCurrent() {
+        return INSTANCE.currentSong != null;
+    }
+
+    public static String getName() {
+        Song s = INSTANCE.currentSong;
+        return s == null ? "" : s.name();
+    }
+
+    public static String getArtist() {
+        Song s = INSTANCE.currentSong;
+        return s == null ? "" : s.displayArtist();
+    }
+
+    public float getProgress() {
+        long total = totalDurationMs();
+        return total <= 0L ? 0.0F : clamp(positionMs() / (float) total);
+    }
+
+    public static long getPosition() {
+        return INSTANCE.positionMs();
+    }
+
+    public static long getDuration() {
+        return INSTANCE.totalDurationMs();
+    }
+
+    public String getCoverUrl() {
+        Song s = currentSong;
+        return s == null ? "" : s.image();
+    }
+
+    public long getId() {
+        Song s = currentSong;
+        return s == null ? -1L : s.id();
+    }
+
+    private static float clamp(float v) {
+        return Math.max(0F, Math.min(1F, v));
+    }
+
     public enum PlaybackMode {
         LOOP("Loop"),
         LIST("List"),
