@@ -84,6 +84,11 @@ public abstract class ItemInHandRendererMixin {
         if (shouldSuppressCooldownRaise || isBlocking || isEatingSwing || client.screen instanceof SettingsScreen) {
             this.mainHandHeight = 1.0F;
             this.oMainHandHeight = 1.0F;
+            // 高度被钉在 1.0 时，原版依赖高度降到 0.1 以下才替换可见物品的机制不会触发，
+            // 手动同步可见主手物品，避免此状态下切换物品画面不更新
+            if (!ItemStack.matches(this.mainHandItem, currentStack)) {
+                this.mainHandItem = currentStack;
+            }
         }
     }
 
